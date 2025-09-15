@@ -1,0 +1,528 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Listagem de Clientes - Golden SAT{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/clientes.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header da Página -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-end py-3 py-md-4" style="margin-top: 20px;">
+                <div class="mb-3 mb-md-2">
+                    <h1 class="page-title mb-1 fs-3 fs-md-2">Listagem de Clientes</h1>
+                    <p class="text-muted mb-0 fs-6 fs-md-5">Gerencie todos os clientes cadastrados no sistema</p>
+                </div>
+                <button type="button" class="btn btn-primary w-100 w-md-auto" data-bs-toggle="modal" data-bs-target="#cadastrarClienteModal">
+                    <i class="fas fa-plus-circle me-2"></i>Novo Cliente
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header py-3 py-md-4">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center">
+                        <h6 class="card-title mb-2 mb-sm-0 fs-6 fs-md-5">
+                            <i class="fas fa-filter me-2"></i>Filtros e Busca
+                        </h6>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-primary btn-sm" onclick="buscarClientes()">
+                                <i class="fas fa-search me-1"></i>Buscar
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="limparFiltros()">
+                                <i class="fas fa-times me-1"></i>Limpar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-2 p-md-3">
+                    <div class="row g-2 g-md-3">
+                        <div class="col-12 col-md-4">
+                            <label for="filtroNome" class="form-label fw-semibold small">
+                                <i class="fas fa-user me-1 text-primary"></i>Nome do Cliente
+                            </label>
+                            <input type="text" class="form-control form-control-sm" id="filtroNome" placeholder="Digite o nome do cliente...">
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label for="filtroCnpj" class="form-label fw-semibold small">
+                                <i class="fas fa-building me-1 text-info"></i>CNPJ
+                            </label>
+                            <input type="text" class="form-control form-control-sm" id="filtroCnpj" placeholder="Digite o CNPJ...">
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label for="filtroStatus" class="form-label fw-semibold small">
+                                <i class="fas fa-toggle-on me-1 text-success"></i>Status
+                            </label>
+                            <select class="form-control form-control-sm" id="filtroStatus">
+                                <option value="">Todos os status</option>
+                                <option value="Ativo">Ativo</option>
+                                <option value="Inativo">Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Clientes -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header py-3 py-md-4">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center">
+                        <h6 class="card-title mb-2 mb-sm-0 fs-6 fs-md-5">
+                            <i class="fas fa-list me-2"></i>Lista de Clientes
+                            <span class="badge bg-primary ms-2" id="totalClientes">{{ object_list|length }}</span>
+                        </h6>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="exportarDados()">
+                                <i class="fas fa-download me-1"></i>Exportar
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="imprimirTabela()">
+                                <i class="fas fa-print me-1"></i>Imprimir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                        <table class="table table-hover mb-0" id="tabelaClientes">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th class="py-3 px-3 d-none d-md-table-cell">
+                                        <i class="fas fa-hashtag me-1"></i>ID
+                                    </th>
+                                    <th class="py-3 px-3">
+                                        <i class="fas fa-user me-1"></i>Cliente
+                                    </th>
+                                    <th class="py-3 px-3 d-none d-lg-table-cell">
+                                        <i class="fas fa-building me-1"></i>CNPJ
+                                    </th>
+                                    <th class="py-3 px-3 d-none d-md-table-cell">
+                                        <i class="fas fa-toggle-on me-1"></i>Status
+                                    </th>
+                                    <th class="py-3 px-3 d-none d-xl-table-cell">
+                                        <i class="fas fa-handshake me-1"></i>Contrato
+                                    </th>
+                                    <th class="py-3 px-3 d-none d-xl-table-cell">
+                                        <i class="fas fa-cube me-1"></i>Equipamento
+                                    </th>
+                                    <th class="py-3 px-3 d-none d-xxl-table-cell">
+                                        <i class="fas fa-calendar me-1"></i>Início
+                                    </th>
+                                    <th class="py-3 px-3 d-none d-xxl-table-cell">
+                                        <i class="fas fa-clock me-1"></i>Vigência
+                                    </th>
+                                    <th class="py-3 px-3 d-none d-xxl-table-cell">
+                                        <i class="fas fa-sort-numeric-up me-1"></i>Qtd
+                                    </th>
+                                    <th class="py-3 px-3 d-none d-xxl-table-cell">
+                                        <i class="fas fa-shield-alt me-1"></i>Seguro
+                                    </th>
+                                    <th class="py-3 px-3">
+                                        <i class="fas fa-cogs me-1"></i>Ações
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cliente in object_list %}
+                                <tr class="align-middle">
+                                    <td class="px-3 py-2 fw-bold d-none d-md-table-cell">
+                                        <span class="badge bg-dark">{{ cliente.id }}</span>
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-2">
+                                                <i class="fas fa-user-circle text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <strong>{{ cliente.nome }}</strong>
+                                                {% if cliente.nome_fantasia %}
+                                                    <div class="small text-muted">{{ cliente.nome_fantasia }}</div>
+                                                {% endif %}
+                                                <div class="d-md-none">
+                                                    <span class="badge bg-info me-1">{{ cliente.cnpj }}</span>
+                                                    <span class="badge {% if cliente.status == 'Ativo' %}bg-success{% else %}bg-secondary{% endif %} me-1">
+                                                        {{ cliente.status|default:"N/A" }}
+                                                    </span>
+                                                    <br>
+                                                    <small class="text-muted d-block mt-1">
+                                                        <i class="fas fa-handshake me-1"></i>{{ cliente.tipo_contrato|default:"N/A" }}
+                                                        <i class="fas fa-cube me-1 ms-2"></i>{{ cliente.equipamento|default:"N/A" }}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-3 py-2 d-none d-lg-table-cell">
+                                        <span class="badge bg-info">{{ cliente.cnpj }}</span>
+                                    </td>
+                                    <td class="px-3 py-2 d-none d-md-table-cell">
+                                        <span class="badge {% if cliente.status == 'Ativo' %}bg-success{% else %}bg-secondary{% endif %}">
+                                            {{ cliente.status|default:"N/A" }}
+                                        </span>
+                                    </td>
+                                    <td class="px-3 py-2 d-none d-xl-table-cell">
+                                        <span class="badge bg-warning text-dark">{{ cliente.tipo_contrato|default:"N/A" }}</span>
+                                    </td>
+                                    <td class="px-3 py-2 d-none d-xl-table-cell">
+                                        <span class="badge bg-secondary">{{ cliente.equipamento|default:"N/A" }}</span>
+                                    </td>
+                                    <td class="px-3 py-2 d-none d-xxl-table-cell">
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar me-1"></i>{{ cliente.inicio_de_contrato|date:"d/m/Y"|default:"N/A" }}
+                                        </small>
+                                    </td>
+                                    <td class="px-3 py-2 d-none d-xxl-table-cell">
+                                        <span class="badge bg-info">{{ cliente.vigencia|default:"N/A" }}m</span>
+                                    </td>
+                                    <td class="px-3 py-2 d-none d-xxl-table-cell">
+                                        <span class="badge bg-primary">{{ cliente.quantidade|default:"N/A" }}</span>
+                                    </td>
+                                    <td class="px-3 py-2 d-none d-xxl-table-cell">
+                                        <div class="d-flex flex-column">
+                                            {% if cliente.corretora %}
+                                                <small class="text-muted">{{ cliente.corretora }}</small>
+                                            {% endif %}
+                                            {% if cliente.seguradora %}
+                                                <small class="text-muted">{{ cliente.seguradora }}</small>
+                                            {% endif %}
+                                            {% if not cliente.corretora and not cliente.seguradora %}
+                                                <small class="text-muted">N/A</small>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <div class="d-flex gap-1">
+                                            <button type="button" class="btn btn-outline-info btn-sm btn-action" 
+                                                    data-action="visualizar" data-id="{{ cliente.id }}" 
+                                                    title="Visualizar">
+                                                <i class="fas fa-eye text-info"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-warning btn-sm btn-action" 
+                                                    data-action="editar" data-id="{{ cliente.id }}" 
+                                                    title="Editar">
+                                                <i class="fas fa-edit text-warning"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger btn-sm btn-action" 
+                                                    data-action="excluir" data-id="{{ cliente.id }}" 
+                                                    title="Excluir">
+                                                <i class="fas fa-trash-alt text-danger"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="11" class="text-center py-5">
+                                        <div class="text-muted">
+                                            <i class="fas fa-users fa-4x mb-4 text-muted"></i>
+                                            <h4 class="mb-3">Nenhum cliente cadastrado</h4>
+                                            <p class="fs-5">Clique em "Cadastrar Cliente" para adicionar um novo cliente.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Cadastrar Cliente -->
+<div class="modal fade" id="cadastrarClienteModal" tabindex="-1" aria-labelledby="cadastrarClienteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cadastrarClienteModalLabel">
+                    <i class="fas fa-user-plus me-2"></i>Cadastrar Novo Cliente
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formCadastrarCliente">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="id_nome" class="form-label">Nome da Empresa *</label>
+                            <input type="text" class="form-control" id="id_nome" name="nome" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_nome_fantasia" class="form-label">Nome Fantasia</label>
+                            <input type="text" class="form-control" id="id_nome_fantasia" name="nome_fantasia">
+                        </div>
+                        <div class="col-12">
+                            <label for="id_endereco" class="form-label">Endereço *</label>
+                            <textarea class="form-control" id="id_endereco" name="endereco" rows="3" required></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_cnpj" class="form-label">CNPJ *</label>
+                            <input type="text" class="form-control" id="id_cnpj" name="cnpj" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_comercial" class="form-label">Comercial</label>
+                            <input type="text" class="form-control" id="id_comercial" name="comercial">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_tipo_contrato" class="form-label">Tipo de Contrato</label>
+                            <select class="form-control" id="id_tipo_contrato" name="tipo_contrato">
+                                <option value="">Selecione...</option>
+                                <option value="Descartavel">Descartável</option>
+                                <option value="Retornavel">Retornável</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_inicio_de_contrato" class="form-label">Início do Contrato</label>
+                            <input type="date" class="form-control" id="id_inicio_de_contrato" name="inicio_de_contrato">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_quantidade_em_contrato" class="form-label">Quantidade em Contrato</label>
+                            <input type="text" class="form-control" id="id_quantidade_em_contrato" name="quantidade_em_contrato">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_vigencia" class="form-label">Vigência</label>
+                            <select class="form-control" id="id_vigencia" name="vigencia">
+                                <option value="">Selecione...</option>
+                                <option value="12">12 meses</option>
+                                <option value="24">24 meses</option>
+                                <option value="36">36 meses</option>
+                                <option value="48">48 meses</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_status" class="form-label">Status</label>
+                            <select class="form-control" id="id_status" name="status">
+                                <option value="">Selecione...</option>
+                                <option value="Ativo">Ativo</option>
+                                <option value="Inativo">Inativo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_termino" class="form-label">Término</label>
+                            <input type="text" class="form-control" id="id_termino" name="termino">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_equipamento" class="form-label">Equipamento</label>
+                            <select class="form-control" id="id_equipamento" name="equipamento">
+                                <option value="">Selecione...</option>
+                                <option value="Isaca">Isaca</option>
+                                <option value="Rastreador">Rastreador</option>
+                                <option value="Tets">Tets</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_quantidade" class="form-label">Quantidade</label>
+                            <input type="number" class="form-control" id="id_quantidade" name="quantidade">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_gr" class="form-label">GR</label>
+                            <input type="text" class="form-control" id="id_gr" name="gr">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_corretora" class="form-label">Corretora</label>
+                            <input type="text" class="form-control" id="id_corretora" name="corretora">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_seguradora" class="form-label">Seguradora</label>
+                            <input type="text" class="form-control" id="id_seguradora" name="seguradora">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_data_treinamento" class="form-label">Data do Treinamento</label>
+                            <input type="date" class="form-control" id="id_data_treinamento" name="data_treinamento">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Cadastrar Cliente
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Visualizar Cliente -->
+<div class="modal fade" id="visualizarClienteModal" tabindex="-1" aria-labelledby="visualizarClienteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="visualizarClienteModalLabel">
+                    <i class="fas fa-eye me-2"></i>Detalhes do Cliente
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="detalhesCliente">
+                    <!-- Conteúdo será preenchido via JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar Cliente -->
+<div class="modal fade" id="editarClienteModal" tabindex="-1" aria-labelledby="editarClienteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarClienteModalLabel">
+                    <i class="fas fa-edit me-2"></i>Editar Cliente
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formEditarCliente">
+                {% csrf_token %}
+                <input type="hidden" id="cliente_id_edit" name="cliente_id">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="id_nome_edit" class="form-label">Nome da Empresa *</label>
+                            <input type="text" class="form-control" id="id_nome_edit" name="nome" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_nome_fantasia_edit" class="form-label">Nome Fantasia</label>
+                            <input type="text" class="form-control" id="id_nome_fantasia_edit" name="nome_fantasia">
+                        </div>
+                        <div class="col-12">
+                            <label for="id_endereco_edit" class="form-label">Endereço *</label>
+                            <textarea class="form-control" id="id_endereco_edit" name="endereco" rows="3" required></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_cnpj_edit" class="form-label">CNPJ *</label>
+                            <input type="text" class="form-control" id="id_cnpj_edit" name="cnpj" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_comercial_edit" class="form-label">Comercial</label>
+                            <input type="text" class="form-control" id="id_comercial_edit" name="comercial">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_tipo_contrato_edit" class="form-label">Tipo de Contrato</label>
+                            <select class="form-control" id="id_tipo_contrato_edit" name="tipo_contrato">
+                                <option value="">Selecione...</option>
+                                <option value="Descartavel">Descartável</option>
+                                <option value="Retornavel">Retornável</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_inicio_de_contrato_edit" class="form-label">Início do Contrato</label>
+                            <input type="date" class="form-control" id="id_inicio_de_contrato_edit" name="inicio_de_contrato">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_quantidade_em_contrato_edit" class="form-label">Quantidade em Contrato</label>
+                            <input type="text" class="form-control" id="id_quantidade_em_contrato_edit" name="quantidade_em_contrato">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_vigencia_edit" class="form-label">Vigência</label>
+                            <select class="form-control" id="id_vigencia_edit" name="vigencia">
+                                <option value="">Selecione...</option>
+                                <option value="12">12 meses</option>
+                                <option value="24">24 meses</option>
+                                <option value="36">36 meses</option>
+                                <option value="48">48 meses</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_status_edit" class="form-label">Status</label>
+                            <select class="form-control" id="id_status_edit" name="status">
+                                <option value="">Selecione...</option>
+                                <option value="Ativo">Ativo</option>
+                                <option value="Inativo">Inativo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_termino_edit" class="form-label">Término</label>
+                            <input type="text" class="form-control" id="id_termino_edit" name="termino">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_equipamento_edit" class="form-label">Equipamento</label>
+                            <select class="form-control" id="id_equipamento_edit" name="equipamento">
+                                <option value="">Selecione...</option>
+                                <option value="Isaca">Isaca</option>
+                                <option value="Rastreador">Rastreador</option>
+                                <option value="Tets">Tets</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_quantidade_edit" class="form-label">Quantidade</label>
+                            <input type="number" class="form-control" id="id_quantidade_edit" name="quantidade">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_gr_edit" class="form-label">GR</label>
+                            <input type="text" class="form-control" id="id_gr_edit" name="gr">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_corretora_edit" class="form-label">Corretora</label>
+                            <input type="text" class="form-control" id="id_corretora_edit" name="corretora">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_seguradora_edit" class="form-label">Seguradora</label>
+                            <input type="text" class="form-control" id="id_seguradora_edit" name="seguradora">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_data_treinamento_edit" class="form-label">Data do Treinamento</label>
+                            <input type="date" class="form-control" id="id_data_treinamento_edit" name="data_treinamento">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-save me-2"></i>Atualizar Cliente
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Excluir Cliente -->
+<div class="modal fade" id="excluirClienteModal" tabindex="-1" aria-labelledby="excluirClienteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="excluirClienteModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2 text-danger"></i>Confirmar Exclusão
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir este cliente?</p>
+                <div class="alert alert-warning">
+                    <i class="fas fa-warning me-2"></i>
+                    <strong>Atenção:</strong> Esta ação não pode ser desfeita!
+                </div>
+                <div id="infoClienteExclusao">
+                    <!-- Informações do cliente serão preenchidas via JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmarExclusaoCliente">
+                    <i class="fas fa-trash-alt me-2"></i>Excluir Cliente
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/clientes.js' %}"></script>
+{% endblock %}

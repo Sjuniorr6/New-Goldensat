@@ -1,0 +1,206 @@
+<!-- Modal para Editar Ticket -->
+<div class="modal fade" id="editarTicketModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 15px !important; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important; background: white !important; border: 1px solid #e9ecef !important;">
+            <!-- Modal Header -->
+            <div class="modal-header" style="background: #f8f9fa !important; color: #333 !important; border-bottom: 1px solid #e9ecef !important; padding: 20px 25px !important;">
+                <h5 class="modal-title" style="font-weight: 600 !important; font-size: 1.25rem !important; gap: 10px !important; color: #333 !important; letter-spacing: 0.5px !important;">
+                    <i class="fas fa-edit" style="font-size: 1.5rem !important; opacity: 0.8 !important; color: #ffc107 !important; background: rgba(255, 193, 7, 0.1) !important; padding: 8px !important; border-radius: 50% !important; width: 40px !important; height: 40px !important; display: flex !important; align-items: center !important; justify-content: center !important;"></i>
+                    Editar Ticket #{{ ticket.id }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background: #fff !important; border: 1px solid #e9ecef !important; border-radius: 50% !important; width: 35px !important; height: 35px !important; transition: all 0.3s ease !important;">
+                    <span style="color: #6c757d !important; font-size: 1.2rem !important; font-weight: 600 !important; line-height: 1 !important;">&times;</span>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body" style="padding: 25px !important; background: white !important; min-height: 400px !important; line-height: 1.6 !important;">
+                <form id="editarTicketForm" method="post" action="{% url 'tickets:editar_ticket' ticket.id %}">
+                    {% csrf_token %}
+                    
+                    <!-- Status e Responsável -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3 border-bottom pb-2">
+                                <i class="fas fa-cogs me-2"></i>Controle do Ticket
+                            </h6>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.status.id_for_label }}" class="form-label">
+                                    <i class="fas fa-flag me-1"></i>Status
+                                </label>
+                                {{ form.status }}
+                                <div class="form-text">Status atual do ticket</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.responsavel.id_for_label }}" class="form-label">
+                                    <i class="fas fa-user-tie me-1"></i>Responsável
+                                </label>
+                                {{ form.responsavel }}
+                                <div class="form-text">Pessoa responsável pela resolução</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Correção Aplicada -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3 border-bottom pb-2">
+                                <i class="fas fa-wrench me-2"></i>Correção Aplicada
+                            </h6>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="{{ form.correcao.id_for_label }}" class="form-label">
+                                    <i class="fas fa-tools me-1"></i>Descrição da Correção
+                                </label>
+                                {{ form.correcao }}
+                                <div class="form-text">
+                                    <i class="fas fa-lightbulb me-1"></i>
+                                    Descreva detalhadamente a correção aplicada:
+                                    <ul class="mt-2 mb-0">
+                                        <li>O que foi feito para resolver o problema</li>
+                                        <li>Quais ferramentas ou métodos foram utilizados</li>
+                                        <li>Se há alguma ação adicional necessária</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Devolutiva -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3 border-bottom pb-2">
+                                <i class="fas fa-comment-dots me-2"></i>Devolutiva
+                            </h6>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="{{ form.devolutiva.id_for_label }}" class="form-label">
+                                    <i class="fas fa-reply me-1"></i>Mensagem para o Usuário
+                                </label>
+                                {{ form.devolutiva }}
+                                <div class="form-text">
+                                    <i class="fas fa-lightbulb me-1"></i>
+                                    Mensagem que será enviada para o usuário:
+                                    <ul class="mt-2 mb-0">
+                                        <li>Explicar a solução aplicada</li>
+                                        <li>Fornecer orientações adicionais</li>
+                                        <li>Informar sobre próximos passos</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Informações do Ticket (Read-only) -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3 border-bottom pb-2">
+                                <i class="fas fa-info-circle me-2"></i>Informações do Ticket
+                            </h6>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">
+                                    <i class="fas fa-user me-1"></i>Solicitante
+                                </label>
+                                <p class="mb-0 text-muted">{{ ticket.usuario.get_full_name|default:ticket.usuario.username }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">
+                                    <i class="fas fa-building me-1"></i>Setor
+                                </label>
+                                <p class="mb-0 text-muted">{{ ticket.setor }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">
+                                    <i class="fas fa-tag me-1"></i>Título
+                                </label>
+                                <p class="mb-0 text-muted">{{ ticket.titulo }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">
+                                    <i class="fas fa-exclamation-triangle me-1"></i>Prioridade
+                                </label>
+                                <p class="mb-0 text-muted">{{ ticket.prioridade }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Descrição Original (Read-only) -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3 border-bottom pb-2">
+                                <i class="fas fa-bug me-2"></i>Descrição Original do Problema
+                            </h6>
+                        </div>
+                        <div class="col-12">
+                            <div class="bg-light p-3 rounded">
+                                <p class="mb-0 text-muted">{{ ticket.descricao_erro|linebreaks }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer" style="background: #f8f9fa !important; border: none !important; border-top: 1px solid #e9ecef !important; padding: 20px 25px !important; gap: 10px !important;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 8px !important; padding: 10px 20px !important; font-weight: 500 !important; font-size: 0.9rem !important; transition: all 0.3s ease !important; border: 1px solid #6c757d !important; box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;">
+                    <i class="fas fa-times me-1"></i>Cancelar
+                </button>
+                <button type="submit" form="editarTicketForm" class="btn btn-warning" style="border-radius: 8px !important; padding: 10px 20px !important; font-weight: 500 !important; font-size: 0.9rem !important; transition: all 0.3s ease !important; border: 1px solid #ffc107 !important; box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;">
+                    <i class="fas fa-save me-1"></i>Salvar Alterações
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Configurar formulário de edição
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('editarTicketForm');
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    mostrarNotificacao('Sucesso!', data.message, 'success');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    mostrarNotificacao('Erro!', data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                mostrarNotificacao('Erro!', 'Erro ao salvar alterações', 'error');
+            }
+        });
+    }
+});
+</script>

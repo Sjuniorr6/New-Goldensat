@@ -1,0 +1,407 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Controle de Estoque{% endblock %}
+
+{% block extra_css %}
+<style>
+    .estoque-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+    }
+    
+    .estoque-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .estoque-disponivel {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #28a745;
+    }
+    
+    .estoque-baixo {
+        color: #dc3545;
+    }
+    
+    .estoque-medio {
+        color: #ffc107;
+    }
+    
+    .estoque-alto {
+        color: #28a745;
+    }
+    
+    .info-badge {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        margin: 5px;
+    }
+    
+    .movimentacao-item {
+        border-left: 4px solid #667eea;
+        padding: 10px 15px;
+        margin: 5px 0;
+        background: #f8f9fa;
+        border-radius: 0 10px 10px 0;
+    }
+    
+    .movimentacao-entrada {
+        border-left-color: #28a745;
+    }
+    
+    .movimentacao-saida {
+        border-left-color: #dc3545;
+    }
+    
+    /* Estilos para a tabela de estoque */
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.1);
+        transform: scale(1.01);
+        transition: all 0.2s ease;
+    }
+    
+    .table th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .table td {
+        vertical-align: middle;
+        border-color: #e9ecef;
+    }
+    
+    .badge.fs-5 {
+        font-size: 1.1rem !important;
+        padding: 8px 12px;
+    }
+    
+    .badge.fs-6 {
+        font-size: 0.9rem !important;
+        padding: 6px 10px;
+    }
+    
+    .btn-group .btn {
+        border-radius: 6px;
+        margin: 0 2px;
+    }
+    
+    .table-responsive {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">
+                    <i class="fas fa-warehouse me-2"></i>
+                    Controle de Estoque
+                </h1>
+                <div>
+                    <button class="btn btn-primary" onclick="atualizarEstoque()">
+                        <i class="fas fa-sync-alt me-1"></i>
+                        Atualizar
+                    </button>
+                </div>
+            </div>
+            
+            {% if produtos %}
+                <!-- Tabela de Estoque -->
+                <div class="card">
+                    <div class="card-header bg-gradient-primary text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-warehouse me-2"></i>
+                            Controle de Estoque - Tabela Detalhada
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="text-center">
+                                            <i class="fas fa-box me-1"></i>
+                                            Produto
+                                        </th>
+                                        <th class="text-center">
+                                            <i class="fas fa-industry me-1"></i>
+                                            Fabricante
+                                        </th>
+                                        <th class="text-center">
+                                            <i class="fas fa-arrow-up me-1"></i>
+                                            Total Entradas
+                                        </th>
+                                        <th class="text-center">
+                                            <i class="fas fa-arrow-down me-1"></i>
+                                            Total Saídas
+                                        </th>
+                                        <th class="text-center">
+                                            <i class="fas fa-calculator me-1"></i>
+                                            Estoque Disponível
+                                        </th>
+                                        <th class="text-center">
+                                            <i class="fas fa-dollar-sign me-1"></i>
+                                            Valor Unitário
+                                        </th>
+                                        <th class="text-center">
+                                            <i class="fas fa-cogs me-1"></i>
+                                            Ações
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for produto in produtos %}
+                                    <tr class="{% if produto.estoque_disponivel == 0 %}table-danger{% elif produto.estoque_disponivel < 10 %}table-warning{% else %}table-success{% endif %}">
+                                        <td class="text-center">
+                                            <div class="d-flex align-items-center justify-content-center">
+                                                <i class="fas fa-box text-primary me-2"></i>
+                                                <strong>{{ produto.nome_produto }}</strong>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-secondary">
+                                                {{ produto.fabricante }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-success fs-6">
+                                                <i class="fas fa-arrow-up me-1"></i>
+                                                {{ produto.total_entradas }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-danger fs-6">
+                                                <i class="fas fa-arrow-down me-1"></i>
+                                                {{ produto.total_saidas }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge fs-5 fw-bold
+                                                {% if produto.estoque_disponivel == 0 %}
+                                                    bg-danger
+                                                {% elif produto.estoque_disponivel < 10 %}
+                                                    bg-warning text-dark
+                                                {% else %}
+                                                    bg-success
+                                                {% endif %}">
+                                                {{ produto.estoque_disponivel }}
+                                            </span>
+                                            <div class="small text-muted">unidades</div>
+                                        </td>
+                                        <td class="text-center">
+                                            {% if produto.valor_unitario %}
+                                                <span class="badge bg-info fs-6">
+                                                    <i class="fas fa-dollar-sign me-1"></i>
+                                                    R$ {{ produto.valor_unitario|floatformat:2 }}
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-outline-primary btn-sm" 
+                                                        onclick="verMovimentacoes({{ produto.id }})"
+                                                        title="Ver Movimentações">
+                                                    <i class="fas fa-history"></i>
+                                                </button>
+                                                <button class="btn btn-outline-info btn-sm" 
+                                                        onclick="verDetalhes({{ produto.id }})"
+                                                        title="Ver Detalhes">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light">
+                        <div class="row text-center">
+                            <div class="col-md-3">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <div class="badge bg-success me-2" style="width: 20px; height: 20px;"></div>
+                                    <small>Estoque Alto (≥10)</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <div class="badge bg-warning me-2" style="width: 20px; height: 20px;"></div>
+                                    <small>Estoque Médio (1-9)</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <div class="badge bg-danger me-2" style="width: 20px; height: 20px;"></div>
+                                    <small>Estoque Baixo (0)</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Total: {{ produtos|length }} produto(s)
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Paginação -->
+                {% if is_paginated %}
+                <nav aria-label="Navegação de páginas">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1">&laquo; Primeira</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                            </li>
+                        {% endif %}
+                        
+                        <li class="page-item active">
+                            <span class="page-link">
+                                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                            </span>
+                        </li>
+                        
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Próxima</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+                
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-warehouse fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">Nenhum produto encontrado</h4>
+                    <p class="text-muted">Não há produtos cadastrados no sistema.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal para movimentações -->
+<div class="modal fade" id="movimentacoesModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-history me-2"></i>
+                    Movimentações de Estoque
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="movimentacoesContent">
+                <div class="text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function atualizarEstoque() {
+    location.reload();
+}
+
+function verMovimentacoes(produtoId) {
+    const modal = new bootstrap.Modal(document.getElementById('movimentacoesModal'));
+    const content = document.getElementById('movimentacoesContent');
+    
+    // Mostrar loading
+    content.innerHTML = `
+        <div class="text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Carregando...</span>
+            </div>
+        </div>
+    `;
+    
+    modal.show();
+    
+    // Buscar movimentações
+    fetch(`/produtos/api/movimentacoes/${produtoId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                let html = '<div class="movimentacoes-list">';
+                
+                data.movimentacoes.forEach(mov => {
+                    const tipoClass = mov.tipo === 'entrada' ? 'movimentacao-entrada' : 'movimentacao-saida';
+                    const icon = mov.tipo === 'entrada' ? 'fa-arrow-up' : 'fa-arrow-down';
+                    const color = mov.tipo === 'entrada' ? 'text-success' : 'text-danger';
+                    
+                    html += `
+                        <div class="movimentacao-item ${tipoClass}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas ${icon} ${color} me-2"></i>
+                                    <strong>${mov.quantidade}</strong> unidades
+                                    <span class="text-muted">- ${mov.motivo}</span>
+                                </div>
+                                <small class="text-muted">${mov.data_formatada}</small>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                content.innerHTML = html;
+            } else {
+                content.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        ${data.message}
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            content.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    Erro ao carregar movimentações: ${error.message}
+                </div>
+            `;
+        });
+}
+
+function verDetalhes(produtoId) {
+    // Redirecionar para a página de detalhes do produto
+    window.location.href = `/produtos/detail-cadastro-tipo-produto/${produtoId}/`;
+}
+</script>
+{% endblock %}

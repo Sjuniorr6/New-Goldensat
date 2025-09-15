@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações - Golden SAT</title>
+    
+    <!-- Favicon -->
+    
+    <link rel="icon" type="image/png" href="/static/images/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="/static/images/favicon.png">
+    <link rel="apple-touch-icon" href="/static/images/favicon.png">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/sidbar.css">
+    <link rel="stylesheet" href="/static/css/home.css">
+    
+    
+<link rel="stylesheet" href="/static/css/requisicoes.css">
+
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <img src="/static/images/logo-golden.png" alt="Logo Golden SAT" class="logo-loading">
+            </div>
+            <div class="loading-text">
+                <h3>Golden SAT</h3>
+                <p>Sistema de Gestão Empresarial</p>
+            </div>
+            <div class="loading-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="loading-percentage">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+    <!-- Header -->
+    <div class="sidebar-header">
+        <div class="logo-container">
+            <img src="/static/images/logo-golden.png" alt="Logo Golden SAT" class="sidebar-logo">
+            <div class="company-name">Golden SAT</div>
+            <div class="company-tagline">Sistema Integrado</div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="sidebar-nav">
+        <!-- Principal -->
+        <div class="nav-section">
+           
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">
+                        <i class="fas fa-home nav-icon"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#ticketsSubmenu">
+                        <i class="fas fa-ticket-alt nav-icon"></i>
+                        <span class="nav-text">Tickets</span>
+                        <span class="nav-badge">5</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="ticketsSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Novos Tickets</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Em Andamento</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Resolvidos</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Gestão -->
+        <div class="nav-section">
+          
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#comprasSubmenu">
+                        <i class="fas fa-shopping-cart nav-icon"></i>
+                        <span class="nav-text">Compras</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="comprasSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="/produtos/" class="nav-submenu-link">Cadastro de Produtos</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#estoqueSubmenu">
+                        <i class="fas fa-boxes nav-icon"></i>
+                        <span class="nav-text">Estoque</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="estoqueSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="/produtos/entrada-produto/" class="nav-submenu-link">Entrada de Produtos</a>
+                        </li>
+                       
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#comercialSubmenu">
+                        <i class="fas fa-handshake nav-icon"></i>
+                        <span class="nav-text">Comercial</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="comercialSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="/clientes/" class="nav-submenu-link">Cadastro de Clientes</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="/requisicoes/" class="nav-submenu-link">Criação de Requisição</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="/requisicoes/historico/" class="nav-submenu-link">Histórico de Requisições</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Histórico de Manutenção</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Configuração -->
+        <div class="nav-section">
+           
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#configuracaoSubmenu">
+                        <i class="fas fa-cog nav-icon"></i>
+                        <span class="nav-text">Configuração</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="configuracaoSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="/configuracao/" class="nav-submenu-link">Configuração</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Configurações Gerais</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Manutenção -->
+        <div class="nav-section">
+          
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#manutencaoSubmenu">
+                        <i class="fas fa-tools nav-icon"></i>
+                        <span class="nav-text">Manutenção</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="manutencaoSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Entrada/Manutenção MODAL</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Histórico de Manutenção</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Agendamentos</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Inteligência/Desenvolvimento -->
+        <div class="nav-section">
+           
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#inteligenciaSubmenu">
+                        <i class="fas fa-brain nav-icon"></i>
+                        <span class="nav-text">Int/Desenvolvimento</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="inteligenciaSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Corte</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Documentos</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Horas Extra</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Manutenção/Aprovação</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Técnico -->
+        <div class="nav-section">
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#tecnicoSubmenu">
+                        <i class="fas fa-wrench nav-icon"></i>
+                        <span class="nav-text">Técnico</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="tecnicoSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Requisição/Configuração de Equipamento</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Configurações Técnicas</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Diagnósticos</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Operacional -->
+        <div class="nav-section">
+           
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#operacionalSubmenu">
+                        <i class="fas fa-cogs nav-icon"></i>
+                        <span class="nav-text">Operacional</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="operacionalSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Consulta de Iscas</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Cadastro de Prestador</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Estoque de Antenistas</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Lista de Saída/Req</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Reativação</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Financeiro -->
+        <div class="nav-section">
+         
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#faturamentoSubmenu">
+                        <i class="fas fa-file-invoice-dollar nav-icon"></i>
+                        <span class="nav-text">Faturamento</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="faturamentoSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Faturamento de Requisição</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Faturamento de Reativação</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Faturamento de Acionamentos</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Nova Tabela</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Aprovação de Requisição/CEO</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Expedição -->
+        <div class="nav-section">
+         
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#expedicaoSubmenu">
+                        <i class="fas fa-shipping-fast nav-icon"></i>
+                        <span class="nav-text">Expedição</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="expedicaoSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Consulta de Iscas</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Saída de Requisição</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Histórico de Manutenção</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Histórico de Requisição</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Sistema -->
+        <div class="nav-section">
+           
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-sign-out-alt nav-icon"></i>
+                        <span class="nav-text">Sair</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Sidebar Toggle Button -->
+<button class="sidebar-toggle" id="sidebarToggle">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header bg-white shadow-sm">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <!-- Search Bar -->
+                            <div class="search-bar">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Pesquisar no sistema...">
+                                    <button class="btn btn-outline-secondary" type="button">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- User Profile -->
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
+                                    <img src="https://via.placeholder.com/32x32" alt="User" class="rounded-circle me-2" width="32" height="32">
+                                    <span>Admin</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Perfil</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Configurações</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Sair</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content Area -->
+        <main>
+            <input type="hidden" name="csrfmiddlewaretoken" value="Ent41XxQM74uRJGp2MZT01ipRJNkTbb4ALZry09CfUV8UttrJrak8qW2erQSmaV0">
+            
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header da Página -->
+            <div class="mb-4">
+                <h1 class="h2 mb-2">
+                    <i class="fas fa-cog me-2 text-primary"></i>Configurações do Sistema
+                </h1>
+                <p class="text-muted">Visualize as configurações atuais do sistema Golden SAT</p>
+            </div>
+
+            <!-- Grid de Cards -->
+            <div class="row g-3" id="cardsGrid">
+                
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                    <div class="card h-100 card-approved" data-id="3">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div class="d-flex gap-2">
+                                <span class="badge bg-secondary">#3</span>
+                                <span class="badge bg-aprovado">
+                                    Aprovado pelo CEO
+                                </span>
+                            </div>
+                            <small class="text-muted">12/09/2025</small>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- Nome -->
+                            <div class="mb-2">
+                                <h6 class="card-title">
+                                    <i class="fas fa-user me-2"></i>Goldensat
+                                </h6>
+                            </div>
+
+                            <!-- CNPJ -->
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-id-card me-1"></i>CNPJ: Não informado
+                                </small>
+                            </div>
+
+                            <!-- Contrato -->
+                            
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-file-contract me-1"></i>Contrato: Descartavel
+                                </small>
+                            </div>
+                            
+
+                            <!-- Data -->
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>Data: 12/09/2025 19:49
+                                </small>
+                            </div>
+
+                            <!-- Motivo -->
+                            
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-tag me-1"></i>Motivo: Isca FAST
+                                </small>
+                            </div>
+                            
+
+                            <!-- Taxa de Envio -->
+                            
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-shipping-fast me-1"></i>Taxa de Envio: R$ 200.00
+                                </small>
+                            </div>
+                            
+
+                            <!-- Comercial -->
+                            
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-handshake me-1"></i>Comercial: MAYRA
+                                </small>
+                            </div>
+                            
+
+                            <!-- Quantidade -->
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-cubes me-1"></i>Quantidade: 2
+                                </small>
+                            </div>
+
+                            <!-- Tipo de Produto -->
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-box me-1"></i>Produto: Produto não informado
+                                </small>
+                            </div>
+
+                            <!-- Tipo de Fatura -->
+                            
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-receipt me-1"></i>Tipo de Fatura: Com Custo
+                                </small>
+                            </div>
+                            
+
+                            <!-- Valor Unitário -->
+                            
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-dollar-sign me-1"></i>Valor Unitário: R$ 200.00
+                                </small>
+                            </div>
+                            
+
+                            <!-- Valor Total -->
+                            <div class="mb-2">
+                                <small class="text-success fw-bold">
+                                    <i class="fas fa-calculator me-1"></i>Valor Total: R$ 2.00
+                                </small>
+                            </div>
+
+                            <!-- Formas de Pagamento -->
+                            
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-credit-card me-1"></i>Pagamento: DEBITO
+                                </small>
+                            </div>
+                            
+
+                            <!-- Observações -->
+                            
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-sticky-note me-1"></i>Observações: dsa
+                                </small>
+                            </div>
+                            
+
+                            <!-- TP -->
+                            
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>TP: 10
+                                </small>
+                            </div>
+                            
+                        </div>
+
+                        <div class="card-footer d-flex justify-content-between align-items-center">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="visualizarRequisicao(3)" title="Visualizar">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-warning btn-sm" onclick="debugEditarRequisicao(3)" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                
+                                <!-- Botões de Aprovar e Reprovar -->
+                                
+                                
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="excluirRequisicao(3)" title="Excluir">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>19:49
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+        </main>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="/static/js/sidbar.js"></script>
+    <script src="/static/js/home.js"></script>
+    
+    <!-- Loading Screen Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const progressFill = document.querySelector('.progress-fill');
+            const percentage = document.querySelector('.loading-percentage');
+            const logo = document.querySelector('.logo-loading');
+            
+            let progress = 0;
+            const duration = 2000; // 2 segundos
+            const interval = 50; // Atualizar a cada 50ms
+            const increment = (100 / (duration / interval));
+            
+            // Animação do logo
+            logo.style.opacity = '0';
+            logo.style.transform = 'scale(0.5)';
+            
+            setTimeout(() => {
+                logo.style.transition = 'all 1s ease-out';
+                logo.style.opacity = '1';
+                logo.style.transform = 'scale(1)';
+            }, 200);
+            
+            // Animação da barra de progresso
+            const progressInterval = setInterval(() => {
+                progress += increment;
+                
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(progressInterval);
+                    
+                    // Aguardar um pouco antes de esconder
+                    setTimeout(() => {
+                        loadingScreen.style.opacity = '0';
+                        setTimeout(() => {
+                            loadingScreen.style.display = 'none';
+                        }, 500);
+                    }, 300);
+                }
+                
+                progressFill.style.width = progress + '%';
+                percentage.textContent = Math.round(progress) + '%';
+            }, interval);
+            
+            // Simular carregamento de recursos
+            let resourcesLoaded = 0;
+            const totalResources = 5; // CSS, JS, imagens, etc.
+            
+            const checkResource = () => {
+                resourcesLoaded++;
+                const resourceProgress = (resourcesLoaded / totalResources) * 20; // 20% para recursos
+                if (resourceProgress > 0) {
+                    progressFill.style.width = Math.min(progress + resourceProgress, 100) + '%';
+                }
+            };
+            
+            // Simular carregamento de recursos
+            setTimeout(checkResource, 100);  // CSS
+            setTimeout(checkResource, 300);  // JS
+            setTimeout(checkResource, 500);  // Imagens
+            setTimeout(checkResource, 700);  // Fonts
+            setTimeout(checkResource, 900);  // Outros recursos
+        });
+    </script>
+    
+    
+<script src="/static/js/requisicoes.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar o RequisicoesManager
+    if (typeof RequisicoesManager !== 'undefined') {
+        window.requisicoesManager = new RequisicoesManager();
+        console.log('✅ RequisicoesManager inicializado na página de configurações');
+    } else {
+        console.error('❌ RequisicoesManager não encontrado');
+    }
+});
+
+// Função de debug para verificar se está funcionando
+function debugEditarRequisicao(id) {
+    console.log('🔍 Debug - Função editarRequisicao chamada com ID:', id);
+    console.log('🔍 Debug - window.requisicoesManager existe?', !!window.requisicoesManager);
+    console.log('🔍 Debug - RequisicoesManager existe?', typeof RequisicoesManager);
+    
+    if (window.requisicoesManager) {
+        console.log('🔍 Debug - Chamando editarRequisicao...');
+        window.requisicoesManager.editarRequisicao(id);
+    } else {
+        console.error('❌ Debug - RequisicoesManager não está disponível');
+    }
+}
+</script>
+
+</body>
+</html>

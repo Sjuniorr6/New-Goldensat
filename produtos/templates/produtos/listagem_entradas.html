@@ -1,0 +1,363 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Listagem de Entradas - Goldensat{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/produtos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <!-- Header da Página -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-end py-3 py-md-4" style="margin-top: 20px;">
+                <div class="mb-3 mb-md-2">
+                    <h1 class="page-title mb-1 fs-3 fs-md-2">Listagem de Entradas</h1>
+                    <p class="text-muted mb-0 fs-6 fs-md-5"></p>
+                </div>
+                <button type="button" class="btn btn-primary w-100 w-md-auto" data-bs-toggle="modal" data-bs-target="#entradaProdutoModal">
+                    <i class="fas fa-plus-circle me-2"></i>Nova Entrada
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body p-3 p-md-4">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 mb-md-4">
+                        <h6 class="card-title mb-2 mb-sm-0 fs-6 fs-md-5">
+                            <i class="fas fa-sliders-h me-2"></i>Filtros de Busca
+                        </h6>
+                        <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-sm-auto">
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="aplicarFiltros()">
+                                <i class="fas fa-search-plus me-1"></i>Filtrar
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="limparFiltros()">
+                                <i class="fas fa-eraser me-1"></i>Limpar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row g-3 g-md-4">
+                        <div class="col-12 col-md-6">
+                            <label for="filtroProduto" class="form-label fw-semibold">Nome do Produto</label>
+                            <input type="text" class="form-control" id="filtroProduto" placeholder="Digite o nome do produto...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Entradas -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header py-3 py-md-4">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center">
+                        <h6 class="card-title mb-2 mb-sm-0 fs-6 fs-md-5">
+                            <i class="fas fa-warehouse me-2"></i>Entradas Registradas
+                            <span class="badge bg-primary ms-2" id="totalEntradas">{{ object_list|length }}</span>
+                        </h6>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                        <table class="table table-hover mb-0" id="tabelaEntradas">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th class="py-3 px-3 d-none d-md-table-cell">ID</th>
+                                    <th class="py-3 px-3">Produto</th>
+                                    <th class="py-3 px-3 d-none d-lg-table-cell">Quantidade</th>
+                                    <th class="py-3 px-3 d-none d-md-table-cell">ID Equipamento</th>
+                                    <th class="py-3 px-3 d-none d-lg-table-cell">Data</th>
+                                    <th class="py-3 px-3">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for entrada in object_list %}
+                                <tr class="align-middle">
+                                    <td class="px-3 py-2 fw-bold d-none d-md-table-cell">{{ entrada.id }}</td>
+                                    <td class="px-3 py-2">
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-2">
+                                                <i class="fas fa-cube text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <strong>{{ entrada.codigo_produto.nome_produto }}</strong>
+                                                <div class="d-md-none">
+                                                    <span class="badge bg-info me-1">Qtd: {{ entrada.quantidade }}</span>
+                                                    <span class="badge bg-secondary me-1">ID: {{ entrada.id_equipamento }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-3 py-2 d-none d-lg-table-cell">
+                                        <span class="badge bg-success fs-6">{{ entrada.quantidade }}</span>
+                                    </td>
+                                    <td class="px-3 py-2 d-none d-md-table-cell">
+                                        <span class="badge bg-secondary">{{ entrada.id_equipamento }}</span>
+                                    </td>
+                                    <td class="px-3 py-2 d-none d-lg-table-cell">
+                                        <small class="text-muted">{{ entrada.data|date:"d/m/Y H:i" }}</small>
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <div class="d-flex gap-1">
+                                            <button type="button" class="btn btn-outline-info btn-sm btn-action" 
+                                                    data-action="visualizar" data-id="{{ entrada.id }}" 
+                                                    title="Visualizar">
+                                                <i class="fas fa-eye text-info"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-warning btn-sm btn-action" 
+                                                    data-action="editar" data-id="{{ entrada.id }}" 
+                                                    title="Editar">
+                                                <i class="fas fa-edit text-warning"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger btn-sm btn-action" 
+                                                    data-action="excluir" data-id="{{ entrada.id }}" 
+                                                    title="Excluir">
+                                                <i class="fas fa-trash-alt text-danger"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-5">
+                                        <div class="text-muted">
+                                            <i class="fas fa-inbox fa-4x mb-4 text-muted"></i>
+                                            <h4 class="mb-3">Nenhuma entrada registrada</h4>
+                                            <p class="fs-5">Clique em "Nova Entrada" para registrar a primeira entrada.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Nova Entrada -->
+<div class="modal fade" id="entradaProdutoModal" tabindex="-1" aria-labelledby="entradaProdutoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="entradaProdutoModalLabel">
+                    <i class="fas fa-plus-circle me-2"></i>Registrar Nova Entrada
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'entrada_produto' %}" id="formEntradaProduto">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_codigo_produto" class="form-label">Produto *</label>
+                                <select class="form-control" id="id_codigo_produto" name="codigo_produto" required>
+                                    <option value="">Selecione um produto</option>
+                                    {% for produto in produtos %}
+                                    <option value="{{ produto.id }}">{{ produto.nome_produto }} - {{ produto.fabricante }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_quantidade" class="form-label">Quantidade *</label>
+                                <input type="number" class="form-control" id="id_quantidade" name="quantidade" 
+                                       min="1" placeholder="Digite a quantidade" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_id_equipamento" class="form-label">ID do Equipamento *</label>
+                                <input type="text" class="form-control" id="id_id_equipamento" name="id_equipamento" 
+                                       placeholder="Digite o ID do equipamento" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_data" class="form-label">Data e Hora *</label>
+                                <input type="datetime-local" class="form-control" id="id_data" name="data" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_valor_nota" class="form-label">Valor da Nota (R$) *</label>
+                                <input type="number" class="form-control" id="id_valor_nota" name="valor_nota" 
+                                       step="0.01" placeholder="0.00" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_numero_nota_fiscal" class="form-label">Número da Nota Fiscal *</label>
+                                <input type="text" class="form-control" id="id_numero_nota_fiscal" name="numero_nota_fiscal" 
+                                       placeholder="Digite o número da nota fiscal" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times-circle me-2"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-check-circle me-2"></i>Registrar Entrada
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Visualização -->
+<div class="modal fade" id="visualizarEntradaModal" tabindex="-1" aria-labelledby="visualizarEntradaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="visualizarEntradaModalLabel">
+                    <i class="fas fa-info-circle me-2"></i>Detalhes da Entrada
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="detalhesEntrada">
+                <!-- Conteúdo será carregado via JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times-circle me-2"></i>Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Edição -->
+<div class="modal fade" id="editarEntradaModal" tabindex="-1" aria-labelledby="editarEntradaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarEntradaModalLabel">
+                    <i class="fas fa-edit me-2"></i>Editar Entrada
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'update_entrada_produto' 0 %}" id="formEditarEntrada">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_codigo_produto_edit" class="form-label">Produto *</label>
+                                <select class="form-control" id="id_codigo_produto_edit" name="codigo_produto" required>
+                                    <option value="">Selecione um produto</option>
+                                    {% for produto in produtos %}
+                                    <option value="{{ produto.id }}">{{ produto.nome_produto }} - {{ produto.fabricante }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_quantidade_edit" class="form-label">Quantidade *</label>
+                                <input type="number" class="form-control" id="id_quantidade_edit" name="quantidade" 
+                                       min="1" placeholder="Digite a quantidade" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_id_equipamento_edit" class="form-label">ID do Equipamento *</label>
+                                <input type="text" class="form-control" id="id_id_equipamento_edit" name="id_equipamento" 
+                                       placeholder="Digite o ID do equipamento" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_data_edit" class="form-label">Data e Hora *</label>
+                                <input type="datetime-local" class="form-control" id="id_data_edit" name="data" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_valor_nota_edit" class="form-label">Valor da Nota (R$) *</label>
+                                <input type="number" class="form-control" id="id_valor_nota_edit" name="valor_nota" 
+                                       step="0.01" placeholder="0.00" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_numero_nota_fiscal_edit" class="form-label">Número da Nota Fiscal *</label>
+                                <input type="text" class="form-control" id="id_numero_nota_fiscal_edit" name="numero_nota_fiscal" 
+                                       placeholder="Digite o número da nota fiscal" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times-circle me-2"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-check-circle me-2"></i>Salvar Alterações
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação de Exclusão -->
+<div class="modal fade" id="confirmarExclusaoEntradaModal" tabindex="-1" aria-labelledby="confirmarExclusaoEntradaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmarExclusaoEntradaModalLabel">
+                    <i class="fas fa-exclamation-circle me-2 text-warning"></i>Confirmar Exclusão
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                    <h5 class="mb-3">Confirmar Exclusão</h5>
+                    <p class="mb-2">Tem certeza que deseja excluir esta entrada?</p>
+                    <p class="text-muted small">Esta ação não pode ser desfeita.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times-circle me-2"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmarExclusaoEntrada">
+                    <i class="fas fa-trash-alt me-2"></i>Excluir
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/entradas.js' %}"></script>
+{% endblock %}

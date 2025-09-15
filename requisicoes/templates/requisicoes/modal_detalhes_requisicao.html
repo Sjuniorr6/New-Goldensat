@@ -1,0 +1,273 @@
+<!-- Modal Header -->
+<div class="modal-header">
+    <h5 class="modal-title">
+        <i class="fas fa-eye me-2"></i>Detalhes da Requisição #{{ requisicao.id }}
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<!-- Modal Body -->
+<div class="modal-body">
+    <div class="requisicao-detalhes">
+        <!-- Informações Básicas -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h6 class="text-primary mb-3 border-bottom pb-2">
+                    <i class="fas fa-info-circle me-2"></i>Informações Básicas
+                </h6>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">ID da Requisição:</label>
+                    <p class="mb-0"><span class="badge bg-secondary">#{{ requisicao.id }}</span></p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Status:</label>
+                    <p class="mb-0">
+                        <span class="badge bg-{% if requisicao.status == 'Pendente' %}warning{% elif requisicao.status == 'Aprovado pelo CEO' %}success{% elif requisicao.status == 'Reprovado pelo CEO' %}danger{% else %}info{% endif %}">
+                            {{ requisicao.status }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Cliente:</label>
+                    <p class="mb-0">{{ requisicao.nome.nome }}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">CNPJ:</label>
+                    <p class="mb-0">{{ requisicao.cnpj|default:"-" }}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tipo de Produto:</label>
+                    <p class="mb-0">{{ requisicao.tipo_produto.nome }}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Número de Equipamentos:</label>
+                    <p class="mb-0"><span class="badge bg-info">{{ requisicao.numero_de_equipamentos }}</span></p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tipo de Contrato:</label>
+                    <p class="mb-0">{{ requisicao.contrato|default:"-" }}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Motivo:</label>
+                    <p class="mb-0">{{ requisicao.motivo|default:"-" }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Informações Comerciais -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h6 class="text-primary mb-3 border-bottom pb-2">
+                    <i class="fas fa-handshake me-2"></i>Informações Comerciais
+                </h6>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Comercial:</label>
+                    <p class="mb-0">{{ requisicao.comercial|default:"-" }}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Valor Unitário:</label>
+                    <p class="mb-0">R$ {{ requisicao.valor_unitario|floatformat:2 }}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Valor Total:</label>
+                    <p class="mb-0"><strong class="text-success">R$ {{ requisicao.valor_total|floatformat:2 }}</strong></p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tipo de Fatura:</label>
+                    <p class="mb-0">{{ requisicao.tipo_fatura|default:"-" }}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Forma de Pagamento:</label>
+                    <p class="mb-0">{{ requisicao.forma_pagamento|default:"-" }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Informações de Entrega -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h6 class="text-primary mb-3 border-bottom pb-2">
+                    <i class="fas fa-truck me-2"></i>Informações de Entrega
+                </h6>
+            </div>
+            <div class="col-12">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Endereço:</label>
+                    <p class="mb-0">{{ requisicao.endereco|default:"-" }}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tipo de Envio:</label>
+                    <p class="mb-0">{{ requisicao.envio|default:"-" }}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Taxa de Envio:</label>
+                    <p class="mb-0">R$ {{ requisicao.taxa_envio|floatformat:2 }}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Aos Cuidados:</label>
+                    <p class="mb-0">{{ requisicao.aos_cuidados|default:"-" }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Informações Técnicas -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h6 class="text-primary mb-3 border-bottom pb-2">
+                    <i class="fas fa-cogs me-2"></i>Informações Técnicas
+                </h6>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Antenista:</label>
+                    <p class="mb-0">{{ requisicao.antenista|default:"-" }}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tipo de Customização:</label>
+                    <p class="mb-0">{{ requisicao.tipo_customizacao|default:"-" }}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Carregador:</label>
+                    <p class="mb-0">{{ requisicao.carregador|default:"-" }}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Cabo:</label>
+                    <p class="mb-0">{{ requisicao.cabo|default:"-" }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Informações de Contrato -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h6 class="text-primary mb-3 border-bottom pb-2">
+                    <i class="fas fa-calendar me-2"></i>Informações de Contrato
+                </h6>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Início do Contrato:</label>
+                    <p class="mb-0">{{ requisicao.inicio_de_contrato|date:"d/m/Y"|default:"-" }}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Vigência:</label>
+                    <p class="mb-0">{{ requisicao.vigencia|default:"-" }} meses</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">TP (Tempo de Processamento):</label>
+                    <p class="mb-0">{{ requisicao.TP|default:"-" }} minutos</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Data de Criação:</label>
+                    <p class="mb-0">{{ requisicao.data|date:"d/m/Y H:i" }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Equipamentos e ICCID -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h6 class="text-primary mb-3 border-bottom pb-2">
+                    <i class="fas fa-microchip me-2"></i>Equipamentos e ICCID
+                </h6>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">IDs dos Equipamentos:</label>
+                    {% if requisicao.id_equipamentos %}
+                        <div class="bg-light p-2 rounded">
+                            <pre class="mb-0 small">{{ requisicao.id_equipamentos }}</pre>
+                        </div>
+                    {% else %}
+                        <p class="mb-0 text-muted">-</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">ICCID:</label>
+                    {% if requisicao.iccid %}
+                        <div class="bg-light p-2 rounded">
+                            <pre class="mb-0 small">{{ requisicao.iccid }}</pre>
+                        </div>
+                    {% else %}
+                        <p class="mb-0 text-muted">-</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Observações -->
+        {% if requisicao.observacoes %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <h6 class="text-primary mb-3 border-bottom pb-2">
+                    <i class="fas fa-sticky-note me-2"></i>Observações
+                </h6>
+            </div>
+            <div class="col-12">
+                <div class="bg-light p-3 rounded">
+                    <p class="mb-0">{{ requisicao.observacoes }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal Footer -->
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+        <i class="fas fa-times me-1"></i>Fechar
+    </button>
+    <button type="button" class="btn btn-warning" onclick="editarRequisicao({{ requisicao.id }})">
+        <i class="fas fa-edit me-1"></i>Editar
+    </button>
+    <button type="button" class="btn btn-danger" onclick="abrirModalExclusao({{ requisicao.id }})">
+        <i class="fas fa-trash me-1"></i>Excluir
+    </button>
+</div>

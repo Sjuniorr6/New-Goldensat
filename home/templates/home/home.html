@@ -1,0 +1,154 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block page_title %}Dashboard{% endblock %}
+{% block page_header %}Dashboard{% endblock %}
+{% block page_description %}Visão geral do sistema Golden SAT{% endblock %}
+
+{% block page_content %}
+<!-- KPI Cards -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 col-6 mb-3">
+        <div class="kpi-card">
+            <div class="kpi-icon">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <div class="kpi-content">
+                <h3 class="kpi-number">42</h3>
+                <p class="kpi-label">Requisições</p>
+                <small class="kpi-subtitle">Ontem: 35</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 col-6 mb-3">
+        <div class="kpi-card">
+            <div class="kpi-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="kpi-content">
+                <h3 class="kpi-number">128</h3>
+                <p class="kpi-label">Clientes</p>
+                <small class="kpi-subtitle">Novos: 5</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 col-6 mb-3">
+        <div class="kpi-card">
+            <div class="kpi-icon">
+                <i class="fas fa-box"></i>
+            </div>
+            <div class="kpi-content">
+                <h3 class="kpi-number">89</h3>
+                <p class="kpi-label">Produtos</p>
+                <small class="kpi-subtitle">Em Estoque</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 col-6 mb-3">
+        <div class="kpi-card">
+            <div class="kpi-icon">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="kpi-content">
+                <h3 class="kpi-number">R$ 15.420</h3>
+                <p class="kpi-label">Faturamento</p>
+                <small class="kpi-subtitle">Este Mês</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Information -->
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="activity-card">
+            <div class="activity-header">
+                <h5 class="activity-title">Sistema de Gerenciamento Empresarial - SGEGolden SAT</h5>
+            </div>
+            <div class="activity-body">
+                <p>O setor de Inteligência gostaria de apresentar a você o nosso novo Sistema de Gerenciamento Empresarial (SGEGolden SAT). Este sistema, desenvolvido pelo setor de Inteligência, visa integrar todas as nossas operações, proporcionando uma visão unificada e eficiente de todos os processos empresariais.</p>
+                
+                <p>Com o SGEGolden SAT, você terá acesso a uma série de novas funcionalidades que irão transformar a maneira como gerenciamos nossas atividades diárias:</p>
+                
+                <ul>
+                    <li><b>Análise de Dados:</b> Relatórios detalhados e análises preditivas que ajudam na tomada de decisões estratégicas, baseadas em dados concretos e atualizados.</li>
+                    
+                    <li><b>Gestão de Clientes (CRM):</b> Um módulo completo de CRM que facilita o gerenciamento de relacionamentos com clientes.</li>
+                    
+                    <li><b>Gestão de Estoque:</b> Monitoramento em tempo real do estoque.</li>
+                    
+                    <li><b>Segurança e Conformidade:</b> Mecanismos robustos de segurança para proteger os dados da empresa e garantir conformidade com as regulamentações vigentes.</li>
+                    
+                    <li><b>Integração com Outros Sistemas via API:</b> Integração com outros sistemas via API.</li>
+                    
+                    <li><b>Controle de Manutenção:</b> Ferramentas para agendamento e acompanhamento de manutenções preventivas e corretivas, garantindo que todos os equipamentos estejam sempre em perfeito funcionamento.</li>
+                    
+                    <li><b>Configuração e Requisição:</b> Módulos específicos para configuração e gestão de requisições, permitindo um controle detalhado e eficiente de todas as solicitações internas.</li>
+                    
+                    <li><b>Busca e Análise de Dados:</b> Funcionalidades avançadas de busca e análise de dados em nosso banco de dados, permitindo acesso rápido e preciso às informações necessárias para a tomada de decisões.</li>
+                    
+                    <li><b>Suporte e Treinamento:</b> Equipe dedicada de suporte e programas de treinamento contínuo para garantir que todos os usuários aproveitem ao máximo as funcionalidades do sistema.</li>
+                </ul>
+                
+                <p>Estamos confiantes de que o SGEGolden SAT será uma ferramenta essencial para otimizar nossas operações e impulsionar o crescimento da empresa. Agradecemos a sua atenção e estamos à disposição para qualquer dúvida ou esclarecimento adicional.</p>
+                
+                <p><b>Atenciosamente,</b><br>Setor de Inteligência e Desenvolvimento</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-12">
+        <div class="quick-actions-card">
+            <div class="quick-actions-header">
+                <h5 class="quick-actions-title">Ações Rápidas</h5>
+            </div>
+            <div class="quick-actions-body">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6 col-6 mb-3">
+                        <a href="{% url 'requisicoes:listagem_requisicoes' %}" class="quick-action-btn">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Nova Requisição</span>
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-6 mb-3">
+                        <a href="{% url 'clientes:listagem_clientes' %}" class="quick-action-btn">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Cadastrar Cliente</span>
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-6 mb-3">
+                        <a href="{% url 'produtos:listagem_produtos' %}" class="quick-action-btn">
+                            <i class="fas fa-box"></i>
+                            <span>Adicionar Produto</span>
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-6 mb-3">
+                        <a href="#" class="quick-action-btn">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Ver Relatórios</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Dashboard functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Dashboard loaded successfully');
+        
+        // Add any additional dashboard functionality here
+        // Example: Auto-refresh data, notifications, etc.
+    });
+</script>
+{% endblock %}

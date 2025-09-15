@@ -1,0 +1,560 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Entrada de Produto - Goldensat{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/produtos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <!-- Header da Página -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-end py-3 py-md-4" style="margin-top: 20px;">
+                <div class="mb-3 mb-md-2">
+                    <h1 class="page-title mb-1 fs-3 fs-md-2">Estoque de Produtos</h1>
+                    <p class="text-muted mb-0 fs-6 fs-md-5">Visualize as entradas registradas no estoque</p>
+                </div>
+                <button type="button" class="btn btn-primary w-100 w-md-auto" data-bs-toggle="modal" data-bs-target="#entradaProdutoModal">
+                    <i class="fas fa-plus-circle me-2"></i>Registrar Entrada
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensagem Informativa -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Funcionalidade Inteligente:</strong> Ao registrar uma entrada de um produto que já existe, a quantidade será somada e os IDs dos equipamentos serão registrados automaticamente! Veja o histórico no detalhe de cada entrada.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header py-3 py-md-4">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center">
+                        <h6 class="card-title mb-2 mb-sm-0 fs-6 fs-md-5">
+                            <i class="fas fa-filter me-2"></i>Filtros e Busca Avançada
+                        </h6>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-primary btn-sm" onclick="buscarEquipamento()">
+                                <i class="fas fa-search me-1"></i>Buscar
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="limparBusca()">
+                                <i class="fas fa-times me-1"></i>Limpar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-2 p-md-3">
+                    <div class="row g-2 g-md-3">
+                        <div class="col-12 col-md-6">
+                            <label for="filtroIdEquipamento" class="form-label fw-semibold small">
+                                <i class="fas fa-tag me-1 text-info"></i>ID do Equipamento
+                            </label>
+                            <input type="text" class="form-control form-control-sm" id="filtroIdEquipamento" placeholder="Digite o ID do equipamento...">
+                            <div class="form-text">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Busque por um ID específico para verificar se está em estoque
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="filtroProduto" class="form-label fw-semibold small">
+                                <i class="fas fa-cube me-1 text-primary"></i>Nome do Produto
+                            </label>
+                            <input type="text" class="form-control form-control-sm" id="filtroProduto" placeholder="Digite o nome do produto...">
+                            <div class="form-text">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Filtre por nome do produto (opcional)
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resultado da Busca por Equipamento -->
+    <div class="row mb-4" id="resultadoBuscaEquipamento" style="display: none;">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body p-3 p-md-4">
+                    <h6 class="card-title mb-3">
+                        <i class="fas fa-search me-2"></i>Resultado da Busca
+                    </h6>
+                    <div id="conteudoResultadoBusca">
+                        <!-- Conteúdo será preenchido via JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Tabela de Produtos -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header py-3 py-md-4">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center">
+                        <h6 class="card-title mb-2 mb-sm-0 fs-6 fs-md-5">
+                            <i class="fas fa-list me-2"></i>Lista de Entradas
+                            <span class="badge bg-primary ms-2" id="totalEntradas">{{ object_list|length }}</span>
+                        </h6>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="exportarDados()">
+                                <i class="fas fa-download me-1"></i>Exportar
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="imprimirTabela()">
+                                <i class="fas fa-print me-1"></i>Imprimir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                        <table class="table table-hover mb-0" id="tabelaEntradas">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th class="py-3 px-3 d-none d-md-table-cell">
+                                        <i class="fas fa-hashtag me-1"></i>ID
+                                    </th>
+                                    <th class="py-3 px-3">
+                                        <i class="fas fa-cube me-1"></i>Produto
+                                    </th>
+                                    <th class="py-3 px-3 d-none d-lg-table-cell">
+                                        <i class="fas fa-sort-numeric-up me-1"></i>Quantidade
+                                    </th>
+                                    <th class="py-3 px-3 d-none d-md-table-cell">
+                                        <i class="fas fa-tag me-1"></i>ID Equipamento
+                                    </th>
+                                    <th class="py-3 px-3 d-none d-lg-table-cell">
+                                        <i class="fas fa-calendar me-1"></i>Data
+                                    </th>
+                                    <th class="py-3 px-3 d-none d-xl-table-cell">
+                                        <i class="fas fa-file-invoice me-1"></i>Nota Fiscal
+                                    </th>
+                                    <th class="py-3 px-3 d-none d-xl-table-cell">
+                                        <i class="fas fa-dollar-sign me-1"></i>Valor
+                                    </th>
+                                    <th class="py-3 px-3">
+                                        <i class="fas fa-cogs me-1"></i>Ações
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for entrada in object_list %}
+                                <tr class="align-middle">
+                                    <td class="px-3 py-2 fw-bold d-none d-md-table-cell">
+                                        <span class="badge bg-dark">{{ entrada.id }}</span>
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-2">
+                                                <i class="fas fa-cube text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <strong>{{ entrada.codigo_produto.nome_produto }}</strong>
+                                                <div class="d-md-none">
+                                                    <span class="badge bg-success me-1">Qtd: {{ entrada.quantidade }}</span>
+                                                    <span class="badge bg-secondary me-1" title="Total de IDs: {{ entrada.get_quantidade_ids }}">
+                                                        {% if entrada.get_quantidade_ids > 1 %}
+                                                            {{ entrada.get_quantidade_ids }} IDs
+                                                        {% else %}
+                                                            ID: {{ entrada.id_equipamento }}
+                                                        {% endif %}
+                                                    </span>
+                                                    <br>
+                                                    <small class="text-muted d-block mt-1">
+                                                        <i class="fas fa-calendar me-1"></i>{{ entrada.data|date:"d/m/Y H:i" }}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-3 py-2 d-none d-lg-table-cell">
+                                        <span class="badge bg-success fs-6">{{ entrada.quantidade }}</span>
+                                    </td>
+                                    <td class="px-3 py-2 d-none d-md-table-cell">
+                                        <span class="badge bg-secondary" title="Total de IDs: {{ entrada.get_quantidade_ids }}">
+                                            {% if entrada.get_quantidade_ids > 1 %}
+                                                {{ entrada.get_quantidade_ids }} IDs
+                                            {% else %}
+                                                {{ entrada.id_equipamento }}
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td class="px-3 py-2 d-none d-lg-table-cell">
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar me-1"></i>{{ entrada.data|date:"d/m/Y H:i" }}
+                                        </small>
+                                    </td>
+                                    <td class="px-3 py-2 d-none d-xl-table-cell">
+                                        <span class="badge bg-info">{{ entrada.numero_nota_fiscal }}</span>
+                                    </td>
+                                    <td class="px-3 py-2 d-none d-xl-table-cell">
+                                        <span class="badge bg-warning text-dark">
+                                            R$ {{ entrada.valor_nota|floatformat:2 }}
+                                        </span>
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <div class="d-flex gap-1">
+                                            <button type="button" class="btn btn-outline-info btn-sm btn-action" 
+                                                    data-action="visualizar" data-id="{{ entrada.id }}" 
+                                                    title="Visualizar">
+                                                <i class="fas fa-eye text-info"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-warning btn-sm btn-action" 
+                                                    data-action="editar" data-id="{{ entrada.id }}" 
+                                                    title="Editar">
+                                                <i class="fas fa-edit text-warning"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger btn-sm btn-action" 
+                                                    data-action="excluir" data-id="{{ entrada.id }}" 
+                                                    title="Excluir">
+                                                <i class="fas fa-trash-alt text-danger"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center py-5">
+                                        <div class="text-muted">
+                                            <i class="fas fa-inbox fa-4x mb-4 text-muted"></i>
+                                            <h4 class="mb-3">Nenhuma entrada registrada</h4>
+                                            <p class="fs-5">Clique em "Registrar Entrada" para adicionar produtos ao estoque.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Entrada de Produto -->
+<div class="modal fade" id="entradaProdutoModal" tabindex="-1" aria-labelledby="entradaProdutoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="entradaProdutoModalLabel">
+                    <i class="fas fa-plus-circle me-2"></i>Registrar Entrada de Produto
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'produtos:entrada_produto_modal' %}" id="formEntradaProduto">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_codigo_produto" class="form-label">
+                                    <i class="fas fa-cube me-2 text-primary"></i>Produto *
+                                </label>
+                                <select class="form-control form-select" id="id_codigo_produto" name="codigo_produto" required>
+                                    <option value="">🔍 Selecione um produto...</option>
+                                    {% for produto in produtos %}
+                                    <option value="{{ produto.id }}" data-fabricante="{{ produto.fabricante }}" data-valor="{{ produto.valor_unitario }}">
+                                        📦 {{ produto.nome_produto }} - {{ produto.fabricante }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-text">
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Selecione o produto que será registrado no estoque
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_quantidade" class="form-label">
+                                    <i class="fas fa-hashtag me-2 text-success"></i>Quantidade *
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="id_quantidade" name="quantidade" 
+                                           min="1" placeholder="Digite códigos para contagem automática" required readonly>
+                                    <button type="button" class="btn btn-outline-secondary" id="resetQuantidade" title="Resetar contagem">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text">
+                                    <small class="text-muted">
+                                        <i class="fas fa-lock me-1 text-warning"></i>
+                                        Campo automático - digite códigos em qualquer campo para contagem
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_id_equipamento" class="form-label">
+                                    <i class="fas fa-tag me-2 text-info"></i>ID do Equipamento *
+                                </label>
+                                <input type="text" class="form-control" id="id_id_equipamento" name="id_equipamento" 
+                                       placeholder="Ex: EQ001" required>
+                                <div class="form-text">
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Identificador único do equipamento
+                                        <br>
+                                        <i class="fas fa-plus-circle me-1 text-success"></i>
+                                        <strong>Dica:</strong> Se já existir uma entrada com o mesmo produto, a quantidade será somada e o ID será registrado automaticamente!
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_data" class="form-label">
+                                    <i class="fas fa-calendar-alt me-2 text-warning"></i>Data e Hora *
+                                </label>
+                                <input type="datetime-local" class="form-control" id="id_data" name="data" required>
+                                <div class="form-text">
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Data e hora da entrada no estoque
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_valor_nota" class="form-label">
+                                    <i class="fas fa-dollar-sign me-2 text-success"></i>Valor da Nota (R$) *
+                                </label>
+                                <input type="number" class="form-control" id="id_valor_nota" name="valor_nota" 
+                                       step="0.01" placeholder="0.00" required>
+                                <div class="form-text">
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Valor total da nota fiscal
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_numero_nota_fiscal" class="form-label">
+                                    <i class="fas fa-file-invoice me-2 text-primary"></i>Número da Nota Fiscal *
+                                </label>
+                                <input type="text" class="form-control" id="id_numero_nota_fiscal" name="numero_nota_fiscal" 
+                                       placeholder="Ex: 123456" required>
+                                <div class="form-text">
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Número da nota fiscal de entrada
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Confirmação -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="alert alert-info d-flex align-items-center">
+                                <i class="fas fa-info-circle me-3 fs-4"></i>
+                                <div>
+                                    <strong>Confirmação:</strong>
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input" type="checkbox" id="confirmarEntrada" required>
+                                        <label class="form-check-label" for="confirmarEntrada">
+                                            Confirmo que as informações da nota fiscal estão corretas e autorizo o registro da entrada no estoque.
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times-circle me-2"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-check-circle me-2"></i>Registrar Entrada
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Visualização -->
+<div class="modal fade" id="visualizarEntradaModal" tabindex="-1" aria-labelledby="visualizarEntradaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="visualizarEntradaModalLabel">
+                    <i class="fas fa-info-circle me-2"></i>Detalhes da Entrada
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="detalhesEntrada">
+                <!-- Conteúdo será carregado via JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times-circle me-2"></i>Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Edição -->
+<div class="modal fade" id="editarEntradaModal" tabindex="-1" aria-labelledby="editarEntradaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarEntradaModalLabel">
+                    <i class="fas fa-edit me-2"></i>Editar Entrada
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'produtos:update_entrada_produto' 0 %}" id="formEditarEntrada">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_codigo_produto_edit" class="form-label">Produto *</label>
+                                <select class="form-control" id="id_codigo_produto_edit" name="codigo_produto" required>
+                                    <option value="">Selecione um produto</option>
+                                    {% for produto in produtos %}
+                                    <option value="{{ produto.id }}">{{ produto.nome_produto }} - {{ produto.fabricante }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_quantidade_edit" class="form-label">
+                                    <i class="fas fa-hashtag me-2 text-success"></i>
+                                    <i class="fas fa-barcode me-1 text-info"></i>Quantidade *
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="id_quantidade_edit" name="quantidade" 
+                                           min="1" placeholder="Digite códigos para contagem automática" required readonly>
+                                    <button type="button" class="btn btn-outline-secondary" id="resetQuantidadeEdit" title="Resetar contagem">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text">
+                                    <small class="text-muted">
+                                        <i class="fas fa-lock me-1 text-warning"></i>
+                                        Campo automático - digite códigos em qualquer campo para contagem
+                                        <br>
+                                        <i class="fas fa-qrcode me-1"></i>
+                                        Códigos suportados: 35154, 35642, 86590, 86325, 35196, 35643, 03G01
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_id_equipamento_edit" class="form-label">ID do Equipamento *</label>
+                                <input type="text" class="form-control" id="id_id_equipamento_edit" name="id_equipamento" 
+                                       placeholder="Digite o ID do equipamento" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_data_edit" class="form-label">Data e Hora *</label>
+                                <input type="datetime-local" class="form-control" id="id_data_edit" name="data" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_valor_nota_edit" class="form-label">Valor da Nota (R$) *</label>
+                                <input type="number" class="form-control" id="id_valor_nota_edit" name="valor_nota" 
+                                       step="0.01" placeholder="0.00" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_numero_nota_fiscal_edit" class="form-label">Número da Nota Fiscal *</label>
+                                <input type="text" class="form-control" id="id_numero_nota_fiscal_edit" name="numero_nota_fiscal" 
+                                       placeholder="Digite o número da nota fiscal" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times-circle me-2"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-check-circle me-2"></i>Salvar Alterações
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação de Exclusão -->
+<div class="modal fade" id="confirmarExclusaoEntradaModal" tabindex="-1" aria-labelledby="confirmarExclusaoEntradaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmarExclusaoEntradaModalLabel">
+                    <i class="fas fa-exclamation-circle me-2 text-warning"></i>Confirmar Exclusão
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                    <h5 class="mb-3">Confirmar Exclusão</h5>
+                    <p class="mb-2">Tem certeza que deseja excluir esta entrada?</p>
+                    <p class="text-muted small">Esta ação não pode ser desfeita.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times-circle me-2"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmarExclusaoEntrada">
+                    <i class="fas fa-trash-alt me-2"></i>Excluir
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/entrada-produtos.js' %}"></script>
+{% endblock %}

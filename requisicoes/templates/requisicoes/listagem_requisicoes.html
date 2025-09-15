@@ -1,0 +1,336 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Listagem de Requisições - Golden SAT{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/requisicoes.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header da Página -->
+            <div class="mb-4">
+                <h1 class="h2 mb-2">Requisições</h1>
+            </div>
+
+            <!-- Filtros -->
+            <div class="card filtros-card mb-2" style="max-width: 1000px;">
+                <div class="card-header">
+                    <form id="filtrosForm" class="row g-2 align-items-end">
+                        <div class="col-md-3 col-sm-9">
+                            <label for="search" class="form-label mb-0">Buscar</label>
+                            <input type="text" class="form-control" id="search" name="search" placeholder="ID, Cliente, Produto...">
+                        </div>
+                        <div class="col-md-2 col-sm-3">
+                            <label for="cliente" class="form-label mb-0">Cliente</label>
+                            <select class="form-select" id="cliente" name="cliente">
+                                <option value="">Todos os Clientes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-7 col-sm-6">
+                            <div class="d-flex gap-2 justify-content-end flex-wrap align-items-end">
+                                <button type="button" class="btn btn-outline-secondary" onclick="aplicarFiltros()">
+                                    <i class="fas fa-search me-1"></i>Buscar
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="limparFiltros()">
+                                    <i class="fas fa-times me-1"></i>Limpar
+                                </button>
+                                <button type="button" class="btn btn-golden" data-bs-toggle="modal" data-bs-target="#cadastrarRequisicaoModal">
+                                    <i class="fas fa-plus-circle me-1"></i>Nova Requisição
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Controles e Estatísticas -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center">
+                    <h5 class="mb-0 me-3">
+                        <i class="fas fa-list me-2"></i>Requisições
+                        <span class="badge bg-primary ms-2" id="totalRequisicoes">{{ requisicoes|length }}</span>
+                    </h5>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-success" onclick="exportarDados()">
+                        <i class="fas fa-download me-1"></i>Exportar
+                    </button>
+                    <button type="button" class="btn btn-outline-info" onclick="imprimirTabela()">
+                        <i class="fas fa-print me-1"></i>Imprimir
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grid de Cards -->
+            <div class="row g-3" id="cardsGrid">
+                {% for requisicao in requisicoes %}
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                    <div class="card h-100 {% if requisicao.status == 'Aprovado pelo CEO' %}card-approved{% elif requisicao.status == 'Reprovado pelo CEO' %}card-rejected{% endif %}" data-id="{{ requisicao.id }}">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div class="d-flex gap-2">
+                                <span class="badge bg-secondary">#{{ requisicao.id }}</span>
+                                <span class="badge bg-{{ requisicao.status|lower|cut:' '|cut:'pelo'|cut:'ceo'|default:'primary' }}">
+                                    {{ requisicao.status }}
+                                </span>
+                            </div>
+                            <small class="text-muted">{{ requisicao.data|date:"d/m/Y" }}</small>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- Nome -->
+                            <div class="mb-2">
+                                <h6 class="card-title">
+                                    <i class="fas fa-user me-2"></i>{{ requisicao.nome.nome }}
+                                </h6>
+                            </div>
+
+                            <!-- CNPJ -->
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-id-card me-1"></i>CNPJ: {{ requisicao.cnpj|default:"Não informado" }}
+                                </small>
+                            </div>
+
+                            <!-- Contrato -->
+                            {% if requisicao.contrato %}
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-file-contract me-1"></i>Contrato: {{ requisicao.contrato }}
+                                </small>
+                            </div>
+                            {% endif %}
+
+                            <!-- Data -->
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>Data: {{ requisicao.data|date:"d/m/Y H:i" }}
+                                </small>
+                            </div>
+
+                            <!-- Motivo -->
+                            {% if requisicao.motivo %}
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-tag me-1"></i>Motivo: {{ requisicao.motivo }}
+                                </small>
+                            </div>
+                            {% endif %}
+
+                            <!-- Taxa de Envio -->
+                            {% if requisicao.taxa_envio %}
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-shipping-fast me-1"></i>Taxa de Envio: R$ {{ requisicao.taxa_envio|floatformat:2 }}
+                                </small>
+                            </div>
+                            {% endif %}
+
+                            <!-- Comercial -->
+                            {% if requisicao.comercial %}
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-handshake me-1"></i>Comercial: {{ requisicao.comercial }}
+                                </small>
+                            </div>
+                            {% endif %}
+
+                            <!-- Quantidade -->
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-cubes me-1"></i>Quantidade: {{ requisicao.numero_de_equipamentos }}
+                                </small>
+                            </div>
+
+                            <!-- Tipo de Produto -->
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-box me-1"></i>Produto: {{ requisicao.tipo_produto.nome }}
+                                </small>
+                            </div>
+
+                            <!-- Tipo de Fatura -->
+                            {% if requisicao.tipo_fatura %}
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-receipt me-1"></i>Tipo de Fatura: {{ requisicao.tipo_fatura }}
+                                </small>
+                            </div>
+                            {% endif %}
+
+                            <!-- Valor Unitário -->
+                            {% if requisicao.valor_unitario %}
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-dollar-sign me-1"></i>Valor Unitário: R$ {{ requisicao.valor_unitario|floatformat:2 }}
+                                </small>
+                            </div>
+                            {% endif %}
+
+                            <!-- Valor Total -->
+                            <div class="mb-2">
+                                <small class="text-success fw-bold">
+                                    <i class="fas fa-calculator me-1"></i>Valor Total: R$ {{ requisicao.valor_total|floatformat:2 }}
+                                </small>
+                            </div>
+
+                            <!-- Formas de Pagamento -->
+                            {% if requisicao.forma_pagamento %}
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-credit-card me-1"></i>Pagamento: {{ requisicao.forma_pagamento }}
+                                </small>
+                            </div>
+                            {% endif %}
+
+                            <!-- Observações -->
+                            {% if requisicao.observacoes %}
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-sticky-note me-1"></i>Observações: {{ requisicao.observacoes|truncatechars:30 }}
+                                </small>
+                            </div>
+                            {% endif %}
+
+                            <!-- TP -->
+                            {% if requisicao.TP %}
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>TP: {{ requisicao.TP }}
+                                </small>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="card-footer d-flex justify-content-between align-items-center">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="visualizarRequisicao({{ requisicao.id }})" title="Visualizar">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-warning btn-sm" onclick="editarRequisicao({{ requisicao.id }})" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                
+                                <!-- Botões de Aprovar e Reprovar -->
+                                {% if requisicao.status == 'Pendente' or requisicao.status == 'Configurado' %}
+                                <button type="button" class="btn btn-outline-success btn-sm" onclick="aprovarRequisicao({{ requisicao.id }})" title="Aprovar">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="reprovarRequisicao({{ requisicao.id }})" title="Reprovar">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                {% endif %}
+                                
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="excluirRequisicao({{ requisicao.id }})" title="Excluir">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>{{ requisicao.data|date:"H:i" }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">Nenhuma requisição encontrada</h4>
+                        <p class="text-muted">Comece criando sua primeira requisição clicando no botão "Nova Requisição"</p>
+                        <button type="button" class="btn btn-golden" data-bs-toggle="modal" data-bs-target="#cadastrarRequisicaoModal">
+                            <i class="fas fa-plus-circle me-2"></i>Nova Requisição
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center py-4">
+                <div id="confirmIcon" class="mb-3">
+                    <!-- Ícone será inserido via JavaScript -->
+                </div>
+                <h5 id="confirmTitle" class="mb-3"></h5>
+                <p id="confirmMessage" class="mb-3"></p>
+                <p id="confirmSubMessage" class="text-muted small"></p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </button>
+                <button type="button" class="btn" id="confirmButton">
+                    <i class="fas fa-check me-2"></i>Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modais -->
+<div class="modal fade" id="cadastrarRequisicaoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div id="cadastrarRequisicaoContent">
+                    <!-- Conteúdo será carregado via AJAX -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="detalhesRequisicaoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div id="detalhesRequisicaoContent">
+                    <!-- Conteúdo será carregado via AJAX -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editarRequisicaoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div id="editarRequisicaoContent">
+                    <!-- Conteúdo será carregado via AJAX -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="excluirRequisicaoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                <h5 class="mb-3">Confirmar Exclusão</h5>
+                <p class="text-muted mb-4">Tem certeza que deseja excluir esta requisição? Esta ação não pode ser desfeita.</p>
+                <div class="d-flex gap-2 justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmarExclusaoBtn">
+                        <i class="fas fa-trash me-1"></i>Excluir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/requisicoes.js' %}"></script>
+{% endblock %}

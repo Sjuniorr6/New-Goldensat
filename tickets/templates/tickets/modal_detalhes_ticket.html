@@ -1,0 +1,220 @@
+<!-- Modal para Detalhes do Ticket -->
+<div class="modal fade" id="detalhesTicketModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 15px !important; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important; background: white !important; border: 1px solid #e9ecef !important;">
+            <!-- Modal Header -->
+            <div class="modal-header" style="background: #f8f9fa !important; color: #333 !important; border-bottom: 1px solid #e9ecef !important; padding: 20px 25px !important;">
+                <h5 class="modal-title" style="font-weight: 600 !important; font-size: 1.25rem !important; gap: 10px !important; color: #333 !important; letter-spacing: 0.5px !important;">
+                    <i class="fas fa-ticket-alt" style="font-size: 1.5rem !important; opacity: 0.8 !important; color: #667eea !important; background: rgba(102, 126, 234, 0.1) !important; padding: 8px !important; border-radius: 50% !important; width: 40px !important; height: 40px !important; display: flex !important; align-items: center !important; justify-content: center !important;"></i>
+                    Ticket #{{ ticket.id }} - {{ ticket.titulo }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background: #fff !important; border: 1px solid #e9ecef !important; border-radius: 50% !important; width: 35px !important; height: 35px !important; transition: all 0.3s ease !important;">
+                    <span style="color: #6c757d !important; font-size: 1.2rem !important; font-weight: 600 !important; line-height: 1 !important;">&times;</span>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body" style="padding: 25px !important; background: white !important; min-height: 400px !important; line-height: 1.6 !important;">
+                <!-- Status e Prioridade -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <span class="badge {{ ticket.get_status_badge_class }} fs-6 me-2">
+                                <i class="fas fa-flag me-1"></i>{{ ticket.status }}
+                            </span>
+                            <span class="badge {{ ticket.get_prioridade_badge_class }} fs-6">
+                                <i class="fas fa-exclamation-triangle me-1"></i>{{ ticket.prioridade }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <span class="badge {{ ticket.get_setor_badge_class }} fs-6">
+                            <i class="fas fa-building me-1"></i>{{ ticket.setor }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Informações do Ticket -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h6 class="text-primary mb-3 border-bottom pb-2">
+                            <i class="fas fa-info-circle me-2"></i>Informações do Ticket
+                        </h6>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-user me-1"></i>Solicitante
+                            </label>
+                            <p class="mb-0">{{ ticket.usuario.get_full_name|default:ticket.usuario.username }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-calendar me-1"></i>Data de Criação
+                            </label>
+                            <p class="mb-0">{{ ticket.data_criacao|date:"d/m/Y H:i" }}</p>
+                        </div>
+                    </div>
+                    {% if ticket.responsavel %}
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-user-tie me-1"></i>Responsável
+                            </label>
+                            <p class="mb-0">{{ ticket.responsavel.get_full_name|default:ticket.responsavel.username }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if ticket.data_resolucao %}
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-check-circle me-1"></i>Data de Resolução
+                            </label>
+                            <p class="mb-0">{{ ticket.data_resolucao|date:"d/m/Y H:i" }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Descrição do Problema -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h6 class="text-primary mb-3 border-bottom pb-2">
+                            <i class="fas fa-bug me-2"></i>Descrição do Problema
+                        </h6>
+                    </div>
+                    <div class="col-12">
+                        <div class="bg-light p-3 rounded">
+                            <p class="mb-0">{{ ticket.descricao_erro|linebreaks }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Correção Aplicada -->
+                {% if ticket.correcao %}
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h6 class="text-primary mb-3 border-bottom pb-2">
+                            <i class="fas fa-wrench me-2"></i>Correção Aplicada
+                        </h6>
+                    </div>
+                    <div class="col-12">
+                        <div class="bg-success bg-opacity-10 p-3 rounded border border-success border-opacity-25">
+                            <p class="mb-0">{{ ticket.correcao|linebreaks }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Devolutiva -->
+                {% if ticket.devolutiva %}
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h6 class="text-primary mb-3 border-bottom pb-2">
+                            <i class="fas fa-comment-dots me-2"></i>Devolutiva
+                        </h6>
+                    </div>
+                    <div class="col-12">
+                        <div class="bg-info bg-opacity-10 p-3 rounded border border-info border-opacity-25">
+                            <p class="mb-0">{{ ticket.devolutiva|linebreaks }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Timeline -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h6 class="text-primary mb-3 border-bottom pb-2">
+                            <i class="fas fa-history me-2"></i>Histórico
+                        </h6>
+                    </div>
+                    <div class="col-12">
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-marker bg-primary"></div>
+                                <div class="timeline-content">
+                                    <h6 class="mb-1">Ticket Criado</h6>
+                                    <p class="text-muted mb-0 small">{{ ticket.data_criacao|date:"d/m/Y H:i" }}</p>
+                                </div>
+                            </div>
+                            {% if ticket.data_atualizacao and ticket.data_atualizacao != ticket.data_criacao %}
+                            <div class="timeline-item">
+                                <div class="timeline-marker bg-warning"></div>
+                                <div class="timeline-content">
+                                    <h6 class="mb-1">Última Atualização</h6>
+                                    <p class="text-muted mb-0 small">{{ ticket.data_atualizacao|date:"d/m/Y H:i" }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if ticket.data_resolucao %}
+                            <div class="timeline-item">
+                                <div class="timeline-marker bg-success"></div>
+                                <div class="timeline-content">
+                                    <h6 class="mb-1">Ticket Resolvido</h6>
+                                    <p class="text-muted mb-0 small">{{ ticket.data_resolucao|date:"d/m/Y H:i" }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer" style="background: #f8f9fa !important; border: none !important; border-top: 1px solid #e9ecef !important; padding: 20px 25px !important; gap: 10px !important;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 8px !important; padding: 10px 20px !important; font-weight: 500 !important; font-size: 0.9rem !important; transition: all 0.3s ease !important; border: 1px solid #6c757d !important; box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;">
+                    <i class="fas fa-times me-1"></i>Fechar
+                </button>
+                {% if user.is_staff or ticket.usuario == user %}
+                <button type="button" class="btn btn-warning" onclick="abrirModalEditar({{ ticket.id }})" style="border-radius: 8px !important; padding: 10px 20px !important; font-weight: 500 !important; font-size: 0.9rem !important; transition: all 0.3s ease !important; border: 1px solid #ffc107 !important; box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;">
+                    <i class="fas fa-edit me-1"></i>Editar
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e9ecef;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -22px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #e9ecef;
+}
+
+.timeline-content {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 3px solid #667eea;
+}
+</style>

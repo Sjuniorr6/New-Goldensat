@@ -1,0 +1,371 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Listagem de Produtos - Golden SAT{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/produtos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <!-- Header da Página -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-end py-3 py-md-4" style="margin-top: 20px;">
+                <div class="mb-3 mb-md-2">
+                    <h1 class="page-title mb-1 fs-3 fs-md-2">Listagem de Produtos</h1>
+                    <p class="text-muted mb-0 fs-6 fs-md-5">Gerencie todos os produtos cadastrados no sistema</p>
+                </div>
+                <button type="button" class="btn btn-primary w-100 w-md-auto" data-bs-toggle="modal" data-bs-target="#cadastroProdutoModal">
+                    <i class="fas fa-plus-circle me-2"></i>Novo Produto
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body p-3">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 mb-md-4">
+                        <h6 class="card-title mb-2 mb-sm-0 fs-6 fs-md-5">
+                            <i class="fas fa-sliders-h me-2"></i>Filtros de Busca
+                        </h6>
+                        <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-sm-auto">
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="aplicarFiltros()">
+                                <i class="fas fa-search-plus me-1"></i>Filtrar
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="limparFiltros()">
+                                <i class="fas fa-eraser me-1"></i>Limpar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row g-3 g-md-4">
+                        <div class="col-12 col-md-6">
+                            <label for="filtroNome" class="form-label fw-semibold">Nome do Produto</label>
+                            <input type="text" class="form-control" id="filtroNome" placeholder="Digite o nome do produto...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Produtos -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header py-3 py-md-4">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center">
+                        <h6 class="card-title mb-2 mb-sm-0 fs-6 fs-md-5">
+                            <i class="fas fa-warehouse me-2"></i>Produtos Cadastrados
+                            <span class="badge bg-primary ms-2" id="totalProdutos">{{ object_list|length }}</span>
+                        </h6>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                        <table class="table table-hover mb-0" id="tabelaProdutos">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th class="py-3 px-3 d-none d-md-table-cell">ID</th>
+                                    <th class="py-3 px-3">Nome do Produto</th>
+                                    <th class="py-3 px-3 d-none d-lg-table-cell">Fabricante</th>
+                                    <th class="py-3 px-3 d-none d-md-table-cell">Valor Unitário</th>
+                                    <th class="py-3 px-3 d-none d-lg-table-cell">Data Cadastro</th>
+                                    <th class="py-3 px-3">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for produto in object_list %}
+                                <tr class="align-middle">
+                                    <td class="px-3 py-2 fw-bold d-none d-md-table-cell">{{ produto.id }}</td>
+                                    <td class="px-3 py-2">
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-2">
+                                                <i class="fas fa-cube text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <strong>{{ produto.nome_produto }}</strong>
+                                                <div class="d-md-none mt-1">
+                                                    <small class="text-muted d-block">ID: {{ produto.id }}</small>
+                                                    <small class="text-muted d-block">{{ produto.fabricante }}</small>
+                                                    {% if produto.valor_unitario %}
+                                                    <span class="badge bg-success mt-1">R$ {{ produto.valor_unitario|floatformat:2 }}</span>
+                                                    {% endif %}
+                                                </div>
+                                                {% if produto.descricao %}
+                                                <br><small class="text-muted">{{ produto.descricao|truncatechars:40 }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-3 py-2 d-none d-lg-table-cell">
+                                        <strong>{{ produto.fabricante }}</strong>
+                                        {% if produto.telefone_fabricante %}
+                                        <br><small class="text-muted">
+                                            <i class="fas fa-phone-alt me-1"></i>{{ produto.telefone_fabricante }}
+                                        </small>
+                                        {% endif %}
+                                        {% if produto.email_fabricante %}
+                                        <br><small class="text-muted">
+                                            <i class="fas fa-envelope-open me-1"></i>{{ produto.email_fabricante }}
+                                        </small>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-3 py-2 d-none d-md-table-cell">
+                                        {% if produto.valor_unitario %}
+                                        <span class="badge bg-success">R$ {{ produto.valor_unitario|floatformat:2 }}</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Não informado</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-3 py-2 d-none d-lg-table-cell">
+                                        <span class="text-muted">
+                                            {{ produto.data_cadastro|date:"d/m/Y H:i" }}
+                                        </span>
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-outline-primary btn-sm btn-action" 
+                                                    data-action="visualizar" data-id="{{ produto.id }}" 
+                                                    title="Visualizar">
+                                                <i class="fas fa-eye text-info"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-warning btn-sm btn-action" 
+                                                    data-action="editar" data-id="{{ produto.id }}" 
+                                                    title="Editar">
+                                                <i class="fas fa-edit text-warning"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger btn-sm btn-action" 
+                                                    data-action="excluir" data-id="{{ produto.id }}" 
+                                                    title="Excluir">
+                                                <i class="fas fa-trash-alt text-danger"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-5">
+                                        <div class="text-muted">
+                                            <i class="fas fa-inbox fa-4x mb-4 text-muted"></i>
+                                            <h4 class="mb-3">Nenhum produto cadastrado</h4>
+                                            <p class="fs-5">Clique em "Novo Produto" para cadastrar o primeiro produto.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Cadastro de Produto -->
+<div class="modal fade" id="cadastroProdutoModal" tabindex="-1" aria-labelledby="cadastroProdutoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cadastroProdutoModalLabel">
+                    <i class="fas fa-plus-circle me-2"></i>Cadastrar Novo Produto
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'produtos:cadastro_produto_modal' %}" id="formCadastroProduto">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_nome_produto" class="form-label">Nome do Produto *</label>
+                                <input type="text" class="form-control" id="id_nome_produto" name="nome_produto" 
+                                       placeholder="Digite o nome do produto" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_fabricante" class="form-label">Fabricante *</label>
+                                <input type="text" class="form-control" id="id_fabricante" name="fabricante" 
+                                       placeholder="Nome do fabricante" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group mt-3">
+                        <label for="id_descricao" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="id_descricao" name="descricao" rows="3" 
+                                  placeholder="Descreva o produto"></textarea>
+                    </div>
+                    
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="id_telefone_fabricante" class="form-label">Telefone</label>
+                                <input type="text" class="form-control" id="id_telefone_fabricante" name="telefone_fabricante" 
+                                       placeholder="(11) 99999-9999">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="id_email_fabricante" class="form-label">E-mail</label>
+                                <input type="email" class="form-control" id="id_email_fabricante" name="email_fabricante" 
+                                       placeholder="fabricante@email.com">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="id_valor_unitario" class="form-label">Valor Unitário (R$)</label>
+                                <input type="number" class="form-control" id="id_valor_unitario" name="valor_unitario" 
+                                       step="0.01" placeholder="0.00">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times-circle me-2"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-check-circle me-2"></i>Salvar Produto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Visualização -->
+<div class="modal fade" id="visualizarProdutoModal" tabindex="-1" aria-labelledby="visualizarProdutoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="visualizarProdutoModalLabel">
+                    <i class="fas fa-info-circle me-2"></i>Detalhes do Produto
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="detalhesProduto">
+                <!-- Conteúdo será carregado via JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times-circle me-2"></i>Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Edição -->
+<div class="modal fade" id="editarProdutoModal" tabindex="-1" aria-labelledby="editarProdutoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarProdutoModalLabel">
+                    <i class="fas fa-edit me-2"></i>Editar Produto
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'produtos:update_cadastro_tipo_produto' 0 %}" id="formEditarProduto">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_nome_produto_edit" class="form-label">Nome do Produto *</label>
+                                <input type="text" class="form-control" id="id_nome_produto_edit" name="nome_produto" 
+                                       placeholder="Digite o nome do produto" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_fabricante_edit" class="form-label">Fabricante *</label>
+                                <input type="text" class="form-control" id="id_fabricante_edit" name="fabricante" 
+                                       placeholder="Nome do fabricante" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group mt-3">
+                        <label for="id_descricao_edit" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="id_descricao_edit" name="descricao" rows="3" 
+                                  placeholder="Descreva o produto"></textarea>
+                    </div>
+                    
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="id_telefone_fabricante_edit" class="form-label">Telefone</label>
+                                <input type="text" class="form-control" id="id_telefone_fabricante_edit" name="telefone_fabricante" 
+                                       placeholder="(11) 99999-9999">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="id_email_fabricante_edit" class="form-label">E-mail</label>
+                                <input type="email" class="form-control" id="id_email_fabricante_edit" name="email_fabricante" 
+                                       placeholder="fabricante@email.com">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="id_valor_unitario_edit" class="form-label">Valor Unitário (R$)</label>
+                                <input type="number" class="form-control" id="id_valor_unitario_edit" name="valor_unitario" 
+                                       step="0.01" placeholder="0.00">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times-circle me-2"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-check-circle me-2"></i>Salvar Alterações
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação de Exclusão -->
+<div class="modal fade" id="confirmarExclusaoModal" tabindex="-1" aria-labelledby="confirmarExclusaoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmarExclusaoModalLabel">
+                    <i class="fas fa-exclamation-circle me-2 text-warning"></i>Confirmar Exclusão
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                    <h5 class="mb-3">Confirmar Exclusão</h5>
+                    <p class="mb-2">Tem certeza que deseja excluir este produto?</p>
+                    <p class="text-muted small">Esta ação não pode ser desfeita.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times-circle me-2"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmarExclusao">
+                    <i class="fas fa-trash-alt me-2"></i>Excluir
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/produtos.js' %}"></script>
+{% endblock %}

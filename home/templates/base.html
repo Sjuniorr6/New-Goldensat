@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Golden SAT - Sistema de Gestão{% endblock %}</title>
+    
+    <!-- Favicon -->
+    {% load static %}
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/favicon.png' %}">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/sidbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <img src="{% static 'images/logo-golden.png' %}" alt="Logo Golden SAT" class="logo-loading">
+            </div>
+            <div class="loading-text">
+                <h3>Golden SAT</h3>
+                <p>Sistema de Gestão Empresarial</p>
+            </div>
+            <div class="loading-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="loading-percentage">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    {% include 'components/_sidbar.html' %}
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header bg-white shadow-sm">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <!-- Search Bar -->
+                            <div class="search-bar">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Pesquisar no sistema...">
+                                    <button class="btn btn-outline-secondary" type="button">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- User Profile -->
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
+                                    <img src="https://via.placeholder.com/32x32" alt="User" class="rounded-circle me-2" width="32" height="32">
+                                    <span>Admin</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Perfil</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Configurações</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Sair</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content Area -->
+        <main>
+            {% csrf_token %}
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{% static 'js/sidbar.js' %}"></script>
+    <script src="{% static 'js/home.js' %}"></script>
+    
+    <!-- Loading Screen Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const progressFill = document.querySelector('.progress-fill');
+            const percentage = document.querySelector('.loading-percentage');
+            const logo = document.querySelector('.logo-loading');
+            
+            let progress = 0;
+            const duration = 2000; // 2 segundos
+            const interval = 50; // Atualizar a cada 50ms
+            const increment = (100 / (duration / interval));
+            
+            // Animação do logo
+            logo.style.opacity = '0';
+            logo.style.transform = 'scale(0.5)';
+            
+            setTimeout(() => {
+                logo.style.transition = 'all 1s ease-out';
+                logo.style.opacity = '1';
+                logo.style.transform = 'scale(1)';
+            }, 200);
+            
+            // Animação da barra de progresso
+            const progressInterval = setInterval(() => {
+                progress += increment;
+                
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(progressInterval);
+                    
+                    // Aguardar um pouco antes de esconder
+                    setTimeout(() => {
+                        loadingScreen.style.opacity = '0';
+                        setTimeout(() => {
+                            loadingScreen.style.display = 'none';
+                        }, 500);
+                    }, 300);
+                }
+                
+                progressFill.style.width = progress + '%';
+                percentage.textContent = Math.round(progress) + '%';
+            }, interval);
+            
+            // Simular carregamento de recursos
+            let resourcesLoaded = 0;
+            const totalResources = 5; // CSS, JS, imagens, etc.
+            
+            const checkResource = () => {
+                resourcesLoaded++;
+                const resourceProgress = (resourcesLoaded / totalResources) * 20; // 20% para recursos
+                if (resourceProgress > 0) {
+                    progressFill.style.width = Math.min(progress + resourceProgress, 100) + '%';
+                }
+            };
+            
+            // Simular carregamento de recursos
+            setTimeout(checkResource, 100);  // CSS
+            setTimeout(checkResource, 300);  // JS
+            setTimeout(checkResource, 500);  // Imagens
+            setTimeout(checkResource, 700);  // Fonts
+            setTimeout(checkResource, 900);  // Outros recursos
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

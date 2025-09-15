@@ -1,0 +1,643 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    /* Estilos para cards de tickets */
+    .ticket-card {
+        transition: all 0.3s ease;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    
+    .ticket-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .ticket-header {
+        background: #f8f9fa;
+        color: #495057;
+        border-radius: 15px 15px 0 0;
+        padding: 20px;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .ticket-body {
+        padding: 20px;
+    }
+    
+    .ticket-footer {
+        background-color: #f8f9fa;
+        border-radius: 0 0 15px 15px;
+        padding: 15px 20px;
+        border-top: 1px solid #e9ecef;
+    }
+    
+    .status-badge {
+        font-size: 0.8rem;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        background-color: #e9ecef;
+        color: #495057;
+        border: 1px solid #dee2e6;
+    }
+    
+    .status-pendente {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border: 1px solid #dee2e6;
+    }
+    
+    .status-andamento {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border: 1px solid #dee2e6;
+    }
+    
+    .status-resolvido {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border: 1px solid #dee2e6;
+    }
+    
+    .status-fechado {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border: 1px solid #dee2e6;
+    }
+    
+    .prioridade-badge {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-weight: 600;
+        background-color: #e9ecef;
+        color: #495057;
+        border: 1px solid #dee2e6;
+    }
+    
+    .prioridade-baixa {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border: 1px solid #dee2e6;
+    }
+    
+    .prioridade-media {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border: 1px solid #dee2e6;
+    }
+    
+    .prioridade-alta {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border: 1px solid #dee2e6;
+    }
+    
+    .prioridade-critica {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border: 1px solid #dee2e6;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    .btn-criar-ticket {
+        background: #495057;
+        border: none;
+        border-radius: 25px;
+        padding: 12px 30px;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-criar-ticket:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(73, 80, 87, 0.3);
+        color: white;
+        background: #343a40;
+    }
+    
+    .stats-card {
+        background: #f8f9fa;
+        color: #495057;
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        margin-bottom: 20px;
+        border: 1px solid #e9ecef;
+    }
+    
+    .stats-number {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    
+    .stats-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    
+    .search-container {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    
+    .filter-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 15px;
+    }
+    
+    .filter-btn {
+        border: 2px solid #6c757d;
+        background: transparent;
+        color: #6c757d;
+        border-radius: 20px;
+        padding: 8px 16px;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+    }
+    
+    .filter-btn:hover,
+    .filter-btn.active {
+        background: #6c757d;
+        color: white;
+    }
+    
+    /* Estilos para botões dos cards */
+    .btn-group .btn {
+        border-color: #dee2e6;
+        color: #6c757d;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-group .btn:hover {
+        background-color: #f8f9fa;
+        border-color: #adb5bd;
+        color: #495057;
+    }
+    
+    .btn-outline-secondary:hover {
+        background-color: #6c757d !important;
+        border-color: #6c757d !important;
+        color: white !important;
+    }
+    
+    .btn-outline-warning:hover {
+        background-color: #ffc107 !important;
+        border-color: #ffc107 !important;
+        color: #212529 !important;
+    }
+    
+    .btn-outline-info:hover {
+        background-color: #0dcaf0 !important;
+        border-color: #0dcaf0 !important;
+        color: #000 !important;
+    }
+    
+    .btn-outline-danger:hover {
+        background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
+        color: white !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-0 text-dark">Sistema de Tickets</h1>
+                    <p class="text-muted mb-0">Gerencie todos os tickets de suporte</p>
+                </div>
+                <button type="button" class="btn btn-criar-ticket" onclick="abrirModalCriarTicket()">
+                    <i class="fas fa-plus me-2"></i>Criar Novo Ticket
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="stats-number">{{ total_tickets }}</div>
+                <div class="stats-label">Total de Tickets</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="stats-number">{{ pendentes }}</div>
+                <div class="stats-label">Pendentes</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="stats-number">{{ em_andamento }}</div>
+                <div class="stats-label">Em Andamento</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="stats-number">{{ resolvidos }}</div>
+                <div class="stats-label">Resolvidos</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros e Busca -->
+    <div class="search-container">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    <input type="text" class="form-control" id="searchInput" placeholder="Buscar por título, descrição ou setor...">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select class="form-select" id="statusFilter">
+                    <option value="">Todos os Status</option>
+                    <option value="Pendente">Pendente</option>
+                    <option value="Em Andamento">Em Andamento</option>
+                    <option value="Resolvido">Resolvido</option>
+                    <option value="Fechado">Fechado</option>
+                </select>
+            </div>
+        </div>
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-status="">Todos</button>
+            <button class="filter-btn" data-status="Pendente">Pendentes</button>
+            <button class="filter-btn" data-status="Em Andamento">Em Andamento</button>
+            <button class="filter-btn" data-status="Resolvido">Resolvidos</button>
+        </div>
+    </div>
+
+    <!-- Lista de Tickets -->
+    <div class="row" id="ticketsContainer">
+        {% for ticket in tickets %}
+        <div class="col-md-6 col-lg-4 mb-4 ticket-item" data-status="{{ ticket.status }}">
+            <div class="card ticket-card">
+                <div class="ticket-header">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="mb-1">{{ ticket.titulo }}</h5>
+                            <small class="opacity-75">Ticket #{{ ticket.id }}</small>
+                        </div>
+                        <span class="status-badge status-{{ ticket.status|lower|cut:' ' }}">
+                            {{ ticket.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="ticket-body">
+                    <p class="text-muted mb-3">{{ ticket.descricao|truncatewords:20 }}</p>
+                    
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <small class="text-muted">Setor:</small><br>
+                            <strong>{{ ticket.setor|default:"Não definido" }}</strong>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Prioridade:</small><br>
+                            <span class="prioridade-badge prioridade-{{ ticket.prioridade|lower }}">
+                                {{ ticket.get_prioridade_display }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-muted">Criado por:</small><br>
+                            <strong>{{ ticket.usuario.username|default:"Sistema" }}</strong>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Data:</small><br>
+                            <strong>{{ ticket.data_criacao|date:"d/m/Y" }}</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ticket-footer">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>
+                            {{ ticket.data_criacao|timesince }} atrás
+                        </small>
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-sm btn-outline-secondary" onclick="verDetalhes({{ ticket.id }})" title="Ver Detalhes">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-warning" onclick="atualizarTicket({{ ticket.id }})" title="Atualizar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-info" onclick="responderTicket({{ ticket.id }})" title="Responder">
+                                <i class="fas fa-reply"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="recusarTicket({{ ticket.id }})" title="Recusar">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-ticket-alt fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">Nenhum ticket encontrado</h4>
+                <p class="text-muted">Clique em "Criar Novo Ticket" para começar</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Paginação -->
+    {% if is_paginated %}
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="Navegação de tickets">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1">&laquo; Primeira</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                        </li>
+                    {% endif %}
+                    
+                    <li class="page-item active">
+                        <span class="page-link">
+                            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                        </span>
+                    </li>
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Próxima</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal para Criar Ticket -->
+<div class="modal fade" id="criarTicketModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 15px !important; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important; background: white !important; border: 1px solid #e9ecef !important;">
+            <!-- Modal Header -->
+            <div class="modal-header" style="background: #f8f9fa !important; color: #495057 !important; border-radius: 15px 15px 0 0 !important; border: none !important; border-bottom: 1px solid #e9ecef !important;">
+                <h5 class="modal-title" style="color: #495057 !important;">
+                    <i class="fas fa-plus-circle me-2"></i>Criar Novo Ticket
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="modal-body" style="background: white !important; padding: 30px !important;">
+                <form id="criarTicketForm">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="titulo" class="form-label">Título do Ticket *</label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="setor" class="form-label">Setor Responsável *</label>
+                            <select class="form-select" id="setor" name="setor" required>
+                                <option value="">Selecione o setor</option>
+                                {% for value, label in setor_choices %}
+                                <option value="{{ value }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="prioridade" class="form-label">Prioridade</label>
+                            <select class="form-select" id="prioridade" name="prioridade">
+                                {% for value, label in prioridade_choices %}
+                                <option value="{{ value }}" {% if value == 'Média' %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="responsavel" class="form-label">Responsável</label>
+                            <select class="form-select" id="responsavel" name="responsavel">
+                                <option value="">Selecione o responsável</option>
+                                <!-- Aqui você pode adicionar usuários disponíveis -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="descricao" class="form-label">Descrição do Problema *</label>
+                        <textarea class="form-control" id="descricao" name="descricao" rows="4" required placeholder="Descreva detalhadamente o problema encontrado..."></textarea>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer" style="background: white !important; border: none !important; padding: 20px 30px !important; border-radius: 0 0 15px 15px !important;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" onclick="criarTicket()" style="background: #495057 !important; border: none !important;">
+                    <i class="fas fa-save me-2"></i>Criar Ticket
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Detalhes do Ticket -->
+<div class="modal fade" id="detalhesTicketModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 15px !important; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important; background: white !important; border: 1px solid #e9ecef !important;">
+            <div class="modal-header" style="background: #f8f9fa !important; color: #495057 !important; border-radius: 15px 15px 0 0 !important; border: none !important; border-bottom: 1px solid #e9ecef !important;">
+                <h5 class="modal-title" style="color: #495057 !important;">
+                    <i class="fas fa-ticket-alt me-2"></i>Detalhes do Ticket
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="detalhesTicketBody" style="background: white !important; padding: 30px !important;">
+                <!-- Conteúdo será carregado via AJAX -->
+            </div>
+            <div class="modal-footer" style="background: white !important; border: none !important; padding: 20px 30px !important; border-radius: 0 0 15px 15px !important;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Função para abrir modal de criar ticket
+function abrirModalCriarTicket() {
+    const modal = new bootstrap.Modal(document.getElementById('criarTicketModal'));
+    modal.show();
+}
+
+// Função para criar ticket
+function criarTicket() {
+    const form = document.getElementById('criarTicketForm');
+    const formData = new FormData(form);
+    
+    fetch('{% url "tickets:criar_ticket" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Fechar modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('criarTicketModal'));
+            modal.hide();
+            
+            // Limpar formulário
+            form.reset();
+            
+            // Recarregar página
+            location.reload();
+            
+            // Mostrar notificação de sucesso
+            showNotification('Ticket criado com sucesso!', 'success');
+        } else {
+            showNotification('Erro ao criar ticket: ' + data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        showNotification('Erro ao criar ticket', 'error');
+    });
+}
+
+// Função para ver detalhes do ticket
+function verDetalhes(ticketId) {
+    fetch(`{% url 'tickets:detalhes_ticket' 0 %}`.replace('0', ticketId))
+    .then(response => response.text())
+    .then(html => {
+        document.getElementById('detalhesTicketBody').innerHTML = html;
+        const modal = new bootstrap.Modal(document.getElementById('detalhesTicketModal'));
+        modal.show();
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        showNotification('Erro ao carregar detalhes', 'error');
+    });
+}
+
+// Função para atualizar ticket
+function atualizarTicket(ticketId) {
+    showNotification('Funcionalidade de atualização em desenvolvimento', 'info');
+}
+
+// Função para responder ticket
+function responderTicket(ticketId) {
+    showNotification('Funcionalidade de resposta em desenvolvimento', 'info');
+}
+
+// Função para recusar ticket
+function recusarTicket(ticketId) {
+    if (confirm('Tem certeza que deseja recusar este ticket?')) {
+        showNotification('Funcionalidade de recusa em desenvolvimento', 'info');
+    }
+}
+
+// Função para mostrar notificações
+function showNotification(message, type) {
+    const alertClass = type === 'success' ? 'alert-success' : type === 'error' ? 'alert-danger' : 'alert-info';
+    const notification = `
+        <div class="alert ${alertClass} alert-dismissible fade show position-fixed" style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', notification);
+    
+    // Remover automaticamente após 5 segundos
+    setTimeout(() => {
+        const alert = document.querySelector('.alert');
+        if (alert) {
+            alert.remove();
+        }
+    }, 5000);
+}
+
+// Filtros e busca
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    
+    // Função para filtrar tickets
+    function filterTickets() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const statusValue = statusFilter.value;
+        const tickets = document.querySelectorAll('.ticket-item');
+        
+        tickets.forEach(ticket => {
+            const ticketText = ticket.textContent.toLowerCase();
+            const ticketStatus = ticket.dataset.status;
+            
+            const matchesSearch = ticketText.includes(searchTerm);
+            const matchesStatus = !statusValue || ticketStatus === statusValue;
+            
+            if (matchesSearch && matchesStatus) {
+                ticket.style.display = 'block';
+            } else {
+                ticket.style.display = 'none';
+            }
+        });
+    }
+    
+    // Event listeners
+    searchInput.addEventListener('input', filterTickets);
+    statusFilter.addEventListener('change', filterTickets);
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remover classe active de todos os botões
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            // Adicionar classe active ao botão clicado
+            this.classList.add('active');
+            
+            // Aplicar filtro
+            const status = this.dataset.status;
+            statusFilter.value = status;
+            filterTickets();
+        });
+    });
+});
+</script>
+{% endblock %}

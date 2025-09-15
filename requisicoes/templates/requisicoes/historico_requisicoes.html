@@ -1,0 +1,329 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block title %}Histórico de Requisições - Golden SAT{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/requisicoes.css' %}">
+<link rel="stylesheet" href="{% static 'css/historico-requisicoes.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      
+      <!-- Header da Página -->
+      <div class="mb-4">
+        <h1 class="h2 mb-2">
+          <i class="fas fa-history me-2 text-warning"></i>Histórico de Requisições
+        </h1>
+        <p class="text-muted">Visualize todas as requisições criadas no sistema</p>
+      </div>
+
+      <!-- Estatísticas -->
+      <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+          <div class="stats-card">
+            <div class="stats-number">{{ total_requisicoes }}</div>
+            <div class="stats-label">Total de Requisições</div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+          <div class="stats-card">
+            <div class="stats-number text-success">{{ aprovadas }}</div>
+            <div class="stats-label">Aprovadas</div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+          <div class="stats-card">
+            <div class="stats-number text-danger">{{ reprovadas }}</div>
+            <div class="stats-label">Reprovadas</div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+          <div class="stats-card">
+            <div class="stats-number text-warning">{{ pendentes }}</div>
+            <div class="stats-label">Pendentes</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filtros -->
+       <div class="card filtros-card mb-2" style="max-width: 1000px;">
+         <div class="card-header">
+           <form method="get" class="row g-2 align-items-end">
+             <div class="col-md-3 col-sm-9">
+               <label for="search" class="form-label mb-0">Buscar</label>
+               <input type="text" class="form-control" id="search" name="search" 
+                      value="{{ request.GET.search }}" placeholder="ID/Nome">
+             </div>
+             <div class="col-md-2 col-sm-3">
+               <label for="status" class="form-label mb-0">Status</label>
+               <select class="form-select" id="status" name="status">
+                 <option value="">Todos</option>
+                 <option value="Pendente" {% if request.GET.status == 'Pendente' %}selected{% endif %}>Pendente</option>
+                 <option value="Configurado" {% if request.GET.status == 'Configurado' %}selected{% endif %}>Configurado</option>
+                 <option value="Aprovado pelo CEO" {% if request.GET.status == 'Aprovado pelo CEO' %}selected{% endif %}>Aprovado</option>
+                 <option value="Reprovado pelo CEO" {% if request.GET.status == 'Reprovado pelo CEO' %}selected{% endif %}>Reprovado</option>
+                 <option value="Processando" {% if request.GET.status == 'Processando' %}selected{% endif %}>Processando</option>
+               </select>
+             </div>
+             <div class="col-md-7 col-sm-6">
+               <div class="d-flex gap-2 justify-content-end flex-wrap align-items-end">
+                 <button type="submit" class="btn btn-outline-secondary">
+                   <i class="fas fa-search me-1"></i>Buscar
+                 </button>
+                 <a href="{% url 'requisicoes:historico_requisicoes' %}" class="btn btn-outline-secondary">
+                   <i class="fas fa-times me-1"></i>Limpar
+                 </a>
+               </div>
+             </div>
+           </form>
+         </div>
+       </div>
+
+      
+      
+
+      <!-- Tabela de Requisições -->
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="fas fa-table me-2"></i>Requisições
+            <span class="badge bg-primary ms-2">{{ requisicoes|length }}</span>
+          </h5>
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-success" onclick="exportarHistorico()">
+              <i class="fas fa-download me-1"></i>Exportar
+            </button>
+            <button type="button" class="btn btn-outline-info" onclick="imprimirHistorico()">
+              <i class="fas fa-print me-1"></i>Imprimir
+            </button>
+          </div>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Cliente</th>
+                  <th>CNPJ</th>
+                  <th>Produto</th>
+                  <th>Quantidade</th>
+                  <th>Valor Total</th>
+                  <th>Status</th>
+                  <th>Comercial</th>
+                  <th>Data</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for requisicao in requisicoes %}
+                <tr>
+                  <td>
+                    <span class="badge bg-secondary">#{{ requisicao.id }}</span>
+                  </td>
+                  <td>
+                    <strong>{{ requisicao.nome.nome }}</strong>
+                  </td>
+                  <td>{{ requisicao.cnpj|default:"Não informado" }}</td>
+                  <td>{{ requisicao.tipo_produto.nome }}</td>
+                  <td>
+                    <span class="badge bg-info">{{ requisicao.numero_de_equipamentos }}</span>
+                  </td>
+                  <td>
+                    <strong class="text-success">R$ {{ requisicao.valor_total|floatformat:2 }}</strong>
+                  </td>
+                  <td>
+                    {% if requisicao.status == 'Aprovado pelo CEO' %}
+                      <span class="badge badge-status bg-success">{{ requisicao.status }}</span>
+                    {% elif requisicao.status == 'Reprovado pelo CEO' %}
+                      <span class="badge badge-status bg-danger">{{ requisicao.status }}</span>
+                    {% elif requisicao.status == 'Pendente' %}
+                      <span class="badge badge-status bg-warning">{{ requisicao.status }}</span>
+                    {% elif requisicao.status == 'Configurado' %}
+                      <span class="badge badge-status bg-info">{{ requisicao.status }}</span>
+                    {% else %}
+                      <span class="badge badge-status bg-secondary">{{ requisicao.status }}</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ requisicao.comercial|default:"Não informado" }}</td>
+                  <td>
+                    <small class="text-muted">
+                      {{ requisicao.data|date:"d/m/Y H:i" }}
+                    </small>
+                  </td>
+                  <td>
+                    <div class="btn-group" role="group">
+                      <button type="button" class="btn btn-outline-primary btn-sm" 
+                              onclick="visualizarRequisicao({{ requisicao.id }})" title="Visualizar">
+                        <i class="fas fa-eye"></i>
+                      </button>
+                      <button type="button" class="btn btn-outline-warning btn-sm" 
+                              onclick="editarRequisicao({{ requisicao.id }})" title="Editar">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="10" class="text-center py-5">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">Nenhuma requisição encontrada</h4>
+                    <p class="text-muted">Tente ajustar os filtros ou criar uma nova requisição</p>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paginação -->
+      {% if is_paginated %}
+      <nav aria-label="Paginação do histórico" class="mt-4">
+        <ul class="pagination justify-content-center">
+          {% if page_obj.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.data_inicio %}&data_inicio={{ request.GET.data_inicio }}{% endif %}{% if request.GET.data_fim %}&data_fim={{ request.GET.data_fim }}{% endif %}">
+                <i class="fas fa-angle-double-left"></i>
+              </a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.data_inicio %}&data_inicio={{ request.GET.data_inicio }}{% endif %}{% if request.GET.data_fim %}&data_fim={{ request.GET.data_fim }}{% endif %}">
+                <i class="fas fa-angle-left"></i>
+              </a>
+            </li>
+          {% endif %}
+
+          <li class="page-item active">
+            <span class="page-link">
+              Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            </span>
+          </li>
+
+          {% if page_obj.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.data_inicio %}&data_inicio={{ request.GET.data_inicio }}{% endif %}{% if request.GET.data_fim %}&data_fim={{ request.GET.data_fim }}{% endif %}">
+                <i class="fas fa-angle-right"></i>
+              </a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.data_inicio %}&data_inicio={{ request.GET.data_inicio }}{% endif %}{% if request.GET.data_fim %}&data_fim={{ request.GET.data_fim }}{% endif %}">
+                <i class="fas fa-angle-double-right"></i>
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+<!-- Modais -->
+<div class="modal fade" id="detalhesRequisicaoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div id="detalhesRequisicaoContent">
+          <!-- Conteúdo será carregado via AJAX -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editarRequisicaoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div id="editarRequisicaoContent">
+          <!-- Conteúdo será carregado via AJAX -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/requisicoes.js' %}"></script>
+<script>
+// Função para exportar histórico
+function exportarHistorico() {
+    console.log('📊 Exportando histórico...');
+    const rows = document.querySelectorAll('table tbody tr');
+    if (rows.length === 0) return;
+
+    let csv = 'ID,Cliente,CNPJ,Produto,Quantidade,Valor Total,Status,Comercial,Data\n';
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length > 1) {
+            const id = cells[0].textContent.trim();
+            const cliente = cells[1].textContent.trim();
+            const cnpj = cells[2].textContent.trim();
+            const produto = cells[3].textContent.trim();
+            const quantidade = cells[4].textContent.trim();
+            const valorTotal = cells[5].textContent.trim();
+            const status = cells[6].textContent.trim();
+            const comercial = cells[7].textContent.trim();
+            const data = cells[8].textContent.trim();
+            
+            csv += `"${id}","${cliente}","${cnpj}","${produto}","${quantidade}","${valorTotal}","${status}","${comercial}","${data}"\n`;
+        }
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `historico_requisicoes_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Função para imprimir histórico
+function imprimirHistorico() {
+    console.log('🖨️ Imprimindo histórico...');
+    const table = document.querySelector('table');
+    if (!table) return;
+
+    const janelaImpressao = window.open('', '_blank');
+    janelaImpressao.document.write(`
+        <html>
+            <head>
+                <title>Histórico de Requisições - Golden SAT</title>
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 20px; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                    th { background-color: #d4af37; color: white; }
+                    .badge { padding: 2px 6px; border-radius: 3px; font-size: 12px; }
+                    .bg-success { background-color: #28a745; color: white; }
+                    .bg-danger { background-color: #dc3545; color: white; }
+                    .bg-warning { background-color: #ffc107; color: black; }
+                    .bg-info { background-color: #17a2b8; color: white; }
+                    .bg-secondary { background-color: #6c757d; color: white; }
+                </style>
+            </head>
+            <body>
+                <h1>Histórico de Requisições - Golden SAT</h1>
+                <p>Data de impressão: ${new Date().toLocaleString('pt-BR')}</p>
+                ${table.outerHTML}
+            </body>
+        </html>
+    `);
+    janelaImpressao.document.close();
+    janelaImpressao.print();
+}
+</script>
+{% endblock %}

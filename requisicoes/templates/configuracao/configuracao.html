@@ -1,0 +1,1025 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Configurações - Golden SAT{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/requisicoes.css' %}">
+<style>
+/* Gradientes para os cards baseados no status */
+.card.status-configurado {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+    border: 2px solid #ff9a9e;
+}
+
+.card.status-aprovado {
+    background: linear-gradient(135deg, #ffffff 0%, #a8edea 50%, #4ade80 100%);
+    border: 2px solid #4ade80;
+}
+
+.card.status-reprovado {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #ffffff 100%);
+    border: 2px solid #ff9a9e;
+}
+
+/* Botões de status */
+.btn-configurado {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    border: 1px solid #ff9a9e;
+    color: #333;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    min-width: 120px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+}
+
+.btn-configurado:hover {
+    background: linear-gradient(135deg, #ff8a8e 0%, #febfef 100%);
+    border-color: #ff8a8e;
+    color: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 154, 158, 0.3);
+}
+
+.btn-aprovado {
+    background: linear-gradient(135deg, #ffffff 0%, #a8edea 50%, #4ade80 100%);
+    border: 1px solid #4ade80;
+    color: #333;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    min-width: 120px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+}
+
+.btn-aprovado:hover {
+    background: linear-gradient(135deg, #f0fdf4 0%, #98edea 50%, #22c55e 100%);
+    border-color: #22c55e;
+    color: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(74, 222, 128, 0.3);
+}
+
+.btn-reprovado {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+    border: 1px solid #ff9a9e;
+    color: #333;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    min-width: 120px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+}
+
+.btn-reprovado:hover {
+    background: linear-gradient(135deg, #ff8a8e 0%, #fac0b4 100%);
+    border-color: #ff8a8e;
+    color: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 154, 158, 0.3);
+}
+
+/* Badge de status com cores correspondentes */
+.badge.status-configurado {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    color: #333;
+    font-weight: 600;
+}
+
+.badge.status-aprovado {
+    background: linear-gradient(135deg, #ffffff 0%, #a8edea 50%, #4ade80 100%);
+    color: #333;
+    font-weight: 600;
+}
+
+.badge.status-reprovado {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+    color: #333;
+    font-weight: 600;
+}
+
+/* Animação suave para mudança de status */
+.card {
+    transition: all 0.5s ease;
+}
+
+/* Efeito hover nos cards */
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Responsividade dos botões de status */
+@media (max-width: 576px) {
+    .btn-configurado, .btn-aprovado, .btn-reprovado {
+        min-width: 100px;
+        padding: 6px 8px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .btn-configurado, .btn-aprovado, .btn-reprovado {
+        min-width: 90px;
+        padding: 5px 6px;
+        font-size: 0.75rem;
+    }
+}
+
+/* Estilização dos Modais */
+.modal-content {
+    border: none !important;
+    border-radius: 15px !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important;
+    overflow: hidden !important;
+    backdrop-filter: blur(10px) !important;
+    background: white !important;
+    border: 1px solid #e9ecef !important;
+}
+
+/* Forçar estilos nos modais específicos */
+#detalhesModal .modal-content,
+#edicaoModal .modal-content,
+#exclusaoModal .modal-content {
+    border: none !important;
+    border-radius: 15px !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important;
+    overflow: hidden !important;
+    backdrop-filter: blur(10px) !important;
+    background: white !important;
+    border: 1px solid #e9ecef !important;
+}
+
+.modal-header {
+    background: #f8f9fa !important;
+    color: #333 !important;
+    border: none !important;
+    border-bottom: 1px solid #e9ecef !important;
+    padding: 25px 30px !important;
+    position: relative !important;
+}
+
+/* Forçar estilos nos cabeçalhos dos modais específicos */
+#detalhesModal .modal-header,
+#edicaoModal .modal-header,
+#exclusaoModal .modal-header {
+    background: #f8f9fa !important;
+    color: #333 !important;
+    border: none !important;
+    border-bottom: 1px solid #e9ecef !important;
+    padding: 25px 30px !important;
+    position: relative !important;
+}
+
+
+.modal-title {
+    font-weight: 600;
+    font-size: 1.3rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #2c3e50;
+    letter-spacing: -0.5px;
+}
+
+.modal-title i {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    color: #495057;
+    background: #e9ecef;
+    padding: 8px;
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-close {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transition: all 0.2s ease;
+}
+
+.btn-close:hover {
+    background: #e9ecef;
+    border-color: #dee2e6;
+    transform: scale(1.05);
+}
+
+.btn-close::before {
+    content: '×';
+    color: #6c757d;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1;
+}
+
+.modal-body {
+    padding: 35px 30px !important;
+    background: white !important;
+    min-height: 200px !important;
+    line-height: 1.6 !important;
+}
+
+/* Forçar estilos nos corpos dos modais específicos */
+#detalhesModal .modal-body,
+#edicaoModal .modal-body,
+#exclusaoModal .modal-body {
+    padding: 35px 30px !important;
+    background: white !important;
+    min-height: 200px !important;
+    line-height: 1.6 !important;
+}
+
+.modal-footer {
+    background: #f8f9fa !important;
+    border: none !important;
+    border-top: 1px solid #e9ecef !important;
+    padding: 25px 30px !important;
+    gap: 15px !important;
+}
+
+/* Forçar estilos nos rodapés dos modais específicos */
+#detalhesModal .modal-footer,
+#edicaoModal .modal-footer,
+#exclusaoModal .modal-footer {
+    background: #f8f9fa !important;
+    border: none !important;
+    border-top: 1px solid #e9ecef !important;
+    padding: 25px 30px !important;
+    gap: 15px !important;
+}
+
+/* Estilos específicos para o modal de notificação */
+#notificacaoModal .modal-content {
+    border: none !important;
+    border-radius: 15px !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important;
+    overflow: hidden !important;
+    background: white !important;
+    border: 1px solid #e9ecef !important;
+}
+
+#notificacaoModal .modal-body {
+    padding: 30px 25px !important;
+    background: white !important;
+    text-align: center !important;
+}
+
+/* Botões do modal */
+.modal-footer .btn {
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+.modal-footer .btn-secondary {
+    background: #6c757d;
+    color: white;
+    border-color: #6c757d;
+}
+
+.modal-footer .btn-secondary:hover {
+    background: #5a6268;
+    border-color: #5a6268;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+.modal-footer .btn-primary {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.modal-footer .btn-primary:hover {
+    background: #0056b3;
+    border-color: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.modal-footer .btn-warning {
+    background: #ffc107;
+    color: #212529;
+    border-color: #ffc107;
+}
+
+.modal-footer .btn-warning:hover {
+    background: #e0a800;
+    border-color: #e0a800;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+.modal-footer .btn-danger {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+.modal-footer .btn-danger:hover {
+    background: #c82333;
+    border-color: #c82333;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+/* Animação de entrada do modal */
+.modal.fade .modal-dialog {
+    transform: scale(0.9) translateY(-20px);
+    transition: all 0.2s ease;
+    opacity: 0;
+}
+
+.modal.show .modal-dialog {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+/* Backdrop personalizado */
+.modal-backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+/* Modal de exclusão especial */
+#exclusaoModal .modal-content {
+    background: white;
+}
+
+#exclusaoModal .modal-body {
+    background: transparent;
+    text-align: center;
+    padding: 40px 30px;
+}
+
+#exclusaoModal .modal-body i {
+    color: #ff6b6b;
+    margin-bottom: 20px;
+}
+
+#exclusaoModal .modal-body h5 {
+    color: #333;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+#exclusaoModal .modal-body p {
+    color: #555;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+}
+
+/* Spinner personalizado */
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.3em;
+    border-color: #667eea;
+    border-right-color: transparent;
+}
+
+/* Cards dentro do modal */
+.modal-body .card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.modal-body .card-header {
+    background: #f8f9fa;
+    color: #333;
+    border: none;
+    border-radius: 15px 15px 0 0;
+    padding: 15px 20px;
+}
+
+.modal-body .card-body {
+    padding: 20px;
+    background: white;
+}
+
+/* Formulários no modal */
+.modal-body .form-control {
+    border-radius: 10px;
+    border: 2px solid #e9ecef;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+}
+
+.modal-body .form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.modal-body .form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header da Página -->
+            <div class="mb-4">
+                <h1 class="h2 mb-2">
+                    <i class="fas fa-cog me-2 text-primary"></i>Configurações do Sistema
+                </h1>
+                <p class="text-muted">Visualize as configurações atuais do sistema Golden SAT</p>
+                
+            </div>
+
+            <!-- Grid de Cards -->
+            <div class="row g-3" id="cardsGrid">
+                {% for requisicao in requisicoes %}
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                    <div class="card h-100 
+                        {% if requisicao.status == 'Configurado' %}status-configurado
+                        {% elif requisicao.status == 'Aprovado pelo CEO' %}status-aprovado
+                        {% elif requisicao.status == 'Reprovado pelo CEO' %}status-reprovado{% endif %}" 
+                        data-id="{{ requisicao.id }}">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div class="d-flex gap-2">
+                                <span class="badge bg-secondary">#{{ requisicao.id }}</span>
+                                <span class="badge 
+                                    {% if requisicao.status == 'Configurado' %}status-configurado
+                                    {% elif requisicao.status == 'Aprovado pelo CEO' %}status-aprovado
+                                    {% elif requisicao.status == 'Reprovado pelo CEO' %}status-reprovado
+                                    {% else %}bg-primary{% endif %}">{{ requisicao.status }}</span>
+                            </div>
+                            <small class="text-muted">{{ requisicao.data|date:"d/m/Y" }}</small>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- Nome -->
+                            <div class="mb-2">
+                                <h6 class="card-title">
+                                    <i class="fas fa-user me-2"></i>
+                                    {% if requisicao.nome %}
+                                        {{ requisicao.nome.nome|default:"Cliente não informado" }}
+                                    {% else %}
+                                        Cliente não informado
+                                    {% endif %}
+                                </h6>
+                            </div>
+
+                            <!-- CNPJ -->
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-id-card me-1"></i>CNPJ: {{ requisicao.cnpj|default:"Não informado" }}
+                                </small>
+                            </div>
+
+                            <!-- Contrato -->
+                            {% if requisicao.contrato %}
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-file-contract me-1"></i>Contrato: {{ requisicao.contrato }}
+                                </small>
+                            </div>
+                            {% endif %}
+
+                            <!-- Data -->
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>Data: {{ requisicao.data|date:"d/m/Y H:i" }}
+                                </small>
+                            </div>
+
+                            <!-- Motivo -->
+                            {% if requisicao.motivo %}
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-tag me-1"></i>Motivo: {{ requisicao.motivo }}
+                                </small>
+                            </div>
+                            {% endif %}
+
+                            <!-- Taxa de Envio -->
+                            {% if requisicao.taxa_envio %}
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-shipping-fast me-1"></i>Taxa de Envio: R$ {{ requisicao.taxa_envio|floatformat:2 }}
+                                </small>
+                            </div>
+                            {% endif %}
+
+                            <!-- Comercial -->
+                            {% if requisicao.comercial %}
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-handshake me-1"></i>Comercial: {{ requisicao.comercial }}
+                                </small>
+                            </div>
+                            {% endif %}
+
+                            <!-- Quantidade -->
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-cubes me-1"></i>Quantidade: {{ requisicao.numero_de_equipamentos|default:"0" }}
+                                </small>
+                            </div>
+
+                            <!-- Tipo de Produto -->
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-box me-1"></i>Produto: 
+                                    {% if requisicao.tipo_produto %}
+                                        {{ requisicao.tipo_produto.nome }}
+                                    {% else %}
+                                        Produto não informado
+                                    {% endif %}
+                                </small>
+                            </div>
+
+                            <!-- Tipo de Fatura -->
+                            {% if requisicao.tipo_fatura %}
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-receipt me-1"></i>Tipo de Fatura: {{ requisicao.tipo_fatura }}
+                                </small>
+                            </div>
+                            {% endif %}
+
+                            <!-- Valor Unitário -->
+                            {% if requisicao.valor_unitario %}
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-dollar-sign me-1"></i>Valor Unitário: R$ {{ requisicao.valor_unitario|floatformat:2 }}
+                                </small>
+                            </div>
+                            {% endif %}
+
+                            <!-- Valor Total -->
+                            <div class="mb-2">
+                                <small class="text-success fw-bold">
+                                    <i class="fas fa-calculator me-1"></i>Valor Total: R$ {{ requisicao.valor_total|floatformat:2|default:"0.00" }}
+                                </small>
+                            </div>
+
+                            <!-- Formas de Pagamento -->
+                            {% if requisicao.forma_pagamento %}
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-credit-card me-1"></i>Pagamento: {{ requisicao.forma_pagamento }}
+                                </small>
+                            </div>
+                            {% endif %}
+
+                            <!-- Observações -->
+                            {% if requisicao.observacoes %}
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-sticky-note me-1"></i>Observações: {{ requisicao.observacoes|truncatechars:30 }}
+                                </small>
+                            </div>
+                            {% endif %}
+
+                            <!-- TP -->
+                            {% if requisicao.TP %}
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>TP: {{ requisicao.TP }}
+                                </small>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="card-footer">
+                            <!-- Botões de Ação -->
+                            <div class="d-flex justify-content-center gap-2 flex-wrap mb-3">
+                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="abrirModalDetalhes({{ requisicao.id }})" title="Visualizar">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-warning btn-sm" onclick="abrirModalEdicao({{ requisicao.id }})" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="abrirModalExclusao({{ requisicao.id }})" title="Excluir">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Botões de Status -->
+                            <div class="d-flex justify-content-center gap-1 flex-wrap">
+                                <button type="button" class="btn btn-configurado" onclick="alterarStatus({{ requisicao.id }}, 'Configurado')" title="Marcar como Configurado">
+                                    <i class="fas fa-cog me-1"></i>Configurado
+                                </button>
+                                <button type="button" class="btn btn-aprovado" onclick="alterarStatus({{ requisicao.id }}, 'Aprovado pelo CEO')" title="Aprovar">
+                                    <i class="fas fa-check me-1"></i>Aprovado
+                                </button>
+                                <button type="button" class="btn btn-reprovado" onclick="alterarStatus({{ requisicao.id }}, 'Reprovado pelo CEO')" title="Reprovar">
+                                    <i class="fas fa-times me-1"></i>Reprovado
+                                </button>
+                            </div>
+                            
+                            <div class="text-center mt-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>{{ requisicao.data|date:"H:i" }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">Nenhuma requisição encontrada</h4>
+                        <p class="text-muted">Não há requisições cadastradas no sistema.</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Detalhes -->
+    <div class="modal fade" id="detalhesModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content" style="border-radius: 15px !important; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important; background: white !important; border: 1px solid #e9ecef !important;">
+                <div id="detalhesContent">
+                    <div class="text-center p-4">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Carregando...</span>
+                        </div>
+                        <p class="mt-2">Carregando detalhes...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div class="modal fade" id="edicaoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content" style="border-radius: 15px !important; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important; background: white !important; border: 1px solid #e9ecef !important;">
+                <div id="edicaoContent">
+                    <div class="text-center p-4">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Carregando...</span>
+                        </div>
+                        <p class="mt-2">Carregando formulário de edição...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Exclusão -->
+    <div class="modal fade" id="exclusaoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="border-radius: 15px !important; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important; background: white !important; border: 1px solid #e9ecef !important;">
+                <div class="modal-body text-center">
+                    <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                    <h5 class="mb-3">Confirmar Exclusão</h5>
+                    <p class="text-muted mb-4">Tem certeza que deseja excluir esta requisição? Esta ação não pode ser desfeita.</p>
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" id="confirmarExclusaoBtn">
+                            <i class="fas fa-trash me-1"></i>Excluir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Notificação -->
+    <div class="modal fade" id="notificacaoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content" style="border-radius: 15px !important; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important; background: white !important; border: 1px solid #e9ecef !important;">
+                <div class="modal-body text-center p-4">
+                    <div id="notificacaoIcon" class="mb-3">
+                        <i class="fas fa-check-circle fa-3x text-success"></i>
+                    </div>
+                    <h6 id="notificacaoTitulo" class="mb-2">Sucesso!</h6>
+                    <p id="notificacaoMensagem" class="text-muted mb-3 small">Operação realizada com sucesso!</p>
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+console.log('🚀 JavaScript de configuração carregado!');
+
+// Função para mostrar notificações personalizadas
+function mostrarNotificacao(titulo, mensagem, tipo = 'success') {
+    const modal = document.getElementById('notificacaoModal');
+    const icon = document.getElementById('notificacaoIcon');
+    const tituloEl = document.getElementById('notificacaoTitulo');
+    const mensagemEl = document.getElementById('notificacaoMensagem');
+    
+    // Configurar ícone e cores baseado no tipo
+    switch(tipo) {
+        case 'success':
+            icon.innerHTML = '<i class="fas fa-check-circle fa-3x text-success"></i>';
+            break;
+        case 'error':
+            icon.innerHTML = '<i class="fas fa-exclamation-circle fa-3x text-danger"></i>';
+            break;
+        case 'warning':
+            icon.innerHTML = '<i class="fas fa-exclamation-triangle fa-3x text-warning"></i>';
+            break;
+        case 'info':
+            icon.innerHTML = '<i class="fas fa-info-circle fa-3x text-info"></i>';
+            break;
+    }
+    
+    tituloEl.textContent = titulo;
+    mensagemEl.textContent = mensagem;
+    
+    // Mostrar o modal
+    const bootstrapModal = new bootstrap.Modal(modal);
+    bootstrapModal.show();
+}
+
+// Função para abrir modal de detalhes
+async function abrirModalDetalhes(id) {
+    console.log('Abrindo detalhes da requisição:', id);
+    
+    try {
+        const response = await fetch('/requisicoes/detail/' + id + '/', {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        if (response.ok) {
+            const html = await response.text();
+            const detalhesContent = document.getElementById('detalhesContent');
+            if (detalhesContent) {
+                detalhesContent.innerHTML = html;
+                
+                const modal = new bootstrap.Modal(document.getElementById('detalhesModal'));
+                modal.show();
+            } else {
+                console.error('Elemento detalhesContent não encontrado');
+                mostrarNotificacao('Erro!', 'Elemento não encontrado', 'error');
+            }
+        } else {
+            console.error('Erro ao carregar detalhes:', response.status);
+            mostrarNotificacao('Erro!', 'Erro ao carregar detalhes da requisição', 'error');
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        mostrarNotificacao('Erro!', 'Erro interno: ' + error.message, 'error');
+    }
+}
+
+// Função para abrir modal de edição
+async function abrirModalEdicao(id) {
+    console.log('Abrindo edição da requisição:', id);
+    
+    try {
+        const response = await fetch('/requisicoes/update/' + id + '/', {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        if (response.ok) {
+            const html = await response.text();
+            const edicaoContent = document.getElementById('edicaoContent');
+            if (edicaoContent) {
+                edicaoContent.innerHTML = html;
+                
+                const modal = new bootstrap.Modal(document.getElementById('edicaoModal'));
+                modal.show();
+                
+                // Configurar o formulário de edição
+                configurarFormularioEdicao();
+            } else {
+                console.error('Elemento edicaoContent não encontrado');
+                mostrarNotificacao('Erro!', 'Elemento não encontrado', 'error');
+            }
+        } else {
+            console.error('Erro ao carregar formulário:', response.status);
+            mostrarNotificacao('Erro!', 'Erro ao carregar formulário de edição', 'error');
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        mostrarNotificacao('Erro!', 'Erro interno: ' + error.message, 'error');
+    }
+}
+
+// Função para configurar o formulário de edição
+function configurarFormularioEdicao() {
+    const form = document.getElementById('editarRequisicaoForm');
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            await salvarEdicao();
+        });
+    }
+}
+
+// Função para salvar edição
+async function salvarEdicao() {
+    console.log('Salvando edição...');
+    
+    const form = document.getElementById('editarRequisicaoForm');
+    if (!form) {
+        mostrarNotificacao('Erro!', 'Formulário não encontrado', 'error');
+        return;
+    }
+    
+    const formData = new FormData(form);
+    
+    try {
+        const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            mostrarNotificacao('Sucesso!', data.message, 'success');
+            // Fechar modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('edicaoModal'));
+            modal.hide();
+            // Recarregar a página para mostrar as alterações
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            mostrarNotificacao('Erro!', data.message, 'error');
+            if (data.errors) {
+                console.error('Erros de validação:', data.errors);
+            }
+        }
+    } catch (error) {
+        console.error('Erro ao salvar:', error);
+        mostrarNotificacao('Erro!', 'Erro interno: ' + error.message, 'error');
+    }
+}
+
+// Função para abrir modal de exclusão
+function abrirModalExclusao(id) {
+    console.log('Abrindo confirmação de exclusão:', id);
+    
+    // Armazenar o ID para uso posterior
+    window.requisicaoParaExcluir = id;
+    
+    const modal = new bootstrap.Modal(document.getElementById('exclusaoModal'));
+    modal.show();
+    
+    // Configurar o botão de confirmação
+    const confirmarBtn = document.getElementById('confirmarExclusaoBtn');
+    confirmarBtn.onclick = function() {
+        excluirRequisicao(id);
+        modal.hide();
+    };
+}
+
+// Função para excluir requisição
+async function excluirRequisicao(id) {
+    console.log('Excluindo requisição:', id);
+    
+    try {
+        const response = await fetch('/requisicoes/delete/' + id + '/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            // Remover o card da tela
+            const card = document.querySelector('[data-id="' + id + '"]');
+            if (card) {
+                card.remove();
+            }
+            mostrarNotificacao('Sucesso!', data.message, 'success');
+        } else {
+            mostrarNotificacao('Erro!', data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Erro ao excluir:', error);
+        mostrarNotificacao('Erro!', 'Erro interno: ' + error.message, 'error');
+    }
+}
+
+// Função para editar requisição (chamada do modal de detalhes)
+function editarRequisicao(id) {
+    // Fechar modal de detalhes
+    const detalhesModal = bootstrap.Modal.getInstance(document.getElementById('detalhesModal'));
+    detalhesModal.hide();
+    
+    // Abrir modal de edição
+    setTimeout(() => {
+        abrirModalEdicao(id);
+    }, 300);
+}
+
+// Função para alterar status da requisição
+async function alterarStatus(id, novoStatus) {
+    console.log(`Alterando status da requisição ${id} para: ${novoStatus}`);
+    
+    try {
+        const response = await fetch(`/requisicoes/alterar-status/${id}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'status': novoStatus
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            // Atualizar o card visualmente
+            atualizarCardStatus(id, novoStatus);
+            mostrarNotificacao('Sucesso!', data.message, 'success');
+        } else {
+            mostrarNotificacao('Erro!', data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Erro ao alterar status:', error);
+        mostrarNotificacao('Erro!', 'Erro interno: ' + error.message, 'error');
+    }
+}
+
+// Função para atualizar o visual do card após mudança de status
+function atualizarCardStatus(id, novoStatus) {
+    const card = document.querySelector(`[data-id="${id}"]`);
+    if (!card) return;
+    
+    // Remover classes de status anteriores
+    card.classList.remove('status-configurado', 'status-aprovado', 'status-reprovado');
+    
+    // Adicionar nova classe baseada no status
+    if (novoStatus === 'Configurado') {
+        card.classList.add('status-configurado');
+    } else if (novoStatus === 'Aprovado pelo CEO') {
+        card.classList.add('status-aprovado');
+    } else if (novoStatus === 'Reprovado pelo CEO') {
+        card.classList.add('status-reprovado');
+    }
+    
+    // Atualizar o badge de status
+    const badge = card.querySelector('.badge:not(.bg-secondary)');
+    if (badge) {
+        badge.textContent = novoStatus;
+        badge.className = 'badge ';
+        
+        if (novoStatus === 'Configurado') {
+            badge.classList.add('status-configurado');
+        } else if (novoStatus === 'Aprovado pelo CEO') {
+            badge.classList.add('status-aprovado');
+        } else if (novoStatus === 'Reprovado pelo CEO') {
+            badge.classList.add('status-reprovado');
+        } else {
+            badge.classList.add('bg-primary');
+        }
+    }
+}
+
+// Inicializar quando a página carregar
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Página de configurações carregada');
+    
+    // Configurar tooltips se existirem
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+{% endblock %}

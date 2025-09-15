@@ -1,0 +1,343 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .stats-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 25px;
+        text-align: center;
+        margin-bottom: 20px;
+        transition: transform 0.3s ease;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .stats-card.pendente {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+    
+    .stats-card.andamento {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+    
+    .stats-card.resolvido {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+    
+    .stats-number {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    
+    .stats-label {
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+    
+    .ticket-card {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        border-left: 4px solid #667eea;
+    }
+    
+    .ticket-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .ticket-card.pendente {
+        border-left-color: #ffc107;
+    }
+    
+    .ticket-card.andamento {
+        border-left-color: #17a2b8;
+    }
+    
+    .ticket-card.resolvido {
+        border-left-color: #28a745;
+    }
+    
+    .badge-status {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+    
+    .chart-container {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-chart-bar me-2"></i>{{ page_title }}
+            </h1>
+            <p class="text-muted mb-0">Visão geral do sistema de tickets</p>
+        </div>
+        <a href="{% url 'tickets:lista_tickets' %}" class="btn btn-primary">
+            <i class="fas fa-list me-2"></i>Ver Todos os Tickets
+        </a>
+    </div>
+
+    <!-- Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="stats-number">{{ total_tickets }}</div>
+                <div class="stats-label">Total de Tickets</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card pendente">
+                <div class="stats-number">{{ tickets_pendentes }}</div>
+                <div class="stats-label">Pendentes</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card andamento">
+                <div class="stats-number">{{ tickets_em_andamento }}</div>
+                <div class="stats-label">Em Andamento</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card resolvido">
+                <div class="stats-number">{{ tickets_resolvidos }}</div>
+                <div class="stats-label">Resolvidos</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Tickets Recentes -->
+        <div class="col-lg-8">
+            <div class="chart-container">
+                <h5 class="mb-4">
+                    <i class="fas fa-clock me-2"></i>Tickets Recentes
+                </h5>
+                
+                {% if tickets_recentes %}
+                    {% for ticket in tickets_recentes %}
+                    <div class="ticket-card {{ ticket.status|lower|cut:' ' }}">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="mb-1">
+                                    <a href="#" onclick="abrirModalDetalhes({{ ticket.id }})" class="text-decoration-none">
+                                        Ticket #{{ ticket.id }} - {{ ticket.titulo|truncatechars:50 }}
+                                    </a>
+                                </h6>
+                                <p class="text-muted mb-0 small">{{ ticket.descricao_erro|truncatechars:100 }}</p>
+                            </div>
+                            <span class="badge badge-status {{ ticket.get_status_badge_class }}">
+                                {{ ticket.status }}
+                            </span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex gap-2">
+                                <span class="badge bg-secondary">{{ ticket.setor }}</span>
+                                <span class="badge {{ ticket.get_prioridade_badge_class }}">{{ ticket.prioridade }}</span>
+                            </div>
+                            <small class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>{{ ticket.data_criacao|date:"d/m/Y H:i" }}
+                            </small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-ticket-alt fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Nenhum ticket encontrado</h5>
+                        <p class="text-muted">Não há tickets para exibir no dashboard.</p>
+                        <a href="{% url 'tickets:lista_tickets' %}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Criar Primeiro Ticket
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Resumo e Ações -->
+        <div class="col-lg-4">
+            <!-- Resumo por Status -->
+            <div class="chart-container">
+                <h5 class="mb-4">
+                    <i class="fas fa-chart-pie me-2"></i>Resumo por Status
+                </h5>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>Pendentes</span>
+                        <span class="fw-bold">{{ tickets_pendentes }}</span>
+                    </div>
+                    <div class="progress mb-3" style="height: 8px;">
+                        <div class="progress-bar bg-warning" style="width: {% if total_tickets > 0 %}{{ tickets_pendentes|floatformat:0|add:0|mul:100|div:total_tickets }}{% else %}0{% endif %}%"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>Em Andamento</span>
+                        <span class="fw-bold">{{ tickets_em_andamento }}</span>
+                    </div>
+                    <div class="progress mb-3" style="height: 8px;">
+                        <div class="progress-bar bg-info" style="width: {% if total_tickets > 0 %}{{ tickets_em_andamento|floatformat:0|add:0|mul:100|div:total_tickets }}{% else %}0{% endif %}%"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>Resolvidos</span>
+                        <span class="fw-bold">{{ tickets_resolvidos }}</span>
+                    </div>
+                    <div class="progress mb-3" style="height: 8px;">
+                        <div class="progress-bar bg-success" style="width: {% if total_tickets > 0 %}{{ tickets_resolvidos|floatformat:0|add:0|mul:100|div:total_tickets }}{% else %}0{% endif %}%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ações Rápidas -->
+            <div class="chart-container">
+                <h5 class="mb-4">
+                    <i class="fas fa-bolt me-2"></i>Ações Rápidas
+                </h5>
+                
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" onclick="abrirModalCriarTicket()">
+                        <i class="fas fa-plus me-2"></i>Novo Ticket
+                    </button>
+                    <a href="{% url 'tickets:lista_tickets' %}?status=Pendente" class="btn btn-outline-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Ver Pendentes
+                    </a>
+                    <a href="{% url 'tickets:lista_tickets' %}?status=Em Andamento" class="btn btn-outline-info">
+                        <i class="fas fa-clock me-2"></i>Ver Em Andamento
+                    </a>
+                    <a href="{% url 'tickets:lista_tickets' %}?status=Resolvido" class="btn btn-outline-success">
+                        <i class="fas fa-check me-2"></i>Ver Resolvidos
+                    </a>
+                </div>
+            </div>
+
+            <!-- Dicas -->
+            <div class="chart-container">
+                <h5 class="mb-4">
+                    <i class="fas fa-lightbulb me-2"></i>Dicas
+                </h5>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Dica:</strong> Use o sistema de tickets para reportar problemas e solicitar suporte técnico.
+                </div>
+                
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Importante:</strong> Sempre forneça uma descrição detalhada do problema para uma resolução mais rápida.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals serão carregados via AJAX -->
+<div id="modalContainer"></div>
+
+<!-- Modal de Notificação -->
+<div class="modal fade" id="notificacaoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" style="border-radius: 15px !important; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important; background: white !important; border: 1px solid #e9ecef !important;">
+            <div class="modal-body text-center p-4">
+                <div id="notificacaoIcon" class="mb-3">
+                    <i class="fas fa-check-circle fa-3x text-success"></i>
+                </div>
+                <h6 id="notificacaoTitulo" class="mb-2">Sucesso!</h6>
+                <p id="notificacaoMensagem" class="text-muted mb-3 small">Operação realizada com sucesso!</p>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Função para mostrar notificações personalizadas
+function mostrarNotificacao(titulo, mensagem, tipo = 'success') {
+    const modal = document.getElementById('notificacaoModal');
+    const icon = document.getElementById('notificacaoIcon');
+    const tituloEl = document.getElementById('notificacaoTitulo');
+    const mensagemEl = document.getElementById('notificacaoMensagem');
+    
+    // Configurar ícone e cores baseado no tipo
+    switch(tipo) {
+        case 'success':
+            icon.innerHTML = '<i class="fas fa-check-circle fa-3x text-success"></i>';
+            break;
+        case 'error':
+            icon.innerHTML = '<i class="fas fa-exclamation-circle fa-3x text-danger"></i>';
+            break;
+        case 'warning':
+            icon.innerHTML = '<i class="fas fa-exclamation-triangle fa-3x text-warning"></i>';
+            break;
+        case 'info':
+            icon.innerHTML = '<i class="fas fa-info-circle fa-3x text-info"></i>';
+            break;
+    }
+    
+    tituloEl.textContent = titulo;
+    mensagemEl.textContent = mensagem;
+    
+    // Mostrar o modal
+    const bootstrapModal = new bootstrap.Modal(modal);
+    bootstrapModal.show();
+}
+
+// Função para abrir modal de criação
+function abrirModalCriarTicket() {
+    fetch('{% url "tickets:criar_ticket" %}')
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('modalContainer').innerHTML = html;
+            const modal = new bootstrap.Modal(document.getElementById('criarTicketModal'));
+            modal.show();
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            mostrarNotificacao('Erro!', 'Erro ao carregar formulário', 'error');
+        });
+}
+
+// Função para abrir modal de detalhes
+function abrirModalDetalhes(ticketId) {
+    fetch(`{% url "tickets:detalhes_ticket" 0 %}`.replace('0', ticketId))
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('modalContainer').innerHTML = html;
+            const modal = new bootstrap.Modal(document.getElementById('detalhesTicketModal'));
+            modal.show();
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            mostrarNotificacao('Erro!', 'Erro ao carregar detalhes', 'error');
+        });
+}
+</script>
+{% endblock %}

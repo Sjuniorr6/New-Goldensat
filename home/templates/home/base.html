@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% block page_title %}Home{% endblock %} - Golden SAT{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="page-title">{% block page_header %}Home{% endblock %}</h1>
+            <p class="text-muted">{% block page_description %}Visão geral do sistema Golden SAT{% endblock %}</p>
+        </div>
+    </div>
+    
+    {% block page_content %}{% endblock %}
+</div>
+{% endblock %}

@@ -1,0 +1,360 @@
+{% load static %}
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+    <!-- Header -->
+    <div class="sidebar-header">
+        <div class="logo-container">
+            <img src="{% static 'images/logo-golden.png' %}" alt="Logo Golden SAT" class="sidebar-logo">
+            <div class="company-name">Golden SAT</div>
+            <div class="company-tagline">Sistema Integrado</div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="sidebar-nav">
+        <!-- Principal -->
+        <div class="nav-section">
+           
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="{% url 'home:home' %}" class="nav-link">
+                        <i class="fas fa-home nav-icon"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'tickets:lista_tickets' %}" class="nav-link">
+                        <i class="fas fa-ticket-alt nav-icon"></i>
+                        <span class="nav-text">Tickets</span>
+                        <span class="badge bg-danger ms-2" id="ticketsBadge">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Gestão -->
+        <div class="nav-section">
+          
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#comprasSubmenu">
+                        <i class="fas fa-shopping-cart nav-icon"></i>
+                        <span class="nav-text">Compras</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="comprasSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="{% url 'produtos:listagem_produtos' %}" class="nav-submenu-link">Cadastro de Produtos</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#estoqueSubmenu">
+                        <i class="fas fa-boxes nav-icon"></i>
+                        <span class="nav-text">Estoque</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="estoqueSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="{% url 'produtos:estoque' %}" class="nav-submenu-link">Controle de Estoque</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="{% url 'produtos:entrada_produto' %}" class="nav-submenu-link">Entrada de Produtos</a>
+                        </li>
+                       
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#comercialSubmenu">
+                        <i class="fas fa-handshake nav-icon"></i>
+                        <span class="nav-text">Comercial</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="comercialSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="{% url 'clientes:listagem_clientes' %}" class="nav-submenu-link">Cadastro de Clientes</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="{% url 'requisicoes:listagem_requisicoes' %}" class="nav-submenu-link">Criação de Requisição</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="{% url 'requisicoes:historico_requisicoes' %}" class="nav-submenu-link">Histórico de Requisições</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Histórico de Manutenção</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Configuração -->
+        <div class="nav-section">
+           
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#configuracaoSubmenu">
+                        <i class="fas fa-cog nav-icon"></i>
+                        <span class="nav-text">Configuração</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="configuracaoSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="{% url 'requisicoes:configuracao' %}" class="nav-submenu-link">Configuração</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Configurações Gerais</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Manutenção -->
+        <div class="nav-section">
+          
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#manutencaoSubmenu">
+                        <i class="fas fa-tools nav-icon"></i>
+                        <span class="nav-text">Manutenção</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="manutencaoSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Entrada/Manutenção MODAL</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Histórico de Manutenção</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Agendamentos</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Inteligência/Desenvolvimento -->
+        <div class="nav-section">
+           
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#inteligenciaSubmenu">
+                        <i class="fas fa-brain nav-icon"></i>
+                        <span class="nav-text">Int/Desenvolvimento</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="inteligenciaSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Corte</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Documentos</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Horas Extra</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Manutenção/Aprovação</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Técnico -->
+        <div class="nav-section">
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#tecnicoSubmenu">
+                        <i class="fas fa-wrench nav-icon"></i>
+                        <span class="nav-text">Técnico</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="tecnicoSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Requisição/Configuração de Equipamento</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Configurações Técnicas</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Diagnósticos</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Operacional -->
+        <div class="nav-section">
+           
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#operacionalSubmenu">
+                        <i class="fas fa-cogs nav-icon"></i>
+                        <span class="nav-text">Operacional</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="operacionalSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Consulta de Iscas</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Cadastro de Prestador</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Estoque de Antenistas</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Lista de Saída/Req</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Reativação</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Financeiro -->
+        <div class="nav-section">
+         
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#faturamentoSubmenu">
+                        <i class="fas fa-file-invoice-dollar nav-icon"></i>
+                        <span class="nav-text">Faturamento</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="faturamentoSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Faturamento de Requisição</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Faturamento de Reativação</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Faturamento de Acionamentos</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Nova Tabela</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Aprovação de Requisição/CEO</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Expedição -->
+        <div class="nav-section">
+         
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#expedicaoSubmenu">
+                        <i class="fas fa-shipping-fast nav-icon"></i>
+                        <span class="nav-text">Expedição</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="expedicaoSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Consulta de Iscas</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Saída de Requisição</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Histórico de Manutenção</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="#" class="nav-submenu-link">Histórico de Requisição</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+
+        <!-- Sistema -->
+        <div class="nav-section">
+           
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="{% url 'home:logout' %}" class="nav-link">
+                        <i class="fas fa-sign-out-alt nav-icon"></i>
+                        <span class="nav-text">Sair</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Sidebar Toggle Button -->
+<button class="sidebar-toggle" id="sidebarToggle">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<style>
+/* Estilos para badge dos tickets */
+.nav-link .badge {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* Animação para badge */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.badge.bg-danger {
+    animation: pulse 2s infinite;
+}
+</style>
+
+<script>
+// Função para atualizar badge dos tickets
+function atualizarBadgeTickets() {
+    fetch('{% url "tickets:ticket_stats_api" %}')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const stats = data.stats;
+                const ticketsBadge = document.getElementById('ticketsBadge');
+                
+                if (ticketsBadge) {
+                    // Mostrar total de tickets pendentes + em andamento
+                    const totalPendentes = stats.pendentes + stats.em_andamento;
+                    ticketsBadge.textContent = totalPendentes;
+                    // Mostrar badge apenas se houver tickets pendentes
+                    ticketsBadge.style.display = totalPendentes > 0 ? 'inline-block' : 'none';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao atualizar badge dos tickets:', error);
+        });
+}
+
+// Atualizar badge quando a página carregar
+document.addEventListener('DOMContentLoaded', function() {
+    atualizarBadgeTickets();
+    
+    // Atualizar badge a cada 30 segundos
+    setInterval(atualizarBadgeTickets, 30000);
+});
+</script>
