@@ -1,0 +1,366 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Detalhes do Usuário - Golden SAT{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/usuarios.css' %}">
+<style>
+    .detalhes-usuario-container {
+        min-height: 100vh;
+        padding-top: 4rem;
+        padding-bottom: 2rem;
+    }
+    
+    .detalhes-usuario-content {
+        position: relative;
+        z-index: 1;
+        margin-top: 2rem;
+    }
+    
+    .detalhes-usuario-header {
+        margin-bottom: 3rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid detalhes-usuario-container">
+    <!-- Header da página -->
+    <div class="row mb-4 detalhes-usuario-header">
+        <div class="col-12">
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-user me-3"></i>Detalhes do Usuário
+                        </h1>
+                        <p class="page-subtitle">Informações completas do usuário {{ usuario.get_full_name|default:usuario.username }}</p>
+                    </div>
+                    <div>
+                        <a href="{% url 'usuarios:editar_usuario' usuario.id %}" class="btn btn-warning me-2">
+                            <i class="fas fa-edit me-2"></i>Editar
+                        </a>
+                        <a href="{% url 'usuarios:listar_usuarios' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Voltar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row detalhes-usuario-content">
+        <!-- Informações principais -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user me-2"></i>Informações Pessoais
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Nome de Usuário</label>
+                            <p class="form-control-plaintext">{{ usuario.username }}</p>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Email</label>
+                            <p class="form-control-plaintext">{{ usuario.email|default:"Não informado" }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Nome Completo</label>
+                            <p class="form-control-plaintext">{{ usuario.get_full_name|default:"Não informado" }}</p>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Status no Sistema</label>
+                            <p class="form-control-plaintext">
+                                {% if usuario.is_active %}
+                                    <span class="badge bg-success">Ativo</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Inativo</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Data de Cadastro</label>
+                            <p class="form-control-plaintext">{{ usuario.date_joined|date:"d/m/Y H:i" }}</p>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Último Acesso</label>
+                            <p class="form-control-plaintext">
+                                {% if usuario.last_login %}
+                                    {{ usuario.last_login|date:"d/m/Y H:i" }}
+                                {% else %}
+                                    <span class="text-muted">Nunca acessou</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Informações do perfil -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user-cog me-2"></i>Informações do Perfil
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Setor</label>
+                            <p class="form-control-plaintext">
+                                {% if perfil.setor %}
+                                    <span class="badge bg-info">{{ perfil.setor.get_nome_display }}</span>
+                                {% else %}
+                                    <span class="text-muted">Não definido</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Cargo</label>
+                            <p class="form-control-plaintext">{{ perfil.cargo|default:"Não informado" }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Telefone</label>
+                            <p class="form-control-plaintext">{{ perfil.telefone|default:"Não informado" }}</p>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Data de Admissão</label>
+                            <p class="form-control-plaintext">
+                                {% if perfil.data_admissao %}
+                                    {{ perfil.data_admissao|date:"d/m/Y" }}
+                                {% else %}
+                                    <span class="text-muted">Não informado</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Status do Perfil</label>
+                            <p class="form-control-plaintext">
+                                {% if perfil.ativo %}
+                                    <span class="badge bg-success">Ativo</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Inativo</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Data de Criação do Perfil</label>
+                            <p class="form-control-plaintext">{{ perfil.data_criacao|date:"d/m/Y H:i" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Resumo do perfil -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Resumo do Perfil
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="profile-avatar mb-3">
+                        {% if perfil.foto and perfil.foto.name != 'usuarios/fotos/default.png' %}
+                            <img src="{{ perfil.foto.url }}" alt="{{ perfil.nome_completo }}" class="profile-img">
+                        {% else %}
+                            <div class="profile-placeholder">
+                                <i class="fas fa-user fa-3x"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <h5 class="profile-name">{{ perfil.nome_completo }}</h5>
+                    <p class="text-muted mb-2">@{{ perfil.user.username }}</p>
+                    
+                    {% if perfil.setor %}
+                        <span class="badge bg-info mb-2">{{ perfil.setor.get_nome_display }}</span>
+                    {% endif %}
+                    
+                    {% if perfil.cargo %}
+                        <p class="text-muted mb-2">{{ perfil.cargo }}</p>
+                    {% endif %}
+                    
+                    <hr>
+                    
+                    <div class="profile-info">
+                        <div class="info-item">
+                            <i class="fas fa-envelope me-2"></i>
+                            <span>{{ perfil.email|default:"Não informado" }}</span>
+                        </div>
+                        
+                        {% if perfil.telefone %}
+                        <div class="info-item">
+                            <i class="fas fa-phone me-2"></i>
+                            <span>{{ perfil.telefone }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if perfil.data_admissao %}
+                        <div class="info-item">
+                            <i class="fas fa-calendar me-2"></i>
+                            <span>Admitido em {{ perfil.data_admissao|date:"d/m/Y" }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="info-item">
+                            <i class="fas fa-clock me-2"></i>
+                            <span>Último acesso: {{ perfil.user.last_login|date:"d/m/Y H:i"|default:"Nunca" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Estatísticas -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Estatísticas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="stat-item">
+                                <h4 class="text-primary">{{ perfil.user.date_joined|timesince }}</h4>
+                                <small class="text-muted">No sistema</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-item">
+                                <h4 class="text-success">
+                                    {% if perfil.user.is_active and perfil.ativo %}
+                                        Ativo
+                                    {% else %}
+                                        Inativo
+                                    {% endif %}
+                                </h4>
+                                <small class="text-muted">Status</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ações rápidas -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-bolt me-2"></i>Ações Rápidas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'usuarios:editar_usuario' usuario.id %}" class="btn btn-warning">
+                            <i class="fas fa-edit me-2"></i>Editar Usuário
+                        </a>
+                        
+                        {% if usuario.is_active and perfil.ativo %}
+                            <button type="button" class="btn btn-danger" onclick="desativarUsuario({{ usuario.id }})">
+                                <i class="fas fa-user-times me-2"></i>Desativar Usuário
+                            </button>
+                        {% else %}
+                            <button type="button" class="btn btn-success" onclick="ativarUsuario({{ usuario.id }})">
+                                <i class="fas fa-user-check me-2"></i>Ativar Usuário
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmação -->
+<div class="modal fade" id="confirmModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Ação</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="confirmButton">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function desativarUsuario(userId) {
+    document.getElementById('confirmMessage').textContent = 'Tem certeza que deseja desativar este usuário?';
+    document.getElementById('confirmButton').className = 'btn btn-danger';
+    document.getElementById('confirmButton').textContent = 'Desativar';
+    document.getElementById('confirmButton').onclick = function() {
+        fetch(`/usuarios/excluir/${userId}/`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Erro: ' + data.message);
+            }
+        });
+    };
+    new bootstrap.Modal(document.getElementById('confirmModal')).show();
+}
+
+function ativarUsuario(userId) {
+    document.getElementById('confirmMessage').textContent = 'Tem certeza que deseja ativar este usuário?';
+    document.getElementById('confirmButton').className = 'btn btn-success';
+    document.getElementById('confirmButton').textContent = 'Ativar';
+    document.getElementById('confirmButton').onclick = function() {
+        fetch(`/usuarios/ativar/${userId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Erro: ' + data.message);
+            }
+        });
+    };
+    new bootstrap.Modal(document.getElementById('confirmModal')).show();
+}
+</script>
+{% endblock %}

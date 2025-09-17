@@ -14,6 +14,7 @@ urlpatterns = [
     path('aprovar/<int:pk>/', views.AprovarRequisicaoView.as_view(), name='aprovar_requisicao'),
     path('reprovar/<int:pk>/', views.ReprovarRequisicaoView.as_view(), name='reprovar_requisicao'),
     path('historico/', views.HistoricoRequisicoesView.as_view(), name='historico_requisicoes'),
+    path('historico-expedicao/', views.HistoricoExpedicaoView.as_view(), name='historico_expedicao'),
     path('configuracao/', views.ConfiguracaoView.as_view(), name='configuracao'),
     path('alterar-status/<int:pk>/', views.AlterarStatusView.as_view(), name='alterar_status'),
 ]

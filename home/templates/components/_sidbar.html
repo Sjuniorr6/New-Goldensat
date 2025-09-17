@@ -8,6 +8,10 @@
             <div class="company-name">Golden SAT</div>
             <div class="company-tagline">Sistema Integrado</div>
         </div>
+        <!-- Botão de fechar para mobile -->
+        <button class="sidebar-close-btn d-md-none" id="sidebarCloseBtn">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
 
     <!-- Navigation -->
@@ -104,7 +108,31 @@
                             <a href="{% url 'requisicoes:configuracao' %}" class="nav-submenu-link">Configuração</a>
                         </li>
                         <li class="nav-submenu-item">
-                            <a href="#" class="nav-submenu-link">Configurações Gerais</a>
+                            <a href="{% url 'requisicoes:historico_expedicao' %}" class="nav-submenu-link">Expedição</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="nav-section">
+           
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#usuariosSubmenu">
+                        <i class="fas fa-users nav-icon"></i>
+                        <span class="nav-text">Usuários</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="usuariosSubmenu">
+                        <li class="nav-submenu-item">
+                            <a href="{% url 'usuarios:listar_usuarios' %}" class="nav-submenu-link">Usuários</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="{% url 'usuarios:listar_setores' %}" class="nav-submenu-link">Setores</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="{% url 'usuarios:listar_permissoes' %}" class="nav-submenu-link">Permissões</a>
                         </li>
                     </ul>
                 </li>

@@ -18,7 +18,7 @@ class Command(BaseCommand):
         dry_run = options['dry_run']
         
         if dry_run:
-            self.stdout.write(self.style.WARNING('🔍 MODO DRY-RUN - Nenhuma alteração será feita'))
+            self.stdout.write(self.style.WARNING('MODO DRY-RUN - Nenhuma alteração será feita'))
         
         try:
             with transaction.atomic():
@@ -43,7 +43,7 @@ class Command(BaseCommand):
 
     def migrar_entradas_produtos(self, dry_run=False):
         """Migra entradas de produtos existentes para movimentações de estoque"""
-        self.stdout.write('📦 Migrando entradas de produtos...')
+        self.stdout.write('Migrando entradas de produtos...')
         
         entradas = EntradaProduto.objects.all()
         total_entradas = entradas.count()

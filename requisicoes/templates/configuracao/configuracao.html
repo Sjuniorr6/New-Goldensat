@@ -8,106 +8,187 @@
 <style>
 /* Gradientes para os cards baseados no status */
 .card.status-configurado {
-    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
-    border: 2px solid #ff9a9e;
+    background: linear-gradient(135deg, #ffffff 0%, #f0f8ff 100%);
+    border: 2px solid #d4af37;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.15);
 }
 
 .card.status-aprovado {
-    background: linear-gradient(135deg, #ffffff 0%, #a8edea 50%, #4ade80 100%);
-    border: 2px solid #4ade80;
+    background: linear-gradient(135deg, #ffffff 0%, #f0fff0 100%);
+    border: 2px solid #28a745;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15);
 }
 
 .card.status-reprovado {
-    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #ffffff 100%);
-    border: 2px solid #ff9a9e;
+    background: linear-gradient(135deg, #ffffff 0%, #fff5f5 100%);
+    border: 2px solid #dc3545;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.15);
 }
 
 /* Botões de status */
 .btn-configurado {
-    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-    border: 1px solid #ff9a9e;
-    color: #333;
+    background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+    border: 2px solid #d4af37;
+    color: white;
     font-weight: 600;
     transition: all 0.3s ease;
     min-width: 120px;
     padding: 8px 12px;
     font-size: 0.9rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(212, 175, 55, 0.3);
 }
 
 .btn-configurado:hover {
-    background: linear-gradient(135deg, #ff8a8e 0%, #febfef 100%);
-    border-color: #ff8a8e;
-    color: #333;
+    background: linear-gradient(135deg, #e6c547 0%, #d4af37 100%);
+    border-color: #d4af37;
+    color: white;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(255, 154, 158, 0.3);
+    box-shadow: 0 6px 15px rgba(212, 175, 55, 0.4);
 }
 
 .btn-aprovado {
-    background: linear-gradient(135deg, #ffffff 0%, #a8edea 50%, #4ade80 100%);
-    border: 1px solid #4ade80;
-    color: #333;
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+    border: 2px solid #28a745;
+    color: white;
     font-weight: 600;
     transition: all 0.3s ease;
     min-width: 120px;
     padding: 8px 12px;
     font-size: 0.9rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
 }
 
 .btn-aprovado:hover {
-    background: linear-gradient(135deg, #f0fdf4 0%, #98edea 50%, #22c55e 100%);
-    border-color: #22c55e;
-    color: #333;
+    background: linear-gradient(135deg, #34ce57 0%, #28a745 100%);
+    border-color: #28a745;
+    color: white;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(74, 222, 128, 0.3);
+    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
 }
 
 .btn-reprovado {
-    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
-    border: 1px solid #ff9a9e;
-    color: #333;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    border: 2px solid #dc3545;
+    color: white;
     font-weight: 600;
     transition: all 0.3s ease;
     min-width: 120px;
     padding: 8px 12px;
     font-size: 0.9rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
 }
 
 .btn-reprovado:hover {
-    background: linear-gradient(135deg, #ff8a8e 0%, #fac0b4 100%);
-    border-color: #ff8a8e;
-    color: #333;
+    background: linear-gradient(135deg, #e74c3c 0%, #dc3545 100%);
+    border-color: #dc3545;
+    color: white;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(255, 154, 158, 0.3);
+    box-shadow: 0 6px 15px rgba(220, 53, 69, 0.4);
 }
 
 /* Badge de status com cores correspondentes */
 .badge.status-configurado {
-    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-    color: #333;
+    background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+    color: white;
     font-weight: 600;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(212, 175, 55, 0.3);
 }
 
 .badge.status-aprovado {
-    background: linear-gradient(135deg, #ffffff 0%, #a8edea 50%, #4ade80 100%);
-    color: #333;
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+    color: white;
     font-weight: 600;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
 }
 
 .badge.status-reprovado {
-    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
-    color: #333;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
     font-weight: 600;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
 }
 
 /* Animação suave para mudança de status */
 .card {
     transition: all 0.5s ease;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    min-height: 450px;
 }
 
 /* Efeito hover nos cards */
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15);
+    background: linear-gradient(135deg, #ffffff 0%, #f0f8ff 100%);
+}
+
+/* Headers e footers dos cards */
+.card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 12px 12px 0 0 !important;
+    padding: 0.75rem 1rem;
+}
+
+.card-footer {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-top: 1px solid #dee2e6;
+    border-radius: 0 0 12px 12px !important;
+    padding: 0.5rem 0.75rem;
+}
+
+/* Conteúdo dos cards */
+.card-body {
+    padding: 1rem;
+    background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+}
+
+.card-body .card-title {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.card-body small {
+    display: block;
+    margin-bottom: 0.3rem;
+    line-height: 1.4;
+    font-size: 0.8rem;
+    color: #5a6c7d;
+    font-weight: 500;
+}
+
+.card-body .text-success {
+    color: #28a745 !important;
+    font-weight: 700;
+    background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(40, 167, 69, 0.05) 100%);
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    border-left: 3px solid #28a745;
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.1);
+    margin-top: 0.5rem;
+}
+
+/* Ícones dos campos */
+.card-body .fas {
+    color: #d4af37;
+    width: 16px;
+    text-align: center;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 /* Responsividade dos botões de status */
@@ -627,8 +708,8 @@
                                 <button type="button" class="btn btn-configurado" onclick="alterarStatus({{ requisicao.id }}, 'Configurado')" title="Marcar como Configurado">
                                     <i class="fas fa-cog me-1"></i>Configurado
                                 </button>
-                                <button type="button" class="btn btn-aprovado" onclick="alterarStatus({{ requisicao.id }}, 'Aprovado pelo CEO')" title="Aprovar">
-                                    <i class="fas fa-check me-1"></i>Aprovado
+                                <button type="button" class="btn btn-aprovado" onclick="alterarStatus({{ requisicao.id }}, 'Aprovado pelo CEO')" title="Aprovar e Expedir">
+                                    <i class="fas fa-shipping-fast me-1"></i>Expedir
                                 </button>
                                 <button type="button" class="btn btn-reprovado" onclick="alterarStatus({{ requisicao.id }}, 'Reprovado pelo CEO')" title="Reprovar">
                                     <i class="fas fa-times me-1"></i>Reprovado
@@ -964,9 +1045,23 @@ async function alterarStatus(id, novoStatus) {
         const data = await response.json();
         
         if (data.success) {
-            // Atualizar o card visualmente
-            atualizarCardStatus(id, novoStatus);
-            mostrarNotificacao('Sucesso!', data.message, 'success');
+            // Se o status for "Expedido", remover o card da tela
+            if (novoStatus === 'Expedido') {
+                const card = document.querySelector(`[data-id="${id}"]`);
+                if (card) {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.transform = 'scale(0.8)';
+                    card.style.opacity = '0';
+                    setTimeout(() => {
+                        card.remove();
+                    }, 500);
+                }
+                mostrarNotificacao('Sucesso!', 'Requisição expedida com sucesso!', 'success');
+            } else {
+                // Atualizar o card visualmente
+                atualizarCardStatus(id, novoStatus);
+                mostrarNotificacao('Sucesso!', data.message, 'success');
+            }
         } else {
             mostrarNotificacao('Erro!', data.message, 'error');
         }
@@ -987,7 +1082,7 @@ function atualizarCardStatus(id, novoStatus) {
     // Adicionar nova classe baseada no status
     if (novoStatus === 'Configurado') {
         card.classList.add('status-configurado');
-    } else if (novoStatus === 'Aprovado pelo CEO') {
+    } else if (novoStatus === 'Aprovado pelo CEO' || novoStatus === 'Expedido') {
         card.classList.add('status-aprovado');
     } else if (novoStatus === 'Reprovado pelo CEO') {
         card.classList.add('status-reprovado');
@@ -1001,7 +1096,7 @@ function atualizarCardStatus(id, novoStatus) {
         
         if (novoStatus === 'Configurado') {
             badge.classList.add('status-configurado');
-        } else if (novoStatus === 'Aprovado pelo CEO') {
+        } else if (novoStatus === 'Aprovado pelo CEO' || novoStatus === 'Expedido') {
             badge.classList.add('status-aprovado');
         } else if (novoStatus === 'Reprovado pelo CEO') {
             badge.classList.add('status-reprovado');

@@ -26,9 +26,9 @@ def controlar_estoque_requisicao(sender, instance, created, **kwargs):
                             referencia=f'REQ_{instance.id}',
                             usuario=None  # Não temos usuário associado às requisições
                         )
-                        produtos_logger.info(f'✅ Saída de estoque registrada: {quantidade} unidades do produto {instance.tipo_produto.nome_produto} para requisição {instance.id}')
+                        produtos_logger.info(f'Saída de estoque registrada: {quantidade} unidades do produto {instance.tipo_produto.nome_produto} para requisição {instance.id}')
                 except (ValueError, TypeError) as e:
-                    produtos_logger.warning(f'⚠️ Erro ao processar quantidade da requisição {instance.id}: {str(e)}')
+                    produtos_logger.warning(f'Erro ao processar quantidade da requisição {instance.id}: {str(e)}')
         else:
             # Requisição atualizada - verificar mudança de status
             if hasattr(instance, '_previous_status'):
@@ -52,9 +52,9 @@ def controlar_estoque_requisicao(sender, instance, created, **kwargs):
                                     referencia=f'REQ_{instance.id}_RESTAURAR',
                                     usuario=None
                                 )
-                                produtos_logger.info(f'✅ Estoque restaurado: {quantidade} unidades do produto {instance.tipo_produto.nome_produto} - requisição {instance.id} {status_atual}')
+                                produtos_logger.info(f'Estoque restaurado: {quantidade} unidades do produto {instance.tipo_produto.nome_produto} - requisição {instance.id} {status_atual}')
                         except (ValueError, TypeError) as e:
-                            produtos_logger.warning(f'⚠️ Erro ao restaurar estoque da requisição {instance.id}: {str(e)}')
+                            produtos_logger.warning(f'Erro ao restaurar estoque da requisição {instance.id}: {str(e)}')
                 
                 # Se mudou de um status que não consome para um que consome
                 elif (status_anterior in ['Reprovado pelo CEO', 'Cancelado'] and 
@@ -73,12 +73,12 @@ def controlar_estoque_requisicao(sender, instance, created, **kwargs):
                                     referencia=f'REQ_{instance.id}_CONSUMIR',
                                     usuario=None
                                 )
-                                produtos_logger.info(f'✅ Estoque consumido: {quantidade} unidades do produto {instance.tipo_produto.nome_produto} - requisição {instance.id} {status_atual}')
+                                produtos_logger.info(f'Estoque consumido: {quantidade} unidades do produto {instance.tipo_produto.nome_produto} - requisição {instance.id} {status_atual}')
                         except (ValueError, TypeError) as e:
-                            produtos_logger.warning(f'⚠️ Erro ao consumir estoque da requisição {instance.id}: {str(e)}')
+                            produtos_logger.warning(f'Erro ao consumir estoque da requisição {instance.id}: {str(e)}')
     
     except Exception as e:
-        produtos_logger.error(f'❌ Erro no controle de estoque para requisição {instance.id}: {str(e)}')
+        produtos_logger.error(f'Erro no controle de estoque para requisição {instance.id}: {str(e)}')
         produtos_logger.error(traceback.format_exc())
 
 @receiver(post_delete, sender=Requisicoes)
@@ -99,10 +99,10 @@ def restaurar_estoque_requisicao_excluida(sender, instance, **kwargs):
                         referencia=f'REQ_{instance.id}_EXCLUIDA',
                         usuario=None
                     )
-                    produtos_logger.info(f'✅ Estoque restaurado por exclusão: {quantidade} unidades do produto {instance.tipo_produto.nome_produto} - requisição {instance.id}')
+                    produtos_logger.info(f'Estoque restaurado por exclusão: {quantidade} unidades do produto {instance.tipo_produto.nome_produto} - requisição {instance.id}')
             except (ValueError, TypeError) as e:
-                produtos_logger.warning(f'⚠️ Erro ao restaurar estoque da requisição excluída {instance.id}: {str(e)}')
+                produtos_logger.warning(f'Erro ao restaurar estoque da requisição excluída {instance.id}: {str(e)}')
     
     except Exception as e:
-        produtos_logger.error(f'❌ Erro ao restaurar estoque da requisição excluída {instance.id}: {str(e)}')
+        produtos_logger.error(f'Erro ao restaurar estoque da requisição excluída {instance.id}: {str(e)}')
         produtos_logger.error(traceback.format_exc())

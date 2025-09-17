@@ -10,6 +10,8 @@ class Requisicoes(models.Model):
         ('Pendente', 'Pendente'),
         ('Configurado', 'Configurado'),
         ('Expedido', 'Expedido'),
+        ('Aprovado pelo CEO', 'Aprovado pelo CEO'),
+        ('Reprovado pelo CEO', 'Reprovado pelo CEO'),
     ]
 
     # Definição das escolhas de TP (tempo de processamento)

@@ -1,0 +1,377 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Histórico de Expedição - Golden SAT{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/requisicoes.css' %}">
+<style>
+    .expedicao-header {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        color: #333;
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e9ecef;
+    }
+    
+    .expedicao-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .expedicao-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin: 0.5rem 0 0 0;
+    }
+    
+    .stats-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+    
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stats-label {
+        font-size: 1rem;
+        color: #495057;
+        font-weight: 600;
+    }
+    
+    .expedicao-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        min-height: 450px;
+        transition: all 0.3s ease;
+    }
+    
+    .expedicao-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+    
+    .expedicao-card-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        color: #333;
+        padding: 1rem;
+        border-radius: 12px 12px 0 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .expedicao-card-title {
+        color: #333;
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin: 0;
+    }
+    
+    .expedicao-card-body {
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+    }
+    
+    .expedicao-info {
+        margin-bottom: 1rem;
+    }
+    
+    .expedicao-info strong {
+        color: #333;
+        font-weight: 600;
+    }
+    
+    .expedicao-info small {
+        color: #6c757d;
+        font-weight: 500;
+    }
+    
+    .expedicao-icon {
+        color: #6c757d;
+        font-weight: 600;
+    }
+    
+    .badge-expedido {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        color: #333;
+        font-weight: 600;
+        border-radius: 6px;
+        border: 1px solid #e9ecef;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+    
+    .filtros-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    
+    .btn-expedicao {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 1px solid #e9ecef;
+        color: #333;
+        font-weight: 600;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .btn-expedicao:hover {
+        background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+        border-color: #dee2e6;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        color: #333;
+    }
+    
+    .btn-outline-expedicao {
+        border: 1px solid #e9ecef;
+        color: #6c757d;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-expedicao:hover {
+        background: #f8f9fa;
+        border-color: #dee2e6;
+        color: #333;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .no-results {
+        text-align: center;
+        padding: 3rem;
+        color: #6c757d;
+    }
+    
+    .no-results i {
+        font-size: 4rem;
+        color: #6c757d;
+        margin-bottom: 1rem;
+    }
+    
+    .no-results h3 {
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+    
+    .no-results p {
+        color: #6c757d;
+        margin: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="expedicao-header">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="expedicao-title">
+                    <i class="fas fa-shipping-fast me-3"></i>Histórico de Expedição
+                </h1>
+                <p class="expedicao-subtitle">
+                    Acompanhe todas as requisições que foram expedidas
+                </p>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="stats-card">
+                    <div class="stats-number">{{ total_expedidas }}</div>
+                    <div class="stats-label">Requisições Expedidas</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filtros-card">
+        <h5 class="mb-3">
+            <i class="fas fa-filter me-2"></i>Filtros de Busca
+        </h5>
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label for="search" class="form-label">Buscar</label>
+                <input type="text" class="form-control" id="search" name="search" 
+                       value="{{ request.GET.search }}" placeholder="ID ou nome do cliente">
+            </div>
+            <div class="col-md-3">
+                <label for="data_inicio" class="form-label">Data Início</label>
+                <input type="date" class="form-control" id="data_inicio" name="data_inicio" 
+                       value="{{ request.GET.data_inicio }}">
+            </div>
+            <div class="col-md-3">
+                <label for="data_fim" class="form-label">Data Fim</label>
+                <input type="date" class="form-control" id="data_fim" name="data_fim" 
+                       value="{{ request.GET.data_fim }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">&nbsp;</label>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-expedicao">
+                        <i class="fas fa-search me-1"></i>Filtrar
+                    </button>
+                    {% if filtros_ativos %}
+                        <a href="{% url 'requisicoes:historico_expedicao' %}" class="btn btn-outline-expedicao">
+                            <i class="fas fa-times me-1"></i>Limpar
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Lista de Requisições Expedidas -->
+    {% if requisicoes %}
+        <div class="row">
+            {% for requisicao in requisicoes %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card expedicao-card">
+                        <div class="expedicao-card-header">
+                            <h6 class="expedicao-card-title">
+                                <i class="fas fa-shipping-fast me-2"></i>
+                                Requisição #{{ requisicao.id }}
+                            </h6>
+                        </div>
+                        <div class="expedicao-card-body">
+                            <div class="expedicao-info">
+                                <strong><i class="fas fa-user expedicao-icon me-2"></i>Cliente:</strong><br>
+                                <small>{{ requisicao.nome.nome }}</small>
+                            </div>
+                            
+                            <div class="expedicao-info">
+                                <strong><i class="fas fa-box expedicao-icon me-2"></i>Produto:</strong><br>
+                                <small>{{ requisicao.tipo_produto.descricao }}</small>
+                            </div>
+                            
+                            <div class="expedicao-info">
+                                <strong><i class="fas fa-hashtag expedicao-icon me-2"></i>Quantidade:</strong><br>
+                                <small>{{ requisicao.quantidade }} unidades</small>
+                            </div>
+                            
+                            <div class="expedicao-info">
+                                <strong><i class="fas fa-calendar expedicao-icon me-2"></i>Data de Expedição:</strong><br>
+                                <small>{{ requisicao.data|date:"d/m/Y H:i" }}</small>
+                            </div>
+                            
+                            <div class="expedicao-info">
+                                <strong><i class="fas fa-info-circle expedicao-icon me-2"></i>Status:</strong><br>
+                                <span class="badge-expedido">
+                                    <i class="fas fa-check me-1"></i>Expedido
+                                </span>
+                            </div>
+                            
+                            {% if requisicao.observacoes %}
+                                <div class="expedicao-info">
+                                    <strong><i class="fas fa-sticky-note expedicao-icon me-2"></i>Observações:</strong><br>
+                                    <small>{{ requisicao.observacoes|truncatechars:100 }}</small>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Paginação -->
+        {% if is_paginated %}
+            <nav aria-label="Paginação do histórico de expedição">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.data_inicio %}&data_inicio={{ request.GET.data_inicio }}{% endif %}{% if request.GET.data_fim %}&data_fim={{ request.GET.data_fim }}{% endif %}">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.data_inicio %}&data_inicio={{ request.GET.data_inicio }}{% endif %}{% if request.GET.data_fim %}&data_fim={{ request.GET.data_fim }}{% endif %}">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    <li class="page-item active">
+                        <span class="page-link">
+                            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                        </span>
+                    </li>
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.data_inicio %}&data_inicio={{ request.GET.data_inicio }}{% endif %}{% if request.GET.data_fim %}&data_fim={{ request.GET.data_fim }}{% endif %}">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.data_inicio %}&data_inicio={{ request.GET.data_inicio }}{% endif %}{% if request.GET.data_fim %}&data_fim={{ request.GET.data_fim }}{% endif %}">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="no-results">
+            <i class="fas fa-shipping-fast"></i>
+            <h3>Nenhuma requisição expedida encontrada</h3>
+            <p>Não há requisições com status "Expedido" no momento.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animação dos cards
+    const cards = document.querySelectorAll('.expedicao-card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.5s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+    
+    // Animação do header
+    const header = document.querySelector('.expedicao-header');
+    header.style.opacity = '0';
+    header.style.transform = 'translateY(-20px)';
+    
+    setTimeout(() => {
+        header.style.transition = 'all 0.8s ease';
+        header.style.opacity = '1';
+        header.style.transform = 'translateY(0)';
+    }, 200);
+});
+</script>
+{% endblock %}

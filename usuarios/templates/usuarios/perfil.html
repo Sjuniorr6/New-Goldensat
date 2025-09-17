@@ -1,0 +1,277 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Meu Perfil - Golden SAT{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/usuarios.css' %}">
+<style>
+    .perfil-container {
+        min-height: 100vh;
+        padding-top: 4rem;
+        padding-bottom: 2rem;
+    }
+    
+    .perfil-content {
+        position: relative;
+        z-index: 1;
+        margin-top: 2rem;
+    }
+    
+    .perfil-header {
+        margin-bottom: 3rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid perfil-container">
+    <!-- Header da página -->
+    <div class="row mb-4 perfil-header">
+        <div class="col-12">
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-user me-3"></i>Meu Perfil
+                        </h1>
+                        <p class="page-subtitle">Gerencie suas informações pessoais</p>
+                    </div>
+                    <div>
+                        <a href="{% url 'usuarios:listar_usuarios' %}" class="btn btn-outline-secondary me-2">
+                            <i class="fas fa-users me-2"></i>Gerenciar Usuários
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row perfil-content">
+        <!-- Informações do perfil -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user-edit me-2"></i>Informações Pessoais
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form_perfil.setor.id_for_label }}" class="form-label">Setor</label>
+                                {{ form_perfil.setor }}
+                                {% if form_perfil.setor.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form_perfil.setor.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form_perfil.cargo.id_for_label }}" class="form-label">Cargo</label>
+                                {{ form_perfil.cargo }}
+                                {% if form_perfil.cargo.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form_perfil.cargo.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form_perfil.telefone.id_for_label }}" class="form-label">Telefone</label>
+                                {{ form_perfil.telefone }}
+                                {% if form_perfil.telefone.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form_perfil.telefone.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form_perfil.data_admissao.id_for_label }}" class="form-label">Data de Admissão</label>
+                                {{ form_perfil.data_admissao }}
+                                {% if form_perfil.data_admissao.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form_perfil.data_admissao.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form_perfil.foto.id_for_label }}" class="form-label">Foto</label>
+                                {{ form_perfil.foto }}
+                                {% if form_perfil.foto.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form_perfil.foto.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Formatos aceitos: JPG, JPEG, PNG. Tamanho máximo: 2MB</div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Salvar Alterações
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Resumo do perfil -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Resumo do Perfil
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="profile-avatar mb-3">
+                        {% if perfil.foto and perfil.foto.name != 'usuarios/fotos/default.png' %}
+                            <img src="{{ perfil.foto.url }}" alt="{{ perfil.nome_completo }}" class="profile-img">
+                        {% else %}
+                            <div class="profile-placeholder">
+                                <i class="fas fa-user fa-3x"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <h5 class="profile-name">{{ perfil.nome_completo }}</h5>
+                    <p class="text-muted mb-2">@{{ perfil.user.username }}</p>
+                    
+                    {% if perfil.setor %}
+                        <span class="badge bg-info mb-2">{{ perfil.setor.get_nome_display }}</span>
+                    {% endif %}
+                    
+                    {% if perfil.cargo %}
+                        <p class="text-muted mb-2">{{ perfil.cargo }}</p>
+                    {% endif %}
+                    
+                    <hr>
+                    
+                    <div class="profile-info">
+                        <div class="info-item">
+                            <i class="fas fa-envelope me-2"></i>
+                            <span>{{ perfil.email|default:"Não informado" }}</span>
+                        </div>
+                        
+                        {% if perfil.telefone %}
+                        <div class="info-item">
+                            <i class="fas fa-phone me-2"></i>
+                            <span>{{ perfil.telefone }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if perfil.data_admissao %}
+                        <div class="info-item">
+                            <i class="fas fa-calendar me-2"></i>
+                            <span>Admitido em {{ perfil.data_admissao|date:"d/m/Y" }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="info-item">
+                            <i class="fas fa-clock me-2"></i>
+                            <span>Último acesso: {{ perfil.user.last_login|date:"d/m/Y H:i"|default:"Nunca" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Estatísticas -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Estatísticas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="stat-item">
+                                <h4 class="text-primary">{{ perfil.user.date_joined|timesince }}</h4>
+                                <small class="text-muted">No sistema</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-item">
+                                <h4 class="text-success">
+                                    {% if perfil.user.is_active and perfil.ativo %}
+                                        Ativo
+                                    {% else %}
+                                        Inativo
+                                    {% endif %}
+                                </h4>
+                                <small class="text-muted">Status</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ações do perfil -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-cog me-2"></i>Ações
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'usuarios:alterar_senha' %}" class="btn btn-warning">
+                            <i class="fas fa-key me-2"></i>Alterar Senha
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Preview da imagem
+document.getElementById('{{ form_perfil.foto.id_for_label }}').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // Atualizar a imagem do perfil
+            const profileImg = document.querySelector('.profile-img');
+            if (profileImg) {
+                profileImg.src = e.target.result;
+            } else {
+                // Se não há imagem, criar uma
+                const placeholder = document.querySelector('.profile-placeholder');
+                if (placeholder) {
+                    placeholder.innerHTML = `<img src="${e.target.result}" class="profile-img" alt="Preview">`;
+                }
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+{% endblock %}

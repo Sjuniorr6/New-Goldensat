@@ -20,6 +20,168 @@
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
     
     {% block extra_css %}{% endblock %}
+    
+    <style>
+        /* Avatar pequeno para a barra superior */
+        .user-avatar-small {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+        }
+
+        /* ===== BUSCA GLOBAL - BARRA SUPERIOR ===== */
+        .search-bar {
+            position: relative;
+        }
+
+        .search-bar .search-results-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid #d4af37;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+            z-index: 1050;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 5px;
+        }
+
+        .search-bar .search-results-content {
+            padding: 1rem;
+        }
+
+        .search-bar .search-result-item {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f8ff 100%);
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .search-bar .search-result-item:hover {
+            background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+            text-decoration: none;
+        }
+
+        .search-bar .search-result-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .search-bar .search-result-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .search-bar .search-result-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .search-bar .search-result-icon.clientes {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .search-bar .search-result-icon.produtos {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+        }
+
+        .search-bar .search-result-icon.requisicoes {
+            background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+            color: white;
+        }
+
+        .search-bar .search-result-icon.usuarios {
+            background: linear-gradient(135deg, #6f42c1 0%, #5a2d91 100%);
+            color: white;
+        }
+
+        .search-bar .search-result-icon.setores {
+            background: linear-gradient(135deg, #fd7e14 0%, #e55a00 100%);
+            color: white;
+        }
+
+        .search-bar .search-result-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .search-bar .search-result-subtitle {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        .search-bar .search-result-details {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 0.25rem;
+        }
+
+        .search-bar .search-no-results {
+            text-align: center;
+            padding: 1.5rem;
+            color: #6c757d;
+        }
+
+        .search-bar .search-no-results i {
+            font-size: 2rem;
+            color: #d4af37;
+            margin-bottom: 0.5rem;
+        }
+
+        .search-bar .search-loading {
+            text-align: center;
+            padding: 1rem;
+            color: #6c757d;
+        }
+
+        .search-bar .search-loading i {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .search-bar .search-result-item:hover .search-result-icon {
+            transform: scale(1.1);
+        }
+
+        .search-bar .search-result-item:hover .search-result-title,
+        .search-bar .search-result-item:hover .search-result-subtitle,
+        .search-bar .search-result-item:hover .search-result-details {
+            color: white;
+        }
+    </style>
 </head>
 <body>
     <!-- Loading Screen -->
@@ -52,28 +214,49 @@
                 <div class="row align-items-center">
                     <div class="col-12">
                         <div class="d-flex justify-content-between align-items-center">
-                            <!-- Search Bar -->
-                            <div class="search-bar">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Pesquisar no sistema...">
-                                    <button class="btn btn-outline-secondary" type="button">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            
                             <!-- User Profile -->
                             <div class="dropdown">
                                 <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
-                                    <img src="https://via.placeholder.com/32x32" alt="User" class="rounded-circle me-2" width="32" height="32">
-                                    <span>Admin</span>
+                                    {% if user.is_authenticated %}
+                                        {% if user.perfil.foto and user.perfil.foto.url %}
+                                            <img src="{{ user.perfil.foto.url }}" alt="{{ user.get_full_name|default:user.username }}" class="rounded-circle me-2" width="32" height="32" style="object-fit: cover;">
+                                        {% else %}
+                                            <div class="user-avatar-small me-2">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                        {% endif %}
+                                        <span>{{ user.get_full_name|default:user.username }}</span>
+                                    {% else %}
+                                        <img src="https://via.placeholder.com/32x32" alt="User" class="rounded-circle me-2" width="32" height="32">
+                                        <span>Usuário</span>
+                                    {% endif %}
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Perfil</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Configurações</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Sair</a></li>
+                                <ul class="dropdown-menu dropdown-menu-start dropdown-menu-responsive">
+                                    {% if user.is_authenticated %}
+                                        <li><a class="dropdown-item" href="{% url 'usuarios:perfil' %}"><i class="fas fa-user me-2"></i>Meu Perfil</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'usuarios:alterar_senha' %}"><i class="fas fa-key me-2"></i>Alterar Senha</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="{% url 'usuarios:listar_usuarios' %}"><i class="fas fa-users me-2"></i>Gerenciar Usuários</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                    {% endif %}
+                                    <li><a class="dropdown-item" href="{% url 'home:logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Sair</a></li>
                                 </ul>
+                            </div>
+                            
+                            <!-- Search Bar -->
+                            <div class="search-bar">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="globalSearch" placeholder="Pesquisar no sistema..." autocomplete="off">
+                                    <button class="btn btn-outline-secondary" type="button" id="searchBtn">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                                <!-- Dropdown de resultados -->
+                                <div class="search-results-dropdown" id="searchResults" style="display: none;">
+                                    <div class="search-results-content" id="searchResultsContent">
+                                        <!-- Resultados serão inseridos aqui via JavaScript -->
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -160,5 +343,228 @@
     </script>
     
     {% block extra_js %}{% endblock %}
+    
+    <!-- JavaScript para Busca Global -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Elementos da barra superior
+        const searchInput = document.getElementById('globalSearch');
+        const searchResults = document.getElementById('searchResults');
+        const searchResultsContent = document.getElementById('searchResultsContent');
+        const searchBtn = document.getElementById('searchBtn');
+        
+        // Elementos do sidebar
+        const sidebarSearchInput = document.getElementById('sidebarGlobalSearch');
+        const sidebarSearchResults = document.getElementById('sidebarSearchResults');
+        const sidebarSearchResultsContent = document.getElementById('sidebarSearchResultsContent');
+        const sidebarSearchBtn = document.getElementById('sidebarSearchBtn');
+        
+        let searchTimeout;
+        
+        // Função para fazer a busca
+        function performSearch(query, isSidebar = false) {
+            if (query.length < 2) {
+                hideResults(isSidebar);
+                return;
+            }
+            
+            showLoading(isSidebar);
+            
+            fetch(`{% url 'home:busca_global' %}?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayResults(data.resultados, query, isSidebar);
+                    } else {
+                        showNoResults(data.message, isSidebar);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro na busca:', error);
+                    showNoResults('Erro ao realizar a busca', isSidebar);
+                });
+        }
+        
+        // Função para exibir resultados
+        function displayResults(resultados, query, isSidebar = false) {
+            let html = '';
+            let totalResults = 0;
+            
+            // Processar cada categoria de resultados
+            const categorias = [
+                { key: 'clientes', icon: 'fas fa-users', label: 'Clientes' },
+                { key: 'produtos', icon: 'fas fa-box', label: 'Produtos' },
+                { key: 'requisicoes', icon: 'fas fa-file-alt', label: 'Requisições' },
+                { key: 'usuarios', icon: 'fas fa-user', label: 'Usuários' },
+                { key: 'setores', icon: 'fas fa-building', label: 'Setores' }
+            ];
+            
+            categorias.forEach(categoria => {
+                const items = resultados[categoria.key] || [];
+                if (items.length > 0) {
+                    totalResults += items.length;
+                    
+                    items.forEach(item => {
+                        html += `
+                            <a href="${item.url}" class="search-result-item">
+                                <div class="search-result-header">
+                                    <div class="search-result-icon ${categoria.key}">
+                                        <i class="${categoria.icon}"></i>
+                                    </div>
+                                    <div>
+                                        <div class="search-result-title">${item.nome}</div>
+                                        <div class="search-result-subtitle">${categoria.label}</div>
+                                    </div>
+                                </div>
+                                ${item.cliente ? `<div class="search-result-details">Cliente: ${item.cliente}</div>` : ''}
+                                ${item.produto ? `<div class="search-result-details">Produto: ${item.produto}</div>` : ''}
+                                ${item.status ? `<div class="search-result-details">Status: ${item.status}</div>` : ''}
+                                ${item.cnpj ? `<div class="search-result-details">CNPJ: ${item.cnpj}</div>` : ''}
+                                ${item.codigo ? `<div class="search-result-details">Código: ${item.codigo}</div>` : ''}
+                                ${item.email ? `<div class="search-result-details">Email: ${item.email}</div>` : ''}
+                            </a>
+                        `;
+                    });
+                }
+            });
+            
+            if (totalResults === 0) {
+                showNoResults(`Nenhum resultado encontrado para "${query}"`, isSidebar);
+            } else {
+                const targetContent = isSidebar ? sidebarSearchResultsContent : searchResultsContent;
+                targetContent.innerHTML = html;
+                showResults(isSidebar);
+            }
+        }
+        
+        // Função para exibir loading
+        function showLoading(isSidebar = false) {
+            const targetContent = isSidebar ? sidebarSearchResultsContent : searchResultsContent;
+            targetContent.innerHTML = `
+                <div class="search-loading">
+                    <i class="fas fa-spinner"></i>
+                    <div>Buscando...</div>
+                </div>
+            `;
+            showResults(isSidebar);
+        }
+        
+        // Função para exibir "sem resultados"
+        function showNoResults(message, isSidebar = false) {
+            const targetContent = isSidebar ? sidebarSearchResultsContent : searchResultsContent;
+            targetContent.innerHTML = `
+                <div class="search-no-results">
+                    <i class="fas fa-search"></i>
+                    <div>${message}</div>
+                </div>
+            `;
+            showResults(isSidebar);
+        }
+        
+        // Função para mostrar o dropdown
+        function showResults(isSidebar = false) {
+            const targetResults = isSidebar ? sidebarSearchResults : searchResults;
+            targetResults.style.display = 'block';
+        }
+        
+        // Função para esconder o dropdown
+        function hideResults(isSidebar = false) {
+            const targetResults = isSidebar ? sidebarSearchResults : searchResults;
+            targetResults.style.display = 'none';
+        }
+        
+        // Event listeners para barra superior
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const query = this.value.trim();
+                
+                clearTimeout(searchTimeout);
+                
+                if (query.length >= 2) {
+                    searchTimeout = setTimeout(() => {
+                        performSearch(query, false);
+                    }, 300); // Debounce de 300ms
+                } else {
+                    hideResults(false);
+                }
+            });
+            
+            // Buscar ao clicar no botão
+            searchBtn.addEventListener('click', function() {
+                const query = searchInput.value.trim();
+                if (query.length >= 2) {
+                    performSearch(query, false);
+                }
+            });
+            
+            // Buscar ao pressionar Enter
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const query = this.value.trim();
+                    if (query.length >= 2) {
+                        performSearch(query, false);
+                    }
+                }
+            });
+        }
+        
+        // Event listeners para sidebar
+        if (sidebarSearchInput) {
+            sidebarSearchInput.addEventListener('input', function() {
+                const query = this.value.trim();
+                
+                clearTimeout(searchTimeout);
+                
+                if (query.length >= 2) {
+                    searchTimeout = setTimeout(() => {
+                        performSearch(query, true);
+                    }, 300); // Debounce de 300ms
+                } else {
+                    hideResults(true);
+                }
+            });
+            
+            // Buscar ao clicar no botão
+            sidebarSearchBtn.addEventListener('click', function() {
+                const query = sidebarSearchInput.value.trim();
+                if (query.length >= 2) {
+                    performSearch(query, true);
+                }
+            });
+            
+            // Buscar ao pressionar Enter
+            sidebarSearchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const query = this.value.trim();
+                    if (query.length >= 2) {
+                        performSearch(query, true);
+                    }
+                }
+            });
+        }
+        
+        // Esconder resultados ao clicar fora
+        document.addEventListener('click', function(e) {
+            // Barra superior
+            if (searchInput && !searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                hideResults(false);
+            }
+            // Sidebar
+            if (sidebarSearchInput && !sidebarSearchInput.contains(e.target) && !sidebarSearchResults.contains(e.target)) {
+                hideResults(true);
+            }
+        });
+        
+        // Esconder resultados ao pressionar Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideResults(false);
+                hideResults(true);
+                if (searchInput) searchInput.blur();
+                if (sidebarSearchInput) sidebarSearchInput.blur();
+            }
+        });
+    });
+    </script>
 </body>
 </html>

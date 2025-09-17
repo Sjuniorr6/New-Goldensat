@@ -42,26 +42,28 @@ class ListRequisicoesView(ListView):
             return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        queryset = Requisicoes.objects.select_related('nome', 'tipo_produto').order_by('-data')
+        # Filtrar apenas requisições pendentes na listagem
+        queryset = Requisicoes.objects.select_related('nome', 'tipo_produto').filter(status='Pendente').order_by('-data')
         
         # Filtros
         search = self.request.GET.get('search', '')
         status = self.request.GET.get('status', '')
         cliente = self.request.GET.get('cliente', '')
         
-        produtos_logger.info(f"🔍 Filtros recebidos - Search: '{search}', Status: '{status}', Cliente: '{cliente}'")
+        produtos_logger.info(f"Filtros recebidos - Search: '{search}', Status: '{status}', Cliente: '{cliente}'")
+        produtos_logger.info(f"Requisições pendentes encontradas: {queryset.count()}")
         
         if search:
-            produtos_logger.info(f"🔍 Aplicando filtro de busca: '{search}'")
+            produtos_logger.info(f"Aplicando filtro de busca: '{search}'")
             # Tentar buscar por ID primeiro (se for número)
             try:
                 search_id = int(search)
                 queryset = queryset.filter(id=search_id)
-                produtos_logger.info(f"🔍 Busca por ID {search_id}: {queryset.count()} resultados")
+                produtos_logger.info(f"Busca por ID {search_id}: {queryset.count()} resultados")
             except ValueError:
                 # Se não for número, buscar por nome
                 queryset = queryset.filter(nome__nome__icontains=search)
-                produtos_logger.info(f"🔍 Busca por nome '{search}': {queryset.count()} resultados")
+                produtos_logger.info(f"Busca por nome '{search}': {queryset.count()} resultados")
         
         if status:
             queryset = queryset.filter(status=status)
@@ -69,6 +71,7 @@ class ListRequisicoesView(ListView):
         if cliente:
             queryset = queryset.filter(nome__id=cliente)
         
+        produtos_logger.info(f"Resultado final: {queryset.count()} requisições")
         return queryset
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -332,16 +335,16 @@ class AprovarRequisicaoView(View):
     
     def post(self, request, pk):
         try:
-            produtos_logger.info(f'🚀 POST /requisicoes/aprovar/{pk}/ - Usuário: {request.user}')
-            produtos_logger.info(f'📊 Dados recebidos: {dict(request.POST)}')
-            produtos_logger.info(f'📋 Headers: {dict(request.headers)}')
+            produtos_logger.info(f'POST /requisicoes/aprovar/{pk}/ - Usuário: {request.user}')
+            produtos_logger.info(f'Dados recebidos: {dict(request.POST)}')
+            produtos_logger.info(f'Headers: {dict(request.headers)}')
             
             requisicao = get_object_or_404(Requisicoes, id=pk)
-            produtos_logger.info(f'📝 Requisição encontrada: ID {requisicao.id}, Status: {requisicao.status}')
+            produtos_logger.info(f'Requisição encontrada: ID {requisicao.id}, Status: {requisicao.status}')
             
             # Verificar se a requisição pode ser aprovada
             if requisicao.status not in ['Pendente', 'Configurado']:
-                produtos_logger.warning(f'⚠️ Requisição {pk} não pode ser aprovada. Status atual: {requisicao.status}')
+                produtos_logger.warning(f'Requisição {pk} não pode ser aprovada. Status atual: {requisicao.status}')
                 return JsonResponse({
                     'success': False,
                     'message': f'Requisição não pode ser aprovada. Status atual: {requisicao.status}'
@@ -351,7 +354,7 @@ class AprovarRequisicaoView(View):
             requisicao.status = 'Aprovado pelo CEO'
             requisicao.save()
             
-            produtos_logger.info(f'✅ Requisição {requisicao.id} aprovada pelo CEO com sucesso')
+            produtos_logger.info(f'Requisição {requisicao.id} aprovada pelo CEO com sucesso')
             
             return JsonResponse({
                 'success': True,
@@ -360,7 +363,7 @@ class AprovarRequisicaoView(View):
             })
             
         except Exception as e:
-            produtos_logger.error(f'❌ Erro ao aprovar requisição {pk}: {str(e)}')
+            produtos_logger.error(f'Erro ao aprovar requisição {pk}: {str(e)}')
             produtos_logger.error(traceback.format_exc())
             return JsonResponse({
                 'success': False,
@@ -419,7 +422,7 @@ class HistoricoRequisicoesView(ListView):
         data_inicio = self.request.GET.get('data_inicio', '')
         data_fim = self.request.GET.get('data_fim', '')
         
-        produtos_logger.info(f"🔍 Filtros do histórico - Search: '{search}', Status: '{status}', Cliente: '{cliente}', Data: '{data_inicio}' a '{data_fim}'")
+        produtos_logger.info(f"Filtros do histórico - Search: '{search}', Status: '{status}', Cliente: '{cliente}', Data: '{data_inicio}' a '{data_fim}'")
         
         if search:
             # Tentar buscar por ID primeiro (se for número)
@@ -484,8 +487,10 @@ class ConfiguracaoView(View):
 
     def get(self, request, *args, **kwargs):
         try:
-            # Buscar todas as requisições com select_related para evitar N+1 queries
-            requisicoes = Requisicoes.objects.select_related('nome', 'tipo_produto').all().order_by('-data')
+            # Filtrar apenas requisições com status "Configurado" e "Aprovado pelo CEO"
+            requisicoes = Requisicoes.objects.select_related('nome', 'tipo_produto').filter(
+                status__in=['Configurado', 'Aprovado pelo CEO']
+            ).order_by('-data')
             
             context = {
                 'page_title': 'Configurações do Sistema',
@@ -515,19 +520,24 @@ class AlterarStatusView(View):
             data = json.loads(request.body)
             novo_status = data.get('status')
             
-            produtos_logger.info(f'🔄 POST /requisicoes/alterar-status/{pk}/ - Usuário: {request.user}')
-            produtos_logger.info(f'📊 Novo status: {novo_status}')
+            produtos_logger.info(f'POST /requisicoes/alterar-status/{pk}/ - Usuário: {request.user}')
+            produtos_logger.info(f'Novo status: {novo_status}')
             
             requisicao = get_object_or_404(Requisicoes, id=pk)
             status_anterior = requisicao.status
             
             # Validar se o novo status é válido
-            status_validos = ['Pendente', 'Configurado', 'Aprovado pelo CEO', 'Reprovado pelo CEO', 'Enviado para o cliente']
+            status_validos = ['Pendente', 'Configurado', 'Aprovado pelo CEO', 'Reprovado pelo CEO', 'Expedido']
             if novo_status not in status_validos:
                 return JsonResponse({
                     'success': False,
                     'message': f'Status inválido: {novo_status}'
                 })
+            
+            # Se o status for "Aprovado pelo CEO", mudar para "Expedido"
+            if novo_status == 'Aprovado pelo CEO':
+                novo_status = 'Expedido'
+                produtos_logger.info(f'Status alterado de "Aprovado pelo CEO" para "Expedido"')
             
             # Armazenar status anterior para o signal
             requisicao._previous_status = status_anterior
@@ -536,7 +546,7 @@ class AlterarStatusView(View):
             requisicao.status = novo_status
             requisicao.save()
             
-            produtos_logger.info(f'✅ Status da requisição {pk} alterado de "{status_anterior}" para "{novo_status}"')
+            produtos_logger.info(f'Status da requisição {pk} alterado de "{status_anterior}" para "{novo_status}"')
             
             return JsonResponse({
                 'success': True,
@@ -546,9 +556,81 @@ class AlterarStatusView(View):
             })
             
         except Exception as e:
-            produtos_logger.error(f'❌ Erro ao alterar status da requisição {pk}: {str(e)}')
+            produtos_logger.error(f'Erro ao alterar status da requisição {pk}: {str(e)}')
             produtos_logger.error(traceback.format_exc())
             return JsonResponse({
                 'success': False,
                 'message': 'Erro interno do servidor'
             })
+
+class HistoricoExpedicaoView(ListView):
+    """View para exibir o histórico de requisições expedidas"""
+    model = Requisicoes
+    template_name = 'requisicoes/historico_expedicao.html'
+    context_object_name = 'requisicoes'
+    paginate_by = 20
+
+    def get_queryset(self):
+        # Filtrar apenas requisições com status "Expedido"
+        queryset = Requisicoes.objects.select_related('nome', 'tipo_produto').filter(
+            status='Expedido'
+        ).order_by('-data')
+        
+        # Filtros
+        search = self.request.GET.get('search', '')
+        cliente = self.request.GET.get('cliente', '')
+        data_inicio = self.request.GET.get('data_inicio', '')
+        data_fim = self.request.GET.get('data_fim', '')
+        
+        produtos_logger.info(f"Filtros do histórico de expedição - Search: '{search}', Cliente: '{cliente}', Data: '{data_inicio}' a '{data_fim}'")
+        
+        if search:
+            # Tentar buscar por ID primeiro (se for número)
+            try:
+                search_id = int(search)
+                queryset = queryset.filter(id=search_id)
+            except ValueError:
+                # Se não for número, buscar por nome do cliente
+                queryset = queryset.filter(nome__nome__icontains=search)
+        
+        if cliente:
+            queryset = queryset.filter(nome__id=cliente)
+        
+        if data_inicio:
+            try:
+                from datetime import datetime
+                data_inicio_obj = datetime.strptime(data_inicio, '%Y-%m-%d').date()
+                queryset = queryset.filter(data__date__gte=data_inicio_obj)
+            except ValueError:
+                pass
+        
+        if data_fim:
+            try:
+                from datetime import datetime
+                data_fim_obj = datetime.strptime(data_fim, '%Y-%m-%d').date()
+                queryset = queryset.filter(data__date__lte=data_fim_obj)
+            except ValueError:
+                pass
+        
+        produtos_logger.info(f"Requisições expedidas encontradas: {queryset.count()}")
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Adicionar estatísticas
+        total_expedidas = Requisicoes.objects.filter(status='Expedido').count()
+        
+        context.update({
+            'page_title': 'Histórico de Expedição',
+            'active_tab': 'historico_expedicao',
+            'total_expedidas': total_expedidas,
+            'filtros_ativos': any([
+                self.request.GET.get('search'),
+                self.request.GET.get('cliente'),
+                self.request.GET.get('data_inicio'),
+                self.request.GET.get('data_fim')
+            ])
+        })
+        
+        return context

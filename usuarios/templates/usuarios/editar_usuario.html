@@ -1,0 +1,295 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar Usuário - Golden SAT{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/usuarios.css' %}">
+<style>
+    .editar-usuario-container {
+        min-height: 100vh;
+        padding-top: 4rem;
+        padding-bottom: 2rem;
+    }
+    
+    .editar-usuario-content {
+        position: relative;
+        z-index: 1;
+        margin-top: 2rem;
+    }
+    
+    .editar-usuario-header {
+        margin-bottom: 3rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid editar-usuario-container">
+    <!-- Header da página -->
+    <div class="row mb-4 editar-usuario-header">
+        <div class="col-12">
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-user-edit me-3"></i>Editar Usuário
+                        </h1>
+                        <p class="page-subtitle">Edite as informações do usuário {{ usuario.get_full_name|default:usuario.username }}</p>
+                    </div>
+                    <div>
+                        <a href="{% url 'usuarios:listar_usuarios' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Voltar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row editar-usuario-content">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user me-2"></i>Dados do Usuário
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Dados básicos do usuário -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="section-title">
+                                    <i class="fas fa-id-card me-2"></i>Informações Básicas
+                                </h6>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form_usuario.username.id_for_label }}" class="form-label">
+                                    Nome de Usuário <span class="text-danger">*</span>
+                                </label>
+                                {{ form_usuario.username }}
+                                {% if form_usuario.username.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form_usuario.username.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form_usuario.email.id_for_label }}" class="form-label">
+                                    Email <span class="text-danger">*</span>
+                                </label>
+                                {{ form_usuario.email }}
+                                {% if form_usuario.email.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form_usuario.email.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form_usuario.first_name.id_for_label }}" class="form-label">
+                                    Nome <span class="text-danger">*</span>
+                                </label>
+                                {{ form_usuario.first_name }}
+                                {% if form_usuario.first_name.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form_usuario.first_name.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form_usuario.last_name.id_for_label }}" class="form-label">
+                                    Sobrenome <span class="text-danger">*</span>
+                                </label>
+                                {{ form_usuario.last_name }}
+                                {% if form_usuario.last_name.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form_usuario.last_name.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check">
+                                    {{ form_usuario.is_active }}
+                                    <label class="form-check-label" for="{{ form_usuario.is_active.id_for_label }}">
+                                        Usuário ativo no sistema
+                                    </label>
+                                </div>
+                                {% if form_usuario.is_active.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form_usuario.is_active.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Dados do perfil -->
+                        <div class="row mb-4 mt-4">
+                            <div class="col-12">
+                                <h6 class="section-title">
+                                    <i class="fas fa-user-cog me-2"></i>Informações do Perfil
+                                </h6>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form_perfil.setor.id_for_label }}" class="form-label">Setor</label>
+                                {{ form_perfil.setor }}
+                                {% if form_perfil.setor.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form_perfil.setor.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form_perfil.cargo.id_for_label }}" class="form-label">Cargo</label>
+                                {{ form_perfil.cargo }}
+                                {% if form_perfil.cargo.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form_perfil.cargo.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form_perfil.telefone.id_for_label }}" class="form-label">Telefone</label>
+                                {{ form_perfil.telefone }}
+                                {% if form_perfil.telefone.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form_perfil.telefone.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form_perfil.data_admissao.id_for_label }}" class="form-label">Data de Admissão</label>
+                                {{ form_perfil.data_admissao }}
+                                {% if form_perfil.data_admissao.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form_perfil.data_admissao.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form_perfil.foto.id_for_label }}" class="form-label">Foto</label>
+                                {{ form_perfil.foto }}
+                                {% if form_perfil.foto.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form_perfil.foto.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Formatos aceitos: JPG, JPEG, PNG. Tamanho máximo: 2MB</div>
+                                
+                                <!-- Mostrar foto atual se existir -->
+                                {% if usuario.perfil.foto and usuario.perfil.foto.name != 'usuarios/fotos/default.png' %}
+                                    <div class="mt-2">
+                                        <small class="text-muted">Foto atual:</small>
+                                        <img src="{{ usuario.perfil.foto.url }}" class="img-thumbnail mt-1" style="max-width: 100px; max-height: 100px; object-fit: cover;" alt="Foto atual">
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check mt-4">
+                                    {{ form_perfil.ativo }}
+                                    <label class="form-check-label" for="{{ form_perfil.ativo.id_for_label }}">
+                                        Perfil ativo
+                                    </label>
+                                </div>
+                                {% if form_perfil.ativo.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form_perfil.ativo.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Botões -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="{% url 'usuarios:listar_usuarios' %}" class="btn btn-secondary">
+                                        <i class="fas fa-times me-2"></i>Cancelar
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>Salvar Alterações
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Preview da imagem
+document.getElementById('{{ form_perfil.foto.id_for_label }}').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // Criar preview se não existir
+            let preview = document.getElementById('image-preview');
+            if (!preview) {
+                preview = document.createElement('div');
+                preview.id = 'image-preview';
+                preview.className = 'mt-2';
+                e.target.parentNode.appendChild(preview);
+            }
+            preview.innerHTML = `
+                <small class="text-muted">Nova foto:</small>
+                <img src="${e.target.result}" class="img-thumbnail mt-1" style="max-width: 100px; max-height: 100px;" alt="Preview">
+            `;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+{% endblock %}

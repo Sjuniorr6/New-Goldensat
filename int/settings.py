@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'clientes',
     'produtos',
     'tickets',
+    'usuarios',
    
 ]
 
@@ -130,6 +131,10 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR.parent / 'static',
 ]
+
+# Media files (User uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR.parent / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

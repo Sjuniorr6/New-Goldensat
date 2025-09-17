@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,4 +27,9 @@ urlpatterns = [
     path('requisicoes/', include('requisicoes.urls', namespace='requisicoes')),
     path('configuracao/', include('requisicoes.urls', namespace='configuracao')),
     path('tickets/', include('tickets.urls', namespace='tickets')),
+    path('usuarios/', include('usuarios.urls', namespace='usuarios')),
 ]
+
+# Serve media files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

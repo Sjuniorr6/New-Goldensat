@@ -7,4 +7,6 @@ urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
     path('login/', views.LoginView.as_view(), name='login'),
     path('logout/', views.LogoutView.as_view(), name='logout'),
+    path('busca/', views.pagina_busca, name='busca'),
+    path('api/busca/', views.busca_global, name='busca_global'),
 ]
