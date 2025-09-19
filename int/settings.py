@@ -127,12 +127,20 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
-
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR.parent / 'staticfiles'
+
+# Para produção, Nginx está servindo /var/www/staticfiles
+STATIC_ROOT = BASE_DIR.parent / 'staticfiles'   # /var/www/staticfiles
+
+# Fontes adicionais de estáticos dentro do repositório
 STATICFILES_DIRS = [
-    BASE_DIR.parent / 'static',
+    BASE_DIR / 'static',   # /var/www/New-Goldensat/static  ✅
+]
+
+# (Opcional, mas deixa explícito)
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
 
 # Configuração para servir arquivos estáticos em produção
