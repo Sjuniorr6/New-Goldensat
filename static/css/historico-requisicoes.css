@@ -1,0 +1,238 @@
+/* CSS específico para histórico de requisições - Atualizado: 2024-12-19 */
+
+/* ===== CARDS DE ESTATÍSTICAS ===== */
+.stats-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stats-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #d4af37;
+}
+
+.stats-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+/* ===== TABELA RESPONSIVA ===== */
+.table-responsive {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.table thead th {
+    background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+    color: white;
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.85rem;
+}
+
+.table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.01);
+}
+
+.badge-status {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+}
+
+/* ===== CARD DE FILTROS ===== */
+.filters-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem !important;
+}
+
+.filters-card.filters-active {
+    border-left: 4px solid #d4af37;
+}
+
+/* Usar Bootstrap padrão - sem customizações */
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+    .stats-card {
+        margin-bottom: 1rem;
+    }
+    
+    .stats-number {
+        font-size: 1.5rem;
+    }
+    
+    .filters-card {
+        margin: 0 1rem 1rem 1rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.85rem;
+    }
+    
+    .badge-status {
+        font-size: 0.7rem;
+        padding: 0.3rem 0.6rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .stats-number {
+        font-size: 1.2rem;
+    }
+    
+    .stats-label {
+        font-size: 0.8rem;
+    }
+    
+    /* Bootstrap padrão */
+    
+    .table thead th {
+        font-size: 0.75rem;
+        padding: 0.5rem 0.3rem;
+    }
+    
+    .table tbody td {
+        padding: 0.5rem 0.3rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* ===== ANIMAÇÕES ===== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stats-card,
+.filters-card,
+.table-responsive {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* ===== ESTADOS DOS BADGES ===== */
+.bg-success {
+    background-color: #28a745 !important;
+}
+
+.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+.bg-warning {
+    background-color: #ffc107 !important;
+    color: #000 !important;
+}
+
+.bg-info {
+    background-color: #17a2b8 !important;
+}
+
+.bg-secondary {
+    background-color: #6c757d !important;
+}
+
+/* ===== PAGINAÇÃO ===== */
+.pagination .page-link {
+    color: #d4af37;
+    border-color: #dee2e6;
+}
+
+.pagination .page-link:hover {
+    color: #b8941f;
+    background-color: #f8f9fa;
+    border-color: #d4af37;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #d4af37;
+    border-color: #d4af37;
+    color: white;
+}
+
+/* ===== BOTÕES DE AÇÃO ===== */
+.btn-group .btn {
+    border-radius: 0.375rem;
+    margin: 0 1px;
+}
+
+.btn-group .btn:first-child {
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+}
+
+.btn-group .btn:last-child {
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+}
+
+/* ===== LOADING STATES ===== */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.3em;
+}
+
+/* ===== TOOLTIPS ===== */
+[title] {
+    cursor: help;
+}
+
+/* ===== SCROLLBAR CUSTOMIZADA ===== */
+.table-responsive::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #d4af37;
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #b8941f;
+}
