@@ -182,3 +182,6 @@ class Command(BaseCommand):
         
         self.stdout.write(self.style.SUCCESS('\n🎉 TODOS OS TESTES CONCLUÍDOS COM SUCESSO!'))
 
+
+
+
