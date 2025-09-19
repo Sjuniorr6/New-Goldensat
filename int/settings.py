@@ -135,6 +135,13 @@ STATICFILES_DIRS = [
     BASE_DIR.parent / 'static',
 ]
 
+# Configuração para servir arquivos estáticos em produção
+if not DEBUG:
+    # Permite servir arquivos estáticos mesmo em produção
+    import django.contrib.staticfiles.views
+    from django.urls import re_path
+    from django.conf.urls.static import static
+
 # Media files (User uploads)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR.parent / 'media'
