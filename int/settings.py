@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-7=sd^vwv+in5&os2t1zv0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,0.0.0.0').split(',')
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='www.gserp.com.br,gserp.com.br').split(',')
 
 # Login/Logout URLs
 LOGIN_URL = '/login/'
@@ -129,11 +129,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR.parent / 'staticfiles'
 STATICFILES_DIRS = [
     BASE_DIR.parent / 'static',
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+# Configuração para servir arquivos estáticos em produção
+if not DEBUG:
+    # Permite servir arquivos estáticos mesmo em produção
+    import django.contrib.staticfiles.views
+    from django.urls import re_path
+    from django.conf.urls.static import static
 
 # Media files (User uploads)
 MEDIA_URL = '/media/'
@@ -188,12 +195,6 @@ LOGGING = {
         },
     },
     'handlers': {
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs' / 'django.log',
-            'formatter': 'verbose',
-        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
@@ -201,12 +202,12 @@ LOGGING = {
         },
     },
     'root': {
-        'handlers': ['console', 'file'],
+        'handlers': ['console'],
         'level': 'INFO',
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
         },
