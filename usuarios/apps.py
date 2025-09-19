@@ -6,4 +6,6 @@ class UsuariosConfig(AppConfig):
     name = 'usuarios'
     
     def ready(self):
-        import usuarios.signals
+        # Temporariamente desabilitado para debug
+        # import usuarios.signals
+        pass

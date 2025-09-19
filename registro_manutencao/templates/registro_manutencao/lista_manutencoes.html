@@ -1,0 +1,722 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }} - Golden SAT{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/manutencao.css' %}">
+<style>
+    .main-container {
+        background: #f8f9fa;
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+    
+    .page-header {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    
+    .page-title {
+        color: #2c3e50;
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .page-title i {
+        color: #d4af37;
+    }
+    
+    .page-subtitle {
+        color: #6c757d;
+        font-size: 1.1rem;
+        margin: 0;
+    }
+    
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+    
+    .btn-header {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+        color: white;
+        border: none;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #b8941f 0%, #9a7d1a 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    }
+    
+    .search-container {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    
+    .search-title {
+        color: #2c3e50;
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .search-title i {
+        color: #d4af37;
+    }
+    
+    .search-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group {
+        margin-bottom: 0;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+        display: block;
+        font-size: 0.95rem;
+    }
+    
+    .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: white;
+        width: 100%;
+    }
+    
+    .form-control:focus {
+        border-color: #d4af37;
+        box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.15);
+        outline: none;
+    }
+    
+    .form-control::placeholder {
+        color: #6c757d;
+        font-style: italic;
+    }
+    
+    .btn-search {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        justify-self: start;
+    }
+    
+    .btn-search:hover {
+        background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(44, 62, 80, 0.3);
+    }
+    
+    .btn-clear {
+        background: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        justify-self: start;
+    }
+    
+    .btn-clear:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+    }
+    
+    .results-container {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    
+    .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #e9ecef;
+    }
+    
+    .results-title {
+        color: #2c3e50;
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .results-title i {
+        color: #d4af37;
+    }
+    
+    .results-count {
+        color: #6c757d;
+        font-size: 0.95rem;
+        background: #f8f9fa;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        border: 1px solid #e9ecef;
+    }
+    
+    .manutencao-card {
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .manutencao-card:hover {
+        border-color: #d4af37;
+        box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    .manutencao-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #d4af37 0%, #b8941f 100%);
+    }
+    
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+    
+    .card-id {
+        background: #2c3e50;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    
+    .card-status {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-align: center;
+        min-width: 120px;
+    }
+    
+    .status-pendente {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+    }
+    
+    .status-aprovado {
+        background: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+    }
+    
+    .status-reprovado {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+    
+    .status-expedicao {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    
+    .status-expedido {
+        background: #e2e3e5;
+        color: #383d41;
+        border: 1px solid #d6d8db;
+    }
+    
+    .card-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .info-label {
+        font-weight: 600;
+        color: #6c757d;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .info-value {
+        color: #2c3e50;
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+    
+    .card-actions {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+    }
+    
+    .btn-action {
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-view {
+        background: #17a2b8;
+        color: white;
+    }
+    
+    .btn-view:hover {
+        background: #138496;
+        transform: translateY(-1px);
+    }
+    
+    .btn-edit {
+        background: #d4af37;
+        color: white;
+    }
+    
+    .btn-edit:hover {
+        background: #b8941f;
+        transform: translateY(-1px);
+    }
+    
+    .btn-delete {
+        background: #dc3545;
+        color: white;
+    }
+    
+    .btn-delete:hover {
+        background: #c82333;
+        transform: translateY(-1px);
+    }
+    
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+    
+    .pagination {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    
+    .page-link {
+        padding: 0.75rem 1rem;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        color: #2c3e50;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .page-link:hover {
+        background: #d4af37;
+        color: white;
+        border-color: #d4af37;
+    }
+    
+    .page-link.active {
+        background: #d4af37;
+        color: white;
+        border-color: #d4af37;
+    }
+    
+    .no-results {
+        text-align: center;
+        padding: 3rem;
+        color: #6c757d;
+    }
+    
+    .no-results i {
+        font-size: 3rem;
+        color: #d4af37;
+        margin-bottom: 1rem;
+    }
+    
+    .no-results h3 {
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+    
+    @media (max-width: 768px) {
+        .search-form {
+            grid-template-columns: 1fr;
+        }
+        
+        .card-content {
+            grid-template-columns: 1fr;
+        }
+        
+        .card-actions {
+            justify-content: center;
+        }
+        
+        .header-actions {
+            flex-direction: column;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <div class="container-fluid">
+        <!-- Header da Página -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-history"></i>
+                {{ page_title }}
+            </h1>
+            <p class="page-subtitle">Visualize e gerencie todos os registros de manutenção</p>
+            
+            <div class="header-actions">
+                <a href="{% url 'registro_manutencao:criar_manutencao' %}" class="btn-header btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Nova Manutenção
+                </a>
+            </div>
+        </div>
+
+        <!-- Barra de Pesquisa -->
+        <div class="search-container">
+            <h3 class="search-title">
+                <i class="fas fa-search"></i>
+                Filtros de Busca
+            </h3>
+            
+            <form method="get" class="search-form">
+                <div class="form-group">
+                    <label class="form-label">Buscar por ID</label>
+                    <input type="text" name="buscar_id" class="form-control" 
+                           placeholder="Digite o ID da manutenção" 
+                           value="{{ request.GET.buscar_id }}">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Buscar por Nome</label>
+                    <input type="text" name="buscar_nome" class="form-control" 
+                           placeholder="Digite o nome do cliente" 
+                           value="{{ request.GET.buscar_nome }}">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Buscar por Equipamento</label>
+                    <input type="text" name="buscar_equipamento" class="form-control" 
+                           placeholder="Digite o ID do equipamento" 
+                           value="{{ request.GET.buscar_equipamento }}">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-control">
+                        <option value="">Selecione o Status</option>
+                        <option value="Pendente" {% if request.GET.status == 'Pendente' %}selected{% endif %}>Pendente</option>
+                        <option value="Aprovado" {% if request.GET.status == 'Aprovado' %}selected{% endif %}>Aprovado</option>
+                        <option value="Reprovado pela Diretoria" {% if request.GET.status == 'Reprovado pela Diretoria' %}selected{% endif %}>Reprovado pela Diretoria</option>
+                        <option value="Aprovado pela Diretoria" {% if request.GET.status == 'Aprovado pela Diretoria' %}selected{% endif %}>Aprovado pela Diretoria</option>
+                        <option value="Expedição" {% if request.GET.status == 'Expedição' %}selected{% endif %}>Expedição</option>
+                        <option value="expedido" {% if request.GET.status == 'expedido' %}selected{% endif %}>Expedido</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn-search">
+                        <i class="fas fa-search"></i>
+                        Buscar
+                    </button>
+                </div>
+                
+                <div class="form-group">
+                    <a href="{% url 'registro_manutencao:lista_manutencoes' %}" class="btn-clear">
+                        <i class="fas fa-times"></i>
+                        Limpar
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Resultados -->
+        <div class="results-container">
+            <div class="results-header">
+                <h3 class="results-title">
+                    <i class="fas fa-list"></i>
+                    Registros Encontrados
+                </h3>
+                <span class="results-count">
+                    {{ manutencoes|length }} registro(s) encontrado(s)
+                </span>
+            </div>
+
+            {% if manutencoes %}
+                {% for manutencao in manutencoes %}
+                <div class="manutencao-card">
+                    <div class="card-header">
+                        <div class="card-id">#{{ manutencao.id }}</div>
+                        <div class="card-status 
+                            {% if manutencao.status == 'Pendente' %}status-pendente
+                            {% elif manutencao.status == 'Aprovado' %}status-aprovado
+                            {% elif manutencao.status == 'Reprovado pela Diretoria' %}status-reprovado
+                            {% elif manutencao.status == 'Aprovado pela Diretoria' %}status-aprovado
+                            {% elif manutencao.status == 'Expedição' %}status-expedicao
+                            {% elif manutencao.status == 'expedido' %}status-expedido
+                            {% endif %}">
+                            {{ manutencao.status }}
+                        </div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <div class="info-item">
+                            <span class="info-label">Cliente</span>
+                            <span class="info-value">{{ manutencao.nome.nome_fantasia }}</span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-label">Tipo de Entrada</span>
+                            <span class="info-value">{{ manutencao.tipo_entrada }}</span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-label">Produto</span>
+                            <span class="info-value">{{ manutencao.tipo_produto.nome_produto }}</span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-label">Quantidade</span>
+                            <span class="info-value">{{ manutencao.quantidade }}</span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-label">Data de Criação</span>
+                            <span class="info-value">{{ manutencao.data_criacao|date:'d/m/Y H:i' }}</span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-label">Data de Devolução</span>
+                            <span class="info-value">
+                                {% if manutencao.data_devolucao %}
+                                    {{ manutencao.data_devolucao|date:'d/m/Y H:i' }}
+                                {% else %}
+                                    Não definida
+                                {% endif %}
+                            </span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-label">Motivo</span>
+                            <span class="info-value">{{ manutencao.motivo }}</span>
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-label">Tratativa</span>
+                            <span class="info-value">{{ manutencao.tratativa }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card-actions">
+                        <a href="{% url 'registro_manutencao:detalhes_manutencao' manutencao.id %}" 
+                           class="btn-action btn-view">
+                            <i class="fas fa-eye"></i>
+                            Visualizar
+                        </a>
+                        <a href="{% url 'registro_manutencao:editar_manutencao' manutencao.id %}" 
+                           class="btn-action btn-edit">
+                            <i class="fas fa-edit"></i>
+                            Editar
+                        </a>
+                        <button type="button" class="btn-action btn-delete" 
+                                onclick="confirmarExclusao({{ manutencao.id }})">
+                            <i class="fas fa-trash"></i>
+                            Excluir
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <!-- Paginação -->
+                {% if is_paginated %}
+                <div class="pagination-container">
+                    <div class="pagination">
+                        {% if page_obj.has_previous %}
+                            <a href="?page=1" class="page-link">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                            <a href="?page={{ page_obj.previous_page_number }}" class="page-link">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        {% endif %}
+                        
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <span class="page-link active">{{ num }}</span>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}" class="page-link">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                            <a href="?page={{ page_obj.paginator.num_pages }}" class="page-link">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="no-results">
+                    <i class="fas fa-search"></i>
+                    <h3>Nenhum registro encontrado</h3>
+                    <p>Tente ajustar os filtros de busca ou criar um novo registro.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/manutencao.js' %}"></script>
+<script>
+function confirmarExclusao(manutencaoId) {
+    if (confirm('Tem certeza que deseja excluir este registro de manutenção?')) {
+        // Criar formulário para exclusão
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/manutencao/excluir/${manutencaoId}/`;
+        
+        // Adicionar token CSRF
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (csrfToken) {
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = csrfToken.value;
+            form.appendChild(csrfInput);
+        }
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+// Função para mostrar alertas
+function showAlert(type, message) {
+    const alertClass = {
+        'success': 'alert-success',
+        'error': 'alert-danger',
+        'warning': 'alert-warning',
+        'info': 'alert-info'
+    };
+    
+    const alertHtml = `
+        <div class="alert ${alertClass[type]} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    // Adicionar alerta no topo da página
+    const container = document.querySelector('.main-container');
+    container.insertAdjacentHTML('afterbegin', alertHtml);
+    
+    // Remover alerta após 5 segundos
+    setTimeout(() => {
+        const alert = container.querySelector('.alert');
+        if (alert) {
+            alert.remove();
+        }
+    }, 5000);
+}
+</script>
+{% endblock %}

@@ -73,7 +73,7 @@
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="d-flex gap-2">
                                 <span class="badge bg-secondary">#{{ requisicao.id }}</span>
-                                <span class="badge bg-{{ requisicao.status|lower|cut:' '|cut:'pelo'|cut:'ceo'|default:'primary' }}">
+                                <span class="badge badge-status-{{ requisicao.status|lower|cut:' '|cut:'pelo'|cut:'ceo'|default:'pendente' }}">
                                     {{ requisicao.status }}
                                 </span>
                             </div>

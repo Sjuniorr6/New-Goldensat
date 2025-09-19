@@ -85,8 +85,26 @@
                         <li class="nav-submenu-item">
                             <a href="{% url 'requisicoes:historico_requisicoes' %}" class="nav-submenu-link">Histórico de Requisições</a>
                         </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link submenu-toggle" data-target="#manutencaoSubmenu">
+                        <i class="fas fa-tools nav-icon"></i>
+                        <span class="nav-text">Manutenção</span>
+                        <i class="fas fa-chevron-right nav-arrow"></i>
+                    </a>
+                    <ul class="nav-submenu collapse" id="manutencaoSubmenu">
                         <li class="nav-submenu-item">
-                            <a href="#" class="nav-submenu-link">Histórico de Manutenção</a>
+                            <a href="{% url 'registro_manutencao:dashboard' %}" class="nav-submenu-link">Dashboard</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="{% url 'registro_manutencao:lista_manutencoes' %}" class="nav-submenu-link">Histórico de Manutenção</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="{% url 'registro_manutencao:criar_manutencao' %}" class="nav-submenu-link">Nova Manutenção</a>
+                        </li>
+                        <li class="nav-submenu-item">
+                            <a href="{% url 'registro_manutencao:lista_retornos' %}" class="nav-submenu-link">Retornos</a>
                         </li>
                     </ul>
                 </li>

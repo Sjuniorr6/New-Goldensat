@@ -28,6 +28,7 @@ urlpatterns = [
     path('configuracao/', include('requisicoes.urls', namespace='configuracao')),
     path('tickets/', include('tickets.urls', namespace='tickets')),
     path('usuarios/', include('usuarios.urls', namespace='usuarios')),
+    path('manutencao/', include('registro_manutencao.urls', namespace='registro_manutencao')),
 ]
 
 # Serve media files during development

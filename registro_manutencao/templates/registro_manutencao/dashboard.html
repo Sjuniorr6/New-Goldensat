@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }} - Golden SAT{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/manutencao.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header da Página -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="page-title">
+                        <i class="fas fa-chart-line me-2"></i>{{ page_title }}
+                    </h1>
+                    <p class="text-muted">Visão geral do sistema de manutenção</p>
+                </div>
+                <div>
+                    <a href="{% url 'registro_manutencao:criar_manutencao' %}" class="btn btn-golden me-2">
+                        <i class="fas fa-plus me-2"></i>Nova Manutenção
+                    </a>
+                    <a href="{% url 'registro_manutencao:lista_manutencoes' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-list me-2"></i>Ver Todas
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estatísticas Principais -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stats-card">
+                <div class="stats-icon">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <div class="stats-number">{{ stats.total }}</div>
+                <div class="stats-label">Total de Manutenções</div>
+                <div class="stats-subtitle">Registros no sistema</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stats-card">
+                <div class="stats-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stats-number">{{ stats.pendentes }}</div>
+                <div class="stats-label">Pendentes</div>
+                <div class="stats-subtitle">Aguardando processamento</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stats-card">
+                <div class="stats-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stats-number">{{ stats.aprovadas }}</div>
+                <div class="stats-label">Aprovadas</div>
+                <div class="stats-subtitle">Manutenções aprovadas</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stats-card">
+                <div class="stats-icon">
+                    <i class="fas fa-shipping-fast"></i>
+                </div>
+                <div class="stats-number">{{ stats.expedidas }}</div>
+                <div class="stats-label">Expedidas</div>
+                <div class="stats-subtitle">Enviadas para cliente</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Manutenções Recentes -->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history me-2"></i>Manutenções Recentes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if manutencoes_recentes %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Cliente</th>
+                                    <th>Produto</th>
+                                    <th>Status</th>
+                                    <th>Data</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for manutencao in manutencoes_recentes %}
+                                <tr>
+                                    <td>
+                                        <strong>#{{ manutencao.id }}</strong>
+                                    </td>
+                                    <td>{{ manutencao.nome.nome_fantasia|default:"N/A" }}</td>
+                                    <td>{{ manutencao.tipo_produto.nome_produto|default:"N/A" }}</td>
+                                    <td>
+                                        <span class="badge badge-status-{{ manutencao.status|lower|cut:' '|cut:'pela'|cut:'diretor' }}">
+                                            {{ manutencao.status }}
+                                        </span>
+                                    </td>
+                                    <td>{{ manutencao.data_criacao|date:"d/m/Y H:i" }}</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'registro_manutencao:detalhes_manutencao' manutencao.id %}" 
+                                               class="btn btn-outline-primary" title="Visualizar">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'registro_manutencao:editar_manutencao' manutencao.id %}" 
+                                               class="btn btn-outline-warning" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'registro_manutencao:lista_manutencoes' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-list me-2"></i>Ver Todas as Manutenções
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-tools fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Nenhuma manutenção encontrada</h5>
+                        <p class="text-muted">Não há registros de manutenção no sistema.</p>
+                        <a href="{% url 'registro_manutencao:criar_manutencao' %}" class="btn btn-golden">
+                            <i class="fas fa-plus me-2"></i>Criar Primeira Manutenção
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Estatísticas por Tratativa -->
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie me-2"></i>Por Tipo de Tratativa
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if tratativas_stats %}
+                    <div class="list-group list-group-flush">
+                        {% for tratativa, count in tratativas_stats.items %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span>{{ tratativa }}</span>
+                            <span class="badge bg-primary rounded-pill">{{ count }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-chart-pie fa-2x text-muted mb-3"></i>
+                        <p class="text-muted">Nenhuma estatística disponível</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Ações Rápidas -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Ações Rápidas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'registro_manutencao:criar_manutencao' %}" class="btn btn-golden">
+                            <i class="fas fa-plus me-2"></i>Nova Manutenção
+                        </a>
+                        <a href="{% url 'registro_manutencao:lista_manutencoes' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-list me-2"></i>Listar Manutenções
+                        </a>
+                        <a href="{% url 'registro_manutencao:lista_retornos' %}" class="btn btn-outline-info">
+                            <i class="fas fa-undo me-2"></i>Ver Retornos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos (se necessário) -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Resumo do Sistema
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 text-center">
+                            <div class="p-3">
+                                <i class="fas fa-tools fa-2x text-primary mb-2"></i>
+                                <h4 class="text-primary">{{ stats.total }}</h4>
+                                <p class="text-muted mb-0">Total de Manutenções</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="p-3">
+                                <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                                <h4 class="text-warning">{{ stats.pendentes }}</h4>
+                                <p class="text-muted mb-0">Pendentes</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="p-3">
+                                <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                                <h4 class="text-success">{{ stats.aprovadas }}</h4>
+                                <p class="text-muted mb-0">Aprovadas</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="p-3">
+                                <i class="fas fa-shipping-fast fa-2x text-info mb-2"></i>
+                                <h4 class="text-info">{{ stats.expedidas }}</h4>
+                                <p class="text-muted mb-0">Expedidas</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/manutencao.js' %}"></script>
+{% endblock %}

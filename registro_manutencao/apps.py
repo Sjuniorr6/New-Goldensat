@@ -1,11 +1,11 @@
 from django.apps import AppConfig
 
 
-class RequisicoesConfig(AppConfig):
+class RegistrodemanutencaoConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'requisicoes'
-    
+    name = 'registro_manutencao'
+
     def ready(self):
         # Temporariamente desabilitado para debug
-        # import requisicoes.signals
+        # import registro_manutencao.signals
         pass

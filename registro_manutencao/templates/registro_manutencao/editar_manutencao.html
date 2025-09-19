@@ -1,0 +1,878 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }} - Golden SAT{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/manutencao.css' %}">
+<style>
+    .main-container {
+        background: #f8f9fa;
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+    
+    .form-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+    
+    .section-header {
+        background: #2c3e50;
+        color: white;
+        padding: 1.5rem 2rem;
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.2rem;
+        border-bottom: 4px solid #d4af37;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .section-header i {
+        color: #d4af37;
+        font-size: 1.3rem;
+    }
+    
+    .form-content {
+        padding: 2rem;
+    }
+    
+    .form-row {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-col {
+        flex: 1;
+    }
+    
+    .form-col-full {
+        flex: 1;
+        width: 100%;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+        display: block;
+        font-size: 0.95rem;
+    }
+    
+    .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: white;
+        width: 100%;
+    }
+    
+    .form-control:focus {
+        border-color: #d4af37;
+        box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.15);
+        outline: none;
+    }
+    
+    .form-control::placeholder {
+        color: #6c757d;
+        font-style: italic;
+    }
+    
+    .textarea-large {
+        min-height: 120px;
+        resize: vertical;
+        font-family: inherit;
+    }
+    
+    .textarea-equipment-ids {
+        min-height: 150px;
+        resize: vertical;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+        background: #f8f9fa;
+    }
+    
+    .equipment-section {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+    
+    .equipment-section:hover {
+        border-color: #d4af37;
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.1);
+    }
+    
+    .equipment-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #d4af37 0%, #b8941f 100%);
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .equipment-title {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.1rem;
+    }
+    
+    .equipment-title i {
+        color: #d4af37;
+        font-size: 1.2rem;
+    }
+    
+    .remove-equipment-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+    
+    .remove-equipment-btn:hover {
+        background: #c82333;
+        transform: scale(1.1);
+    }
+    
+    .file-upload-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .file-upload-btn {
+        background: #d4af37;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .file-upload-btn:hover {
+        background: #b8941f;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    }
+    
+    .file-input {
+        display: none;
+    }
+    
+    .file-name {
+        color: #6c757d;
+        font-size: 0.9rem;
+        font-style: italic;
+    }
+    
+    .form-footer {
+        background: #2c3e50;
+        padding: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 2rem;
+        border-radius: 0 0 12px 12px;
+    }
+    
+    .btn-add-equipment {
+        background: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .btn-add-equipment:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+    }
+    
+    .btn-save {
+        background: white;
+        color: #2c3e50;
+        border: 2px solid #2c3e50;
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .btn-save:hover {
+        background: #2c3e50;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(44, 62, 80, 0.3);
+    }
+    
+    .checkbox-container {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 1rem;
+        padding: 1rem;
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    }
+    
+    .checkbox-container input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: #d4af37;
+    }
+    
+    .checkbox-container label {
+        margin: 0;
+        color: #6c757d;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+    
+    .page-header {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    
+    .page-title {
+        color: #2c3e50;
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .page-title i {
+        color: #d4af37;
+    }
+    
+    .page-subtitle {
+        color: #6c757d;
+        font-size: 1.1rem;
+        margin: 0;
+    }
+    
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+    
+    .btn-header {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-info {
+        background: white;
+        color: #17a2b8;
+        border: 2px solid #17a2b8;
+    }
+    
+    .btn-outline-info:hover {
+        background: #17a2b8;
+        color: white;
+    }
+    
+    .btn-outline-secondary {
+        background: white;
+        color: #6c757d;
+        border: 2px solid #6c757d;
+    }
+    
+    .btn-outline-secondary:hover {
+        background: #6c757d;
+        color: white;
+    }
+    
+    @media (max-width: 768px) {
+        .form-row {
+            flex-direction: column;
+            gap: 0;
+        }
+        
+        .form-footer {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .header-actions {
+            flex-direction: column;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <div class="container-fluid">
+        <!-- Header da Página -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-edit"></i>
+                {{ page_title }}
+            </h1>
+            <p class="page-subtitle">Edite os dados do registro de manutenção</p>
+            
+            <div class="header-actions">
+                <a href="{% url 'registro_manutencao:detalhes_manutencao' object.id %}" class="btn-header btn-outline-info">
+                    <i class="fas fa-eye"></i>
+                    Visualizar
+                </a>
+                <a href="{% url 'registro_manutencao:lista_manutencoes' %}" class="btn-header btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Voltar
+                </a>
+            </div>
+        </div>
+
+        <!-- Formulário -->
+        <form method="post" enctype="multipart/form-data" id="manutencaoForm">
+            {% csrf_token %}
+            
+            <!-- Dados da Entrada -->
+            <div class="form-container">
+                <h4 class="section-header">
+                    <i class="fas fa-clipboard-list"></i>
+                    Dados da Entrada
+                </h4>
+                <div class="form-content">
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Nome do Cliente</label>
+                                {{ form.nome }}
+                                {% if form.nome.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.nome.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Data de Entrada</label>
+                                <input type="text" class="form-control" value="{{ object.data_criacao|date:'d/m/Y H:i' }}" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Tipo de Entrada</label>
+                                {{ form.tipo_entrada }}
+                                {% if form.tipo_entrada.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.tipo_entrada.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Data de Devolução</label>
+                                {{ form.data_devolucao }}
+                                {% if form.data_devolucao.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.data_devolucao.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Customização</label>
+                                {{ form.customizacaoo }}
+                                {% if form.customizacaoo.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.customizacaoo.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Quantidade</label>
+                                {{ form.quantidade }}
+                                {% if form.quantidade.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.quantidade.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Status</label>
+                                {{ form.status }}
+                                {% if form.status.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.status.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Modelo</label>
+                                {{ form.tipo_produto }}
+                                {% if form.tipo_produto.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.tipo_produto.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Motivo</label>
+                                {{ form.motivo }}
+                                {% if form.motivo.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.motivo.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Tipo de Contrato</label>
+                                {{ form.tipo_contrato }}
+                                {% if form.tipo_contrato.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.tipo_contrato.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">ID de Equipamento</label>
+                        {{ form.id_equipamentos }}
+                        {% if form.id_equipamentos.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.id_equipamentos.errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Observações de Entrada</label>
+                        {{ form.observacoes }}
+                        {% if form.observacoes.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.observacoes.errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dados da Manutenção -->
+            <div class="form-container">
+                <h4 class="section-header">
+                    <i class="fas fa-tools"></i>
+                    Dados da Manutenção
+                </h4>
+                <div class="form-content">
+                    <!-- Imagens Principais -->
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Imagem 1</label>
+                                {{ form.imagem }}
+                                {% if form.imagem.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.imagem.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Imagem 2</label>
+                                {{ form.imagem2 }}
+                                {% if form.imagem2.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.imagem2.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Equipamentos Dinâmicos -->
+                    <div id="equipment-sections">
+                        <!-- Equipamento 1 -->
+                        <div class="equipment-section" data-equipment="1">
+                            <div class="equipment-header">
+                                <h5 class="equipment-title">
+                                    <i class="fas fa-microchip"></i>
+                                    Equipamento 1
+                                </h5>
+                                <button type="button" class="remove-equipment-btn" onclick="removeEquipment(1)" style="display: none;">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">ID do Equipamento</label>
+                                        <input type="text" class="form-control" name="equipment_id_1" placeholder="Digite o ID do equipamento">
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">Tipo de Problema</label>
+                                        <select class="form-control" name="tipo_problema_1">
+                                            <option value="">Selecione...</option>
+                                            <option value="Oxidação">Oxidação</option>
+                                            <option value="Placa Danificada">Placa Danificada</option>
+                                            <option value="USB Danificado">USB Danificado</option>
+                                            <option value="Botão de acionamento Danificado">Botão de acionamento Danificado</option>
+                                            <option value="Antena LoRa Danificada">Antena LoRa Danificada</option>
+                                            <option value="Antena 4G danificada">Antena 4G danificada</option>
+                                            <option value="Avarias Fisicas Graves">Avarias Fisicas Graves</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">Faturamento</label>
+                                        <select class="form-control" name="faturamento_1">
+                                            <option value="">Selecione...</option>
+                                            <option value="Com_Custo">Com Custo</option>
+                                            <option value="Sem_Custo">Sem Custo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label class="form-label">Imagem do Equipamento</label>
+                                        <input type="file" class="form-control" name="equipment_image_1" accept="image/*">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Observações do Equipamento</label>
+                                <textarea class="form-control" name="observacoes_equipamento_1" rows="3" placeholder="Adicione observações sobre o equipamento"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Botão para Adicionar Equipamento -->
+                    <div class="add-equipment-container">
+                        <button type="button" class="btn-add-equipment" onclick="addEquipment()">
+                            <i class="fas fa-plus"></i>
+                            Adicionar Equipamento
+                        </button>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Tratativa</label>
+                                {{ form.tratativa }}
+                                {% if form.tratativa.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.tratativa.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Status da Tratativa</label>
+                                {{ form.status_tratativa }}
+                                {% if form.status_tratativa.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.status_tratativa.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer com Botões -->
+            <div class="form-footer">
+                <button type="submit" class="btn-save">
+                    <i class="fas fa-save"></i>
+                    Salvar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/manutencao.js' %}"></script>
+<script>
+let equipmentCounter = 1;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Validação do formulário
+    const form = document.getElementById('manutencaoForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                showAlert('error', 'Por favor, preencha todos os campos obrigatórios.');
+            }
+        });
+    }
+});
+
+function addEquipment() {
+    equipmentCounter++;
+    const container = document.getElementById('equipment-sections');
+    
+    const equipmentSection = document.createElement('div');
+    equipmentSection.className = 'equipment-section';
+    equipmentSection.setAttribute('data-equipment', equipmentCounter);
+    
+    equipmentSection.innerHTML = `
+        <div class="equipment-header">
+            <h5 class="equipment-title">
+                <i class="fas fa-microchip"></i>
+                Equipamento ${equipmentCounter}
+            </h5>
+            <button type="button" class="remove-equipment-btn" onclick="removeEquipment(${equipmentCounter})">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-col">
+                <div class="form-group">
+                    <label class="form-label">ID do Equipamento</label>
+                    <input type="text" class="form-control" name="equipment_id_${equipmentCounter}" placeholder="Digite o ID do equipamento">
+                </div>
+            </div>
+            <div class="form-col">
+                <div class="form-group">
+                    <label class="form-label">Tipo de Problema</label>
+                    <select class="form-control" name="tipo_problema_${equipmentCounter}">
+                        <option value="">Selecione...</option>
+                        <option value="Oxidação">Oxidação</option>
+                        <option value="Placa Danificada">Placa Danificada</option>
+                        <option value="USB Danificado">USB Danificado</option>
+                        <option value="Botão de acionamento Danificado">Botão de acionamento Danificado</option>
+                        <option value="Antena LoRa Danificada">Antena LoRa Danificada</option>
+                        <option value="Antena 4G danificada">Antena 4G danificada</option>
+                        <option value="Avarias Fisicas Graves">Avarias Fisicas Graves</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-col">
+                <div class="form-group">
+                    <label class="form-label">Faturamento</label>
+                    <select class="form-control" name="faturamento_${equipmentCounter}">
+                        <option value="">Selecione...</option>
+                        <option value="Com_Custo">Com Custo</option>
+                        <option value="Sem_Custo">Sem Custo</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-col">
+                <div class="form-group">
+                    <label class="form-label">Imagem do Equipamento</label>
+                    <input type="file" class="form-control" name="equipment_image_${equipmentCounter}" accept="image/*">
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Observações do Equipamento</label>
+            <textarea class="form-control" name="observacoes_equipamento_${equipmentCounter}" rows="3" placeholder="Adicione observações sobre o equipamento"></textarea>
+        </div>
+    `;
+    
+    container.appendChild(equipmentSection);
+    
+    // Scroll para a nova seção
+    equipmentSection.scrollIntoView({ behavior: 'smooth' });
+    
+    // Mostrar botão de remover no primeiro equipamento se houver mais de um
+    updateRemoveButtons();
+}
+
+function removeEquipment(equipmentId) {
+    const equipmentSection = document.querySelector(`[data-equipment="${equipmentId}"]`);
+    if (equipmentSection) {
+        equipmentSection.remove();
+        updateRemoveButtons();
+    }
+}
+
+function updateRemoveButtons() {
+    const equipmentSections = document.querySelectorAll('.equipment-section');
+    equipmentSections.forEach((section, index) => {
+        const removeBtn = section.querySelector('.remove-equipment-btn');
+        if (removeBtn) {
+            // Mostrar botão de remover apenas se houver mais de um equipamento
+            removeBtn.style.display = equipmentSections.length > 1 ? 'flex' : 'none';
+        }
+    });
+}
+
+// Função para mostrar alertas
+function showAlert(type, message) {
+    const alertClass = {
+        'success': 'alert-success',
+        'error': 'alert-danger',
+        'warning': 'alert-warning',
+        'info': 'alert-info'
+    };
+    
+    const alertHtml = `
+        <div class="alert ${alertClass[type]} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    // Adicionar alerta no topo da página
+    const container = document.querySelector('.main-container');
+    container.insertAdjacentHTML('afterbegin', alertHtml);
+    
+    // Remover alerta após 5 segundos
+    setTimeout(() => {
+        const alert = container.querySelector('.alert');
+        if (alert) {
+            alert.remove();
+        }
+    }, 5000);
+}
+</script>
+{% endblock %}

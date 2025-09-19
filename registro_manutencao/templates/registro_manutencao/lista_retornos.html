@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }} - Golden SAT{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/manutencao.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header da Página -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="page-title">
+                        <i class="fas fa-undo me-2"></i>{{ page_title }}
+                    </h1>
+                    <p class="text-muted">Gerencie todos os retornos de equipamentos</p>
+                </div>
+                <div>
+                    <a href="{% url 'registro_manutencao:criar_retorno' %}" class="btn btn-golden">
+                        <i class="fas fa-plus me-2"></i>Novo Retorno
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Retornos -->
+    <div class="row">
+        {% for retorno in retornos %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-undo me-1"></i>Retorno #{{ retorno.id }}
+                    </h6>
+                    <span class="badge bg-info">{{ retorno.tipo_problema }}</span>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <small class="text-muted">
+                            <i class="fas fa-user me-1"></i>
+                            <strong>Cliente:</strong> {{ retorno.cliente.nome_fantasia|default:"N/A" }}
+                        </small>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted">
+                            <i class="fas fa-box me-1"></i>
+                            <strong>Produto:</strong> {{ retorno.produto.nome_produto|default:"N/A" }}
+                        </small>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted">
+                            <i class="fas fa-wrench me-1"></i>
+                            <strong>Problema:</strong> {{ retorno.tipo_problema|default:"N/A" }}
+                        </small>
+                    </div>
+                    {% if retorno.imagem %}
+                    <div class="mb-2">
+                        <small class="text-muted">
+                            <i class="fas fa-image me-1"></i>
+                            <strong>Imagem:</strong> Disponível
+                        </small>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-center gap-2">
+                        {% if retorno.imagem %}
+                        <button type="button" class="btn btn-outline-info btn-action" 
+                                data-bs-toggle="modal" data-bs-target="#imageModal" 
+                                data-image-src="{{ retorno.imagem.url }}"
+                                data-bs-toggle="tooltip" title="Ver Imagem">
+                            <i class="fas fa-image"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-undo fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">Nenhum retorno encontrado</h4>
+                <p class="text-muted">Não há registros de retorno no sistema.</p>
+                <a href="{% url 'registro_manutencao:criar_retorno' %}" class="btn btn-golden">
+                    <i class="fas fa-plus me-2"></i>Criar Primeiro Retorno
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Paginação -->
+    {% if is_paginated %}
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="Paginação de retornos">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    <li class="page-item active">
+                        <span class="page-link">
+                            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                        </span>
+                    </li>
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal para visualizar imagens -->
+<div class="modal fade" id="imageModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Visualizar Imagem</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" alt="Imagem" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/manutencao.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Modal de imagem
+    const imageModal = document.getElementById('imageModal');
+    if (imageModal) {
+        imageModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const imageSrc = button.getAttribute('data-image-src');
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = imageSrc;
+        });
+    }
+});
+</script>
+{% endblock %}

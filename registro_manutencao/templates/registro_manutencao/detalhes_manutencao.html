@@ -1,0 +1,388 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }} - Golden SAT{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/manutencao.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header da Página -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="page-title">
+                        <i class="fas fa-tools me-2"></i>{{ page_title }}
+                    </h1>
+                    <p class="text-muted">Detalhes completos do registro de manutenção</p>
+                </div>
+                <div>
+                    <a href="{% url 'registro_manutencao:editar_manutencao' manutencao.id %}" class="btn btn-outline-warning me-2">
+                        <i class="fas fa-edit me-2"></i>Editar
+                    </a>
+                    <a href="{% url 'registro_manutencao:lista_manutencoes' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Voltar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Informações Principais -->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Informações da Manutenção
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">ID da Manutenção:</label>
+                                <p class="mb-0">#{{ manutencao.id }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Status:</label>
+                                <p class="mb-0">
+                                    <span class="badge badge-status-{{ manutencao.status|lower|cut:' '|cut:'pela'|cut:'diretor' }}">
+                                        {{ manutencao.status }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Cliente:</label>
+                                <p class="mb-0">{{ manutencao.nome.nome_fantasia|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Tipo de Produto:</label>
+                                <p class="mb-0">{{ manutencao.tipo_produto.nome_produto|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Tipo de Entrada:</label>
+                                <p class="mb-0">{{ manutencao.tipo_entrada|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Motivo:</label>
+                                <p class="mb-0">{{ manutencao.motivo|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Quantidade:</label>
+                                <p class="mb-0">{{ manutencao.quantidade|default:"0" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Tipo de Contrato:</label>
+                                <p class="mb-0">{{ manutencao.tipo_contrato|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Tratativa:</label>
+                                <p class="mb-0">{{ manutencao.tratativa|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Status da Tratativa:</label>
+                                <p class="mb-0">{{ manutencao.status_tratativa|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Data de Criação:</label>
+                                <p class="mb-0">{{ manutencao.data_criacao|date:"d/m/Y H:i" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Data de Devolução:</label>
+                                <p class="mb-0">{{ manutencao.data_devolucao|date:"d/m/Y H:i"|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Equipamentos -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-microchip me-2"></i>Equipamentos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">IDs dos Equipamentos:</label>
+                                <div class="bg-light p-3 rounded">
+                                    {% if manutencao.id_equipamentos %}
+                                        <pre class="mb-0">{{ manutencao.id_equipamentos }}</pre>
+                                    {% else %}
+                                        <p class="mb-0 text-muted">Nenhum ID informado</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Números dos Equipamentos:</label>
+                                <div class="bg-light p-3 rounded">
+                                    {% if manutencao.numero_equipamento %}
+                                        <pre class="mb-0">{{ manutencao.numero_equipamento }}</pre>
+                                    {% else %}
+                                        <p class="mb-0 text-muted">Nenhum número informado</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customização e Recebimento -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-cog me-2"></i>Customização e Recebimento
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Tipo de Customização:</label>
+                                <p class="mb-0">{{ manutencao.tipo_customizacao|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Customização:</label>
+                                <p class="mb-0">{{ manutencao.customizacaoo|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Tipo de Recebimento:</label>
+                                <p class="mb-0">{{ manutencao.recebimento|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Entregue por/Retirado por:</label>
+                                <p class="mb-0">{{ manutencao.entregue_por_retirado_por|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Observações -->
+            {% if manutencao.observacoes %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-comment me-2"></i>Observações
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="bg-light p-3 rounded">
+                        <p class="mb-0">{{ manutencao.observacoes }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Ações Rápidas -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Ações Rápidas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'registro_manutencao:editar_manutencao' manutencao.id %}" class="btn btn-outline-warning">
+                            <i class="fas fa-edit me-2"></i>Editar Manutenção
+                        </a>
+                        <a href="{% url 'registro_manutencao:adicionar_imagem' %}" class="btn btn-outline-info">
+                            <i class="fas fa-image me-2"></i>Adicionar Imagem
+                        </a>
+                        <button type="button" class="btn btn-outline-danger" 
+                                data-action="delete" 
+                                data-id="{{ manutencao.id }}" 
+                                data-title="Manutenção #{{ manutencao.id }}">
+                            <i class="fas fa-trash me-2"></i>Excluir
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-flag me-2"></i>Status
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <span class="badge badge-status-{{ manutencao.status|lower|cut:' '|cut:'pela'|cut:'diretor' }} fs-6">
+                            {{ manutencao.status }}
+                        </span>
+                    </div>
+                    <hr>
+                    <div class="text-center">
+                        <small class="text-muted">Status da Tratativa</small><br>
+                        <span class="badge bg-secondary">{{ manutencao.status_tratativa|default:"N/A" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Imagens -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-images me-2"></i>Imagens da Manutenção
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if manutencao.imagem or manutencao.imagem2 %}
+                        <div class="row g-3">
+                            {% if manutencao.imagem %}
+                            <div class="col-md-6">
+                                <div class="text-center">
+                                    <img src="{{ manutencao.imagem.url }}" alt="Imagem 1" class="img-fluid rounded manutencao-image" 
+                                         style="max-height: 300px; cursor: pointer; border: 2px solid #d4af37;" 
+                                         data-bs-toggle="modal" data-bs-target="#imageModal" 
+                                         data-image-src="{{ manutencao.imagem.url }}">
+                                    <div class="mt-2">
+                                        <small class="text-muted">Imagem 1</small>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if manutencao.imagem2 %}
+                            <div class="col-md-6">
+                                <div class="text-center">
+                                    <img src="{{ manutencao.imagem2.url }}" alt="Imagem 2" class="img-fluid rounded manutencao-image" 
+                                         style="max-height: 300px; cursor: pointer; border: 2px solid #d4af37;" 
+                                         data-bs-toggle="modal" data-bs-target="#imageModal" 
+                                         data-image-src="{{ manutencao.imagem2.url }}">
+                                    <div class="mt-2">
+                                        <small class="text-muted">Imagem 2</small>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="text-center">
+                            <i class="fas fa-image fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">Nenhuma imagem foi enviada para esta manutenção.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Imagens Relacionadas -->
+            {% if imagens %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-images me-2"></i>Imagens Relacionadas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for imagem in imagens %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-muted">ID: {{ imagem.id }}</small>
+                            <span class="badge bg-info">{{ imagem.tipo_problema|default:"N/A" }}</span>
+                        </div>
+                        {% if imagem.imagem %}
+                        <div class="text-center">
+                            <img src="{{ imagem.imagem.url }}" alt="Imagem {{ imagem.id }}" 
+                                 class="img-fluid rounded manutencao-image" 
+                                 style="max-height: 150px; cursor: pointer;" 
+                                 data-bs-toggle="modal" data-bs-target="#imageModal" 
+                                 data-image-src="{{ imagem.imagem.url }}">
+                        </div>
+                        {% endif %}
+                        {% if imagem.imagem2 %}
+                        <div class="text-center mt-2">
+                            <img src="{{ imagem.imagem2.url }}" alt="Imagem 2 {{ imagem.id }}" 
+                                 class="img-fluid rounded manutencao-image" 
+                                 style="max-height: 150px; cursor: pointer;" 
+                                 data-bs-toggle="modal" data-bs-target="#imageModal" 
+                                 data-image-src="{{ imagem.imagem2.url }}">
+                        </div>
+                        {% endif %}
+                        {% if imagem.observacao2 %}
+                        <small class="text-muted d-block mt-2">{{ imagem.observacao2 }}</small>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal para visualizar imagens -->
+<div class="modal fade" id="imageModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Visualizar Imagem</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" alt="Imagem" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/manutencao.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Modal de imagem
+    const imageModal = document.getElementById('imageModal');
+    if (imageModal) {
+        imageModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const imageSrc = button.getAttribute('data-image-src');
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = imageSrc;
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -6,8 +6,9 @@ from produtos.models import MovimentacaoEstoque
 from produtos.logger_config import produtos_logger
 import traceback
 
-@receiver(post_save, sender=Requisicoes)
-def controlar_estoque_requisicao(sender, instance, created, **kwargs):
+# Temporariamente desabilitado para debug
+# @receiver(post_save, sender=Requisicoes)
+# def controlar_estoque_requisicao(sender, instance, created, **kwargs):
     """
     Controla o estoque quando uma requisição é criada ou seu status é alterado
     """
@@ -81,8 +82,9 @@ def controlar_estoque_requisicao(sender, instance, created, **kwargs):
         produtos_logger.error(f'Erro no controle de estoque para requisição {instance.id}: {str(e)}')
         produtos_logger.error(traceback.format_exc())
 
-@receiver(post_delete, sender=Requisicoes)
-def restaurar_estoque_requisicao_excluida(sender, instance, **kwargs):
+# Temporariamente desabilitado para debug
+# @receiver(post_delete, sender=Requisicoes)
+# def restaurar_estoque_requisicao_excluida(sender, instance, **kwargs):
     """
     Restaura o estoque quando uma requisição é excluída
     """

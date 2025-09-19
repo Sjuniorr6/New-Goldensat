@@ -1,0 +1,266 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }} - Golden SAT{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/manutencao.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header da Página -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="page-title">
+                        <i class="fas fa-edit me-2"></i>{{ page_title }}
+                    </h1>
+                    <p class="text-muted">Edite as informações da imagem</p>
+                </div>
+                <div>
+                    <a href="{% url 'registro_manutencao:detalhes_manutencao' object.registro.id %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Voltar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulário -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>Editar Imagem
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data" id="imagemForm">
+                        {% csrf_token %}
+                        
+                        <!-- Informações Básicas -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary mb-3">
+                                    <i class="fas fa-info-circle me-2"></i>Informações da Imagem
+                                </h6>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="{{ form.registro.id_for_label }}" class="form-label">
+                                    {{ form.registro.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.registro }}
+                                {% if form.registro.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.registro.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.tipo_problema.id_for_label }}" class="form-label">
+                                    {{ form.tipo_problema.label }}
+                                </label>
+                                {{ form.tipo_problema }}
+                                {% if form.tipo_problema.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.tipo_problema.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="{{ form.id_equipamento.id_for_label }}" class="form-label">
+                                    {{ form.id_equipamento.label }}
+                                </label>
+                                {{ form.id_equipamento }}
+                                {% if form.id_equipamento.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.id_equipamento.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.faturamento.id_for_label }}" class="form-label">
+                                    {{ form.faturamento.label }}
+                                </label>
+                                {{ form.faturamento }}
+                                {% if form.faturamento.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.faturamento.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Imagens -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary mb-3">
+                                    <i class="fas fa-images me-2"></i>Imagens
+                                </h6>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="{{ form.imagem.id_for_label }}" class="form-label">
+                                    {{ form.imagem.label }}
+                                </label>
+                                {{ form.imagem }}
+                                {% if form.imagem.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.imagem.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                {% if object.imagem %}
+                                    <div class="mt-2">
+                                        <small class="text-muted">Imagem atual:</small>
+                                        <div class="mt-1">
+                                            <img src="{{ object.imagem.url }}" alt="Imagem atual" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.imagem2.id_for_label }}" class="form-label">
+                                    {{ form.imagem2.label }}
+                                </label>
+                                {{ form.imagem2 }}
+                                {% if form.imagem2.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.imagem2.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                {% if object.imagem2 %}
+                                    <div class="mt-2">
+                                        <small class="text-muted">Imagem atual:</small>
+                                        <div class="mt-1">
+                                            <img src="{{ object.imagem2.url }}" alt="Imagem atual" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Observações -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary mb-3">
+                                    <i class="fas fa-comment me-2"></i>Observações
+                                </h6>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <label for="{{ form.observacao2.id_for_label }}" class="form-label">
+                                    {{ form.observacao2.label }}
+                                </label>
+                                {{ form.observacao2 }}
+                                {% if form.observacao2.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.observacao2.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Botões -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="{% url 'registro_manutencao:detalhes_manutencao' object.registro.id %}" class="btn btn-outline-secondary">
+                                        <i class="fas fa-times me-2"></i>Cancelar
+                                    </a>
+                                    <button type="submit" class="btn btn-golden">
+                                        <i class="fas fa-save me-2"></i>Salvar Alterações
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/manutencao.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validação do formulário
+    const form = document.getElementById('imagemForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                showAlert('error', 'Por favor, preencha todos os campos obrigatórios.');
+            }
+        });
+    }
+    
+    // Preview de imagens
+    const imageInputs = document.querySelectorAll('input[type="file"][accept*="image"]');
+    imageInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Criar preview se não existir
+                    let preview = document.getElementById(`${input.id}_preview`);
+                    if (!preview) {
+                        preview = document.createElement('img');
+                        preview.id = `${input.id}_preview`;
+                        preview.className = 'img-thumbnail mt-2';
+                        preview.style.maxWidth = '200px';
+                        preview.style.maxHeight = '200px';
+                        input.parentNode.appendChild(preview);
+                    }
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+

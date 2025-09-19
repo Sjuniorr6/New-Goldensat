@@ -137,17 +137,9 @@
                     <strong class="text-success">R$ {{ requisicao.valor_total|floatformat:2 }}</strong>
                   </td>
                   <td>
-                    {% if requisicao.status == 'Aprovado pelo CEO' %}
-                      <span class="badge badge-status bg-success">{{ requisicao.status }}</span>
-                    {% elif requisicao.status == 'Reprovado pelo CEO' %}
-                      <span class="badge badge-status bg-danger">{{ requisicao.status }}</span>
-                    {% elif requisicao.status == 'Pendente' %}
-                      <span class="badge badge-status bg-warning">{{ requisicao.status }}</span>
-                    {% elif requisicao.status == 'Configurado' %}
-                      <span class="badge badge-status bg-info">{{ requisicao.status }}</span>
-                    {% else %}
-                      <span class="badge badge-status bg-secondary">{{ requisicao.status }}</span>
-                    {% endif %}
+                    <span class="badge badge-status-{{ requisicao.status|lower|cut:' '|cut:'pelo'|cut:'ceo'|default:'pendente' }}">
+                        {{ requisicao.status }}
+                    </span>
                   </td>
                   <td>{{ requisicao.comercial|default:"Não informado" }}</td>
                   <td>
