@@ -1,0 +1,302 @@
+/* CSS específico para página de configurações */
+
+/* ===== CARDS DE CONFIGURAÇÃO ===== */
+.config-card {
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.config-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.config-card .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 12px 12px 0 0 !important;
+    padding: 1.25rem 1.5rem;
+}
+
+.config-card .card-header h5 {
+    color: #495057;
+    font-weight: 600;
+    margin: 0;
+}
+
+.config-card .card-header .fas {
+    color: #d4af37;
+}
+
+.config-card .card-body {
+    padding: 1.5rem;
+}
+
+/* ===== ITENS DE CONFIGURAÇÃO ===== */
+.config-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.config-item:last-child {
+    border-bottom: none;
+}
+
+.config-label {
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+.config-value {
+    color: #6c757d;
+    font-size: 0.9rem;
+    text-align: right;
+    max-width: 60%;
+    word-break: break-word;
+}
+
+/* ===== BADGES ===== */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.bg-success {
+    background-color: #28a745 !important;
+}
+
+.bg-warning {
+    background-color: #ffc107 !important;
+    color: #000 !important;
+}
+
+.bg-info {
+    background-color: #17a2b8 !important;
+}
+
+.bg-primary {
+    background-color: #007bff !important;
+}
+
+/* ===== ESTATÍSTICAS ===== */
+.stat-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 10px;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    margin-right: 1rem;
+    width: 50px;
+    text-align: center;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #495057;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+/* ===== ÍCONES ===== */
+.fas {
+    transition: all 0.3s ease;
+}
+
+.config-card:hover .fas {
+    transform: scale(1.1);
+}
+
+/* ===== ANIMAÇÕES ===== */
+.config-card {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Delay para animação escalonada */
+.config-card:nth-child(1) { animation-delay: 0.1s; }
+.config-card:nth-child(2) { animation-delay: 0.2s; }
+.config-card:nth-child(3) { animation-delay: 0.3s; }
+.config-card:nth-child(4) { animation-delay: 0.4s; }
+.config-card:nth-child(5) { animation-delay: 0.5s; }
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+    .config-card .card-header {
+        padding: 1rem;
+    }
+    
+    .config-card .card-body {
+        padding: 1rem;
+    }
+    
+    .config-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0.5rem 0;
+    }
+    
+    .config-label {
+        margin-bottom: 0.25rem;
+    }
+    
+    .config-value {
+        text-align: left;
+        max-width: 100%;
+    }
+    
+    .stat-item {
+        flex-direction: column;
+        text-align: center;
+        padding: 1rem 0.5rem;
+    }
+    
+    .stat-icon {
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .config-card .card-header h5 {
+        font-size: 1rem;
+    }
+    
+    .config-label {
+        font-size: 0.85rem;
+    }
+    
+    .config-value {
+        font-size: 0.85rem;
+    }
+    
+    .stat-number {
+        font-size: 1.25rem;
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
+    }
+}
+
+/* ===== EFEITOS HOVER ===== */
+.config-card:hover .card-header {
+    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+}
+
+.stat-item:hover .stat-icon {
+    transform: scale(1.1);
+}
+
+/* ===== CORES DOS ÍCONES ===== */
+.text-primary {
+    color: #007bff !important;
+}
+
+.text-success {
+    color: #28a745 !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+.text-info {
+    color: #17a2b8 !important;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+}
+
+/* ===== SCROLLBAR CUSTOMIZADA ===== */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #d4af37;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #b8941f;
+}
+
+/* ===== ESTADOS ESPECIAIS ===== */
+.config-item:hover {
+    background-color: rgba(212, 175, 55, 0.05);
+    border-radius: 6px;
+    margin: 0 -0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+/* ===== LOADING STATES ===== */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #d4af37;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

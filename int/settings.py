@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-7=sd^vwv+in5&os2t1zv0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='www.gserp.com.br,gserp.com.br').split(',')
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='www.gserp.com.br,gserp.com.br,127.0.0.1').split(',')
 
 # Login/Logout URLs
 LOGIN_URL = '/login/'
@@ -130,9 +130,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR.parent / 'staticfiles'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
-    BASE_DIR.parent / 'static',
+    BASE_DIR / 'static',
 ]
 
 # Configuração para servir arquivos estáticos em produção
@@ -144,7 +144,7 @@ if not DEBUG:
 
 # Media files (User uploads)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR.parent / 'media'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
