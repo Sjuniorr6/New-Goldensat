@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-7=sd^vwv+in5&os2t1zv00*#n#hr85rssdgj7b6kv%g36s#p@^')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='www.gserp.com.br,gserp.com.br,127.0.0.1').split(',')
 
@@ -161,23 +161,25 @@ MEDIA_ROOT = BASE_DIR.parent / 'media'   # /var/www/media
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Security Settings
+# Security Settings - Ajustados para produção
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
-X_FRAME_OPTIONS = 'DENY'
-SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
+X_FRAME_OPTIONS = 'SAMEORIGIN'  # Mudado de DENY para SAMEORIGIN
 
-# CSRF Protection
-CSRF_COOKIE_SECURE = not DEBUG
+# HSTS - Desabilitado temporariamente para evitar problemas
+# SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# SECURE_HSTS_PRELOAD = True
+
+# CSRF Protection - Ajustado para produção
+CSRF_COOKIE_SECURE = False  # Mudado para False temporariamente
 CSRF_COOKIE_HTTPONLY = True
-CSRF_COOKIE_SAMESITE = 'Strict'
+CSRF_COOKIE_SAMESITE = 'Lax'  # Mudado de Strict para Lax
 
-# Session Security
-SESSION_COOKIE_SECURE = not DEBUG
+# Session Security - Ajustado para produção
+SESSION_COOKIE_SECURE = False  # Mudado para False temporariamente
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = 'Strict'
+SESSION_COOKIE_SAMESITE = 'Lax'  # Mudado de Strict para Lax
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Email Configuration (opcional) - Completamente desabilitado para evitar erros SMTP
