@@ -136,7 +136,7 @@ STATIC_ROOT = BASE_DIR.parent / 'staticfiles'   # /var/www/staticfiles
 
 # Fontes adicionais de estáticos dentro do repositório
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',   # /var/www/New-Goldensat/static  ✅
+    BASE_DIR / 'static',   # /var/www/New-Goldensat/int/static  ✅
 ]
 
 # (Opcional, mas deixa explícito)
