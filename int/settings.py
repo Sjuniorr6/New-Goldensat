@@ -154,33 +154,28 @@ if not DEBUG:
 
 # Media files (User uploads)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR.parent / 'media'   # /var/www/media
+MEDIA_ROOT = BASE_DIR / 'media'   # /var/www/New-Goldensat/media
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Security Settings - Ajustados para produção
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-X_FRAME_OPTIONS = 'SAMEORIGIN'  # Mudado de DENY para SAMEORIGIN
+# Security Settings - MÍNIMAS para funcionar
+SECURE_BROWSER_XSS_FILTER = False  # Desabilitado temporariamente
+SECURE_CONTENT_TYPE_NOSNIFF = False  # Desabilitado temporariamente
+X_FRAME_OPTIONS = None  # Desabilitado temporariamente
 
-# HSTS - Desabilitado temporariamente para evitar problemas
-# SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
-# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-# SECURE_HSTS_PRELOAD = True
+# CSRF Protection - MÍNIMO para funcionar
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = False  # Desabilitado temporariamente
+CSRF_COOKIE_SAMESITE = None  # Desabilitado temporariamente
 
-# CSRF Protection - Ajustado para produção
-CSRF_COOKIE_SECURE = False  # Mudado para False temporariamente
-CSRF_COOKIE_HTTPONLY = True
-CSRF_COOKIE_SAMESITE = 'Lax'  # Mudado de Strict para Lax
-
-# Session Security - Ajustado para produção
-SESSION_COOKIE_SECURE = False  # Mudado para False temporariamente
-SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = 'Lax'  # Mudado de Strict para Lax
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# Session Security - MÍNIMO para funcionar
+SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_HTTPONLY = False  # Desabilitado temporariamente
+SESSION_COOKIE_SAMESITE = None  # Desabilitado temporariamente
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Desabilitado temporariamente
 
 # Email Configuration (opcional) - Completamente desabilitado para evitar erros SMTP
 EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
