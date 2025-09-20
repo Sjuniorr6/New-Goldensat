@@ -164,17 +164,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Security Settings - MÍNIMAS para funcionar
 SECURE_BROWSER_XSS_FILTER = False  # Desabilitado temporariamente
 SECURE_CONTENT_TYPE_NOSNIFF = False  # Desabilitado temporariamente
-X_FRAME_OPTIONS = None  # Desabilitado temporariamente
+X_FRAME_OPTIONS = 'SAMEORIGIN'  # Corrigido - não pode ser None
 
 # CSRF Protection - MÍNIMO para funcionar
 CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_HTTPONLY = False  # Desabilitado temporariamente
-CSRF_COOKIE_SAMESITE = None  # Desabilitado temporariamente
+CSRF_COOKIE_SAMESITE = 'Lax'  # Corrigido - não pode ser None
 
 # Session Security - MÍNIMO para funcionar
 SESSION_COOKIE_SECURE = False
 SESSION_COOKIE_HTTPONLY = False  # Desabilitado temporariamente
-SESSION_COOKIE_SAMESITE = None  # Desabilitado temporariamente
+SESSION_COOKIE_SAMESITE = 'Lax'  # Corrigido - não pode ser None
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Desabilitado temporariamente
 
 # Email Configuration (opcional) - Completamente desabilitado para evitar erros SMTP
