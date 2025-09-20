@@ -16,8 +16,8 @@
             justify-content: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             position: relative;
-            padding-left: 1200px;
-            overflow: hidden;
+            padding: 20px;
+            overflow-x: hidden;
         }
         
         body::before {
@@ -51,15 +51,19 @@
         .main-logo {
             position: absolute;
             top: 50%;
-            left: calc(50% - 300px);
+            left: 50%;
             transform: translate(-50%, -50%);
             z-index: 1;
             opacity: 0.15;
+            max-width: 90vw;
+            max-height: 90vh;
         }
         
         .main-logo img {
-            width: 600px;
-            height: 600px;
+            width: 100%;
+            height: auto;
+            max-width: 600px;
+            max-height: 600px;
             filter: grayscale(100%) brightness(0.7);
         }
         
@@ -72,6 +76,7 @@
             width: 100%;
             position: relative;
             z-index: 2;
+            margin: 0 auto;
         }
         
         .login-header {
@@ -211,6 +216,148 @@
         
         .login-footer a:hover {
             text-decoration: underline;
+        }
+        
+        /* Media Queries para Responsividade */
+        @media (min-width: 1200px) {
+            .login-container {
+                max-width: 450px;
+            }
+            
+            .main-logo img {
+                max-width: 700px;
+                max-height: 700px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .main-logo {
+                opacity: 0.08;
+            }
+            
+            .main-logo img {
+                max-width: 400px;
+                max-height: 400px;
+            }
+            
+            .login-container {
+                max-width: 100%;
+                margin: 0 10px;
+            }
+            
+            .login-header {
+                padding: 30px 20px;
+            }
+            
+            .login-header .logo {
+                width: 80px;
+                height: 80px;
+                font-size: 1.5rem;
+            }
+            
+            .login-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .login-body {
+                padding: 30px 20px;
+            }
+            
+            .form-control {
+                padding: 10px 14px;
+                font-size: 0.9rem;
+            }
+            
+            .btn-login {
+                padding: 10px 25px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .main-logo {
+                opacity: 0.05;
+            }
+            
+            .main-logo img {
+                max-width: 300px;
+                max-height: 300px;
+            }
+            
+            .login-header {
+                padding: 25px 15px;
+            }
+            
+            .login-header .logo {
+                width: 70px;
+                height: 70px;
+                font-size: 1.3rem;
+            }
+            
+            .login-header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .login-body {
+                padding: 25px 15px;
+            }
+            
+            .form-group {
+                margin-bottom: 20px;
+            }
+            
+            .form-control {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+            
+            .btn-login {
+                padding: 8px 20px;
+                font-size: 0.85rem;
+            }
+            
+            .login-footer {
+                padding: 15px;
+                font-size: 0.8rem;
+            }
+        }
+        
+        @media (max-width: 320px) {
+            .login-container {
+                border-radius: 15px;
+            }
+            
+            .login-header {
+                padding: 20px 10px;
+            }
+            
+            .login-header .logo {
+                width: 60px;
+                height: 60px;
+                font-size: 1.1rem;
+            }
+            
+            .login-header h1 {
+                font-size: 1.1rem;
+            }
+            
+            .login-body {
+                padding: 20px 10px;
+            }
+            
+            .form-control {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+            
+            .btn-login {
+                padding: 6px 15px;
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
